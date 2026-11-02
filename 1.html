@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SERENOVA | Mood & Wellness Journal</title>
+
+    <link rel="stylesheet" href="2.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">✦</span>
+            SERENOVA
+        </div>
+
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#mood">Mood</a>
+            <a href="#journal">Journal</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#wellness">Wellness</a>
+            <a href="#about">About</a>
+        </div>
+    </nav>
+
+
+    <!-- ================= HOME ================= -->
+
+    <section id="home" class="hero">
+
+        <div class="hero-decoration decoration-one"></div>
+        <div class="hero-decoration decoration-two"></div>
+
+        <div class="hero-content">
+
+            <p class="small-heading">✦ YOUR PERSONAL WELLNESS SPACE</p>
+
+            <h1>
+                Welcome to
+                <span>SERENOVA</span>
+            </h1>
+
+            <h2>A Little Space for Every Feeling.</h2>
+
+            <p class="hero-text">
+                A simple digital space designed for students to pause,
+                reflect, understand their emotions and keep track of the
+                little moments that shape their days.
+            </p>
+
+            <a href="#mood" class="primary-button">
+                Start Your Journey →
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= INTRO CARDS ================= -->
+
+    <section class="intro-section">
+
+        <div class="section-heading">
+            <p class="small-heading">YOUR SPACE</p>
+            <h2>Wellness begins with noticing.</h2>
+            <p>
+                SERENOVA gives you simple tools to understand your everyday
+                emotional patterns.
+            </p>
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">🌸</div>
+                <h3>Track Your Mood</h3>
+                <p>
+                    Record how you feel each day and gradually understand
+                    your emotional patterns.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✍️</div>
+                <h3>Write Freely</h3>
+                <p>
+                    Keep a private journal for your thoughts, experiences
+                    and everyday reflections.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Notice Patterns</h3>
+                <p>
+                    View simple summaries of your mood history through your
+                    personal dashboard.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= MOOD TRACKER ================= -->
+
+    <section id="mood" class="page-section soft-section">
+
+        <div class="section-heading">
+            <p class="small-heading">DAILY CHECK-IN</p>
+            <h2>How are you feeling today?</h2>
+            <p>
+                There is no right or wrong answer. Choose what feels
+                closest to your current mood.
+            </p>
+        </div>
+
+        <div class="mood-container">
+
+            <div class="mood-options">
+
+                <button class="mood-button" data-mood="Happy" data-emoji="😊">
+                    <span>😊</span>
+                    Happy
+                </button>
+
+                <button class="mood-button" data-mood="Calm" data-emoji="😌">
+                    <span>😌</span>
+                    Calm
+                </button>
+
+                <button class="mood-button" data-mood="Okay" data-emoji="😐">
+                    <span>😐</span>
+                    Okay
+                </button>
+
+                <button class="mood-button" data-mood="Sad" data-emoji="😔">
+                    <span>😔</span>
+                    Sad
+                </button>
+
+                <button class="mood-button" data-mood="Stressed" data-emoji="😣">
+                    <span>😣</span>
+                    Stressed
+                </button>
+
+            </div>
+
+            <button id="saveMoodButton" class="primary-button normal-button">
+                Save Today's Mood
+            </button>
+
+            <p id="moodMessage" class="status-message"></p>
+
+            <div id="moodSuggestion" class="suggestion-box hidden">
+                <div class="suggestion-title">
+                    <span>💜</span>
+                    <h3>A gentle suggestion</h3>
+                </div>
+
+                <p id="suggestionText"></p>
+
+                <small>
+                    This suggestion is generated using predefined rules,
+                    not artificial intelligence or medical assessment.
+                </small>
+            </div>
+
+        </div>
+
+
+        <!-- Previous Mood Entries -->
+
+        <div class="history-card">
+
+            <div class="card-heading">
+                <div>
+                    <p class="small-heading">HISTORY</p>
+                    <h3>Previous Mood Entries</h3>
+                </div>
+            </div>
+
+            <div id="moodHistory">
+                <p class="empty-message">
+                    Your mood history will appear here.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= JOURNAL ================= -->
+
+    <section id="journal" class="page-section">
+
+        <div class="section-heading">
+            <p class="small-heading">YOUR JOURNAL</p>
+            <h2>What's on your mind?</h2>
+            <p>
+                Write without pressure. This space belongs to you.
+            </p>
+        </div>
+
+        <div class="journal-box">
+
+            <div class="journal-top">
+                <span>✍️ New Reflection</span>
+                <span id="currentDate"></span>
+            </div>
+
+            <textarea
+                id="journalInput"
+                maxlength="1500"
+                placeholder="How was your day? What made you smile? What felt difficult? Write anything you want to remember..."
+            ></textarea>
+
+            <div class="journal-bottom">
+
+                <span id="characterCount">
+                    0 / 1500 characters
+                </span>
+
+                <button id="saveJournalButton" class="primary-button normal-button">
+                    Save Reflection
+                </button>
+
+            </div>
+
+            <p id="journalMessage" class="status-message"></p>
+
+        </div>
+
+
+        <!-- Previous Journal Entries -->
+
+        <div class="journal-history">
+
+            <div class="card-heading">
+                <div>
+                    <p class="small-heading">PAST REFLECTIONS</p>
+                    <h3>Your Journal Entries</h3>
+                </div>
+            </div>
+
+            <div id="journalEntries">
+                <p class="empty-message">
+                    Your saved reflections will appear here.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section id="dashboard" class="page-section soft-section">
+
+        <div class="section-heading">
+            <p class="small-heading">YOUR DASHBOARD</p>
+            <h2>Your emotional snapshot.</h2>
+            <p>
+                A simple overview based on the moods you have recorded.
+            </p>
+        </div>
+
+
+        <!-- Dashboard Statistics -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <span class="stat-icon">🌷</span>
+                <p>Total Check-ins</p>
+                <h3 id="totalMoodEntries">0</h3>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">💜</span>
+                <p>Most Frequent Mood</p>
+                <h3 id="frequentMood">—</h3>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">📖</span>
+                <p>Journal Entries</p>
+                <h3 id="totalJournalEntries">0</h3>
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+
+                <p class="small-heading">MOOD OVERVIEW</p>
+                <h3>Mood Distribution</h3>
+
+                <div id="moodChart" class="chart">
+
+                    <div class="chart-column">
+                        <div id="happyBar" class="chart-bar"></div>
+                        <span>😊</span>
+                        <small>Happy</small>
+                    </div>
+
+                    <div class="chart-column">
+                        <div id="calmBar" class="chart-bar"></div>
+                        <span>😌</span>
+                        <small>Calm</small>
+                    </div>
+
+                    <div class="chart-column">
+                        <div id="okayBar" class="chart-bar"></div>
+                        <span>😐</span>
+                        <small>Okay</small>
+                    </div>
+
+                    <div class="chart-column">
+                        <div id="sadBar" class="chart-bar"></div>
+                        <span>😔</span>
+                        <small>Sad</small>
+                    </div>
+
+                    <div class="chart-column">
+                        <div id="stressedBar" class="chart-bar"></div>
+                        <span>😣</span>
+                        <small>Stressed</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Emotional Pattern -->
+
+            <div class="dashboard-card">
+
+                <p class="small-heading">PATTERN SUMMARY</p>
+                <h3>What your entries show</h3>
+
+                <div class="pattern-box">
+                    <span class="pattern-icon">✨</span>
+                    <p id="patternSummary">
+                        Start recording your moods and a simple pattern
+                        summary will appear here.
+                    </p>
+                </div>
+
+                <p class="dashboard-note">
+                    This summary is based only on the moods you select.
+                    It is not a psychological or medical evaluation.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent History -->
+
+        <div class="dashboard-card recent-card">
+
+            <p class="small-heading">RECENT CHECK-INS</p>
+            <h3>Recent Mood History</h3>
+
+            <div id="recentMoodHistory">
+                <p class="empty-message">
+                    No mood entries yet.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= WELLNESS ================= -->
+
+    <section id="wellness" class="page-section">
+
+        <div class="section-heading">
+            <p class="small-heading">WELLNESS CORNER</p>
+            <h2>Small things can make a difference.</h2>
+            <p>
+                Simple ideas for creating small moments of care during
+                student life.
+            </p>
+        </div>
+
+        <div class="wellness-grid">
+
+            <div class="wellness-card">
+                <span>🌿</span>
+                <h3>Take a Pause</h3>
+                <p>
+                    Step away from your screen for a few minutes and give
+                    yourself time to reset.
+                </p>
+            </div>
+
+            <div class="wellness-card">
+                <span>💧</span>
+                <h3>Care for Your Body</h3>
+                <p>
+                    Drink some water, stretch gently and notice whether
+                    your body needs rest.
+                </p>
+            </div>
+
+            <div class="wellness-card">
+                <span>🫶</span>
+                <h3>Stay Connected</h3>
+                <p>
+                    A conversation with a friend, family member or trusted
+                    person can make a difficult day feel less isolating.
+                </p>
+            </div>
+
+            <div class="wellness-card">
+                <span>📝</span>
+                <h3>Break It Down</h3>
+                <p>
+                    When work feels overwhelming, choose one small task
+                    instead of trying to solve everything at once.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="safety-note">
+
+            <span>💜</span>
+
+            <div>
+                <h3>A note about wellbeing</h3>
+
+                <p>
+                    SERENOVA is an educational wellness journal and does
+                    not diagnose mental health conditions or replace
+                    professional support. If you are struggling or feel
+                    unsafe, consider contacting a qualified professional
+                    or a trusted person who can support you.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ABOUT ================= -->
+
+    <section id="about" class="page-section about-section">
+
+        <div class="section-heading light-heading">
+            <p class="small-heading">ABOUT THE PROJECT</p>
+            <h2>About SERENOVA</h2>
+            <p>
+                Prototype 1 — AI Literacy & Integrity Project
+            </p>
+        </div>
+
+
+        <div class="about-grid">
+
+            <div class="about-card">
+                <h3>🌸 Project Introduction</h3>
+                <p>
+                    SERENOVA is a digital mood and wellness journal
+                    designed primarily for college students. It provides
+                    a simple space for daily emotional check-ins,
+                    journaling and reflection.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>🎯 Problem Statement</h3>
+                <p>
+                    Students often experience changing academic and
+                    personal pressures but may not regularly pause to
+                    reflect on how they are feeling.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>✨ Objectives</h3>
+                <p>
+                    Encourage regular reflection, help students record
+                    emotional patterns and demonstrate responsible use
+                    of technology in a wellness-oriented application.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>🎓 Target Audience</h3>
+                <p>
+                    The primary target audience is college and university
+                    students interested in simple tools for reflection,
+                    journaling and everyday wellness.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>💻 Prototype 1 Features</h3>
+                <p>
+                    Mood tracking, journal entries, browser storage,
+                    simple mood statistics, visual summaries and
+                    predefined wellness suggestions.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>🤖 AI & Integrity</h3>
+                <p>
+                    Prototype 1 does not contain a genuine artificial
+                    intelligence model. Wellness responses use
+                    predefined JavaScript rules. AI-assisted development
+                    should be reviewed, understood and tested by the
+                    student team.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="privacy-box">
+
+            <h3>🔒 Privacy & Prototype Limitations</h3>
+
+            <p>
+                Mood and journal entries are stored using your browser's
+                localStorage. They are not intentionally transmitted by
+                SERENOVA to an external server.
+            </p>
+
+            <p>
+                However, localStorage is not encrypted secure storage.
+                Users should therefore avoid storing highly sensitive
+                personal, medical or confidential information in this
+                prototype.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">✦ SERENOVA</div>
+
+        <p>A Little Space for Every Feeling.</p>
+
+        <p class="footer-small">
+            Prototype 1 • AI Literacy & Integrity Educational Project
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script src="3.js"></script>
+
+</body>
+
+</html>
