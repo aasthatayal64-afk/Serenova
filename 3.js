@@ -1,947 +1,1072 @@
-/* ==================================================
-   SERENOVA - PROTOTYPE 1
-   JavaScript Functionality
-   ================================================== */
 
+/* SERENOVA - PROTOTYPE 2 */
+/* Mood, Journal, Dashboard, Memories, Streaks and Reminders */
 
-/* ---------- VARIABLES ---------- */
+/* ---------- BASIC HELPERS ---------- */
 
-// Stores the mood currently selected by the user
 let selectedMood = "";
 let selectedEmoji = "";
 
-
-// Get important HTML elements
-
-let moodButtons = document.querySelectorAll(".mood-button");
-
-let saveMoodButton = document.getElementById("saveMoodButton");
-
-let moodMessage = document.getElementById("moodMessage");
-
-let suggestionBox = document.getElementById("moodSuggestion");
-
-let suggestionText = document.getElementById("suggestionText");
-
-let journalInput = document.getElementById("journalInput");
-
-let saveJournalButton = document.getElementById("saveJournalButton");
-
-let journalMessage = document.getElementById("journalMessage");
-
-let characterCount = document.getElementById("characterCount");
-
-
-/* ==================================================
-   DATE
-   ================================================== */
-
 function getCurrentDate() {
-
-    let today = new Date();
-
-    return today.toLocaleDateString("en-IN", {
+    return new Date().toLocaleDateString("en-IN", {
         day: "numeric",
         month: "long",
         year: "numeric"
     });
 }
 
+function getLocalDateKey(date) {
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0");
+    let day = String(date.getDate()).padStart(2, "0");
+    return year + "-" + month + "-" + day;
+}
+
+function getDateKeyFromEntry(entry) {
+    if (entry.timestamp) {
+        let date = new Date(entry.timestamp);
+        if (!isNaN(date.getTime())) {
+            return getLocalDateKey(date);
+        }
+    }
+
+    // Support entries created in Prototype 1.
+    if (entry.date) {
+        let parts = entry.date.split(" ");
+        let months = [
+            "January", "February", "March", "April",
+            "May", "June", "July", "August",
+            "September", "October", "November", "December"
+        ];
+
+        if (parts.length === 3) {
+            let day = Number(parts[0]);
+            let month = months.indexOf(parts[1]) + 1;
+            let year = Number(parts[2]);
+
+            if (day >= 1 && day <= 31 && month > 0 && year > 0) {
+                return year + "-" +
+                    String(month).padStart(2, "0") + "-" +
+                    String(day).padStart(2, "0");
+            }
+        }
+    }
+    return "";
+}
+
+function readData(key) {
+    try {
+        let data = JSON.parse(localStorage.getItem(key));
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        console.error("Storage error:", error);
+        return [];
+    }
+}
+
+function saveData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error("Unable to save data:", error);
+        return false;
+    }
+}
+
+function makeElement(tag, className, text) {
+    let element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+}
+
+function emptyMessage(container, text) {
+    container.replaceChildren(
+        makeElement("p", "empty-message", text)
+    );
+}
 
 document.getElementById("currentDate").textContent = getCurrentDate();
 
+/* ---------- MOOD SELECTION ---------- */
 
-/* ==================================================
-   MOOD SELECTION
-   ================================================== */
+let moodButtons = document.querySelectorAll(".mood-button");
+let moodMessage = document.getElementById("moodMessage");
 
-for (let i = 0; i < moodButtons.length; i++) {
+let suggestions = {
+    Happy: "Celebrate a positive moment. You could write down something that made you smile today.",
+    Calm: "Take a moment to appreciate what helped you feel balanced.",
+    Okay: "An ordinary day is valid too. Perhaps enjoy a favourite activity.",
+    Sad: "Be gentle with yourself. Rest or connect with someone you trust.",
+    Stressed: "Consider a short break, slow breathing or organizing one small task."
+};
 
-    moodButtons[i].addEventListener("click", function () {
-
-        // Remove selection from every mood button
-        for (let j = 0; j < moodButtons.length; j++) {
-
-            moodButtons[j].classList.remove("selected");
+for (let button of moodButtons) {
+    button.addEventListener("click", function () {
+        for (let other of moodButtons) {
+            other.classList.remove("selected");
         }
 
-        // Highlight the clicked button
         this.classList.add("selected");
-
-        // Store selected mood
-        selectedMood = this.getAttribute("data-mood");
-
-        selectedEmoji = this.getAttribute("data-emoji");
+        selectedMood = this.dataset.mood;
+        selectedEmoji = this.dataset.emoji;
 
         moodMessage.textContent =
             selectedEmoji + " You selected " + selectedMood + ".";
 
-        // Show wellness suggestion
-        showMoodSuggestion(selectedMood);
+        document.getElementById("suggestionText").textContent =
+            suggestions[selectedMood];
 
+        document.getElementById("moodSuggestion")
+            .classList.remove("hidden");
     });
 }
 
+/* ---------- SAVE MOOD ---------- */
 
-/* ==================================================
-   RULE-BASED WELLNESS SUGGESTIONS
-   ================================================== */
+document.getElementById("saveMoodButton")
+    .addEventListener("click", function () {
 
-function showMoodSuggestion(mood) {
-
-    let message = "";
-
-    if (mood === "Happy") {
-
-        message =
-            "It is lovely to notice a positive moment. You could write down one thing that made today feel good or share that energy with someone you care about.";
-
-    } else if (mood === "Calm") {
-
-        message =
-            "A calm moment can be a good opportunity to reflect. Consider noticing what helped you feel balanced today and whether you can carry that habit forward.";
-
-    } else if (mood === "Okay") {
-
-        message =
-            "An ordinary day is completely valid too. A short walk, some music, a favourite activity or a conversation with a friend might add a small positive moment to your day.";
-
-    } else if (mood === "Sad") {
-
-        message =
-            "Consider giving yourself some gentle space today. You might rest, write about what you are feeling, or connect with someone you trust.";
-
-    } else if (mood === "Stressed") {
-
-        message =
-            "Try focusing on one thing at a time. A short break, a few slow breaths, stretching or writing down your next small task may help you organise the moment.";
-
-    }
-
-    suggestionText.textContent = message;
-
-    suggestionBox.classList.remove("hidden");
-}
-
-
-/* ==================================================
-   SAVE OR UPDATE TODAY'S MOOD
-   ================================================== */
-
-saveMoodButton.addEventListener("click", function () {
-
-    // Do not save if no mood is selected
     if (selectedMood === "") {
-
-        moodMessage.textContent =
-            "Please select a mood before saving.";
-
+        moodMessage.textContent = "Please select a mood first.";
         return;
     }
 
-
-    // Get previous mood entries from localStorage
-    let moodEntries =
-        JSON.parse(localStorage.getItem("serenovaMoods")) || [];
-
-
+    let entries = readData("serenovaMoods");
     let today = getCurrentDate();
-
-    let existingEntryIndex = -1;
-
-
-    /*
-       Check whether an entry for today's date
-       already exists.
-    */
-
-    for (let i = 0; i < moodEntries.length; i++) {
-
-        if (moodEntries[i].date === today) {
-
-            existingEntryIndex = i;
-
-            break;
-        }
-    }
-
-
-    /*
-       If today's mood already exists,
-       update the existing entry.
-    */
-
-    if (existingEntryIndex !== -1) {
-
-        moodEntries[existingEntryIndex].mood =
-            selectedMood;
-
-        moodEntries[existingEntryIndex].emoji =
-            selectedEmoji;
-
-        moodEntries[existingEntryIndex].time =
-            new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit"
-            });
-
-
-        moodMessage.textContent =
-            "✓ Today's mood has been updated.";
-
-    }
-
-    /*
-       If there is no mood for today,
-       create a new entry.
-    */
-
-    else {
-
-        let newMoodEntry = {
-
-            mood: selectedMood,
-
-            emoji: selectedEmoji,
-
-            date: today,
-
-            time: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit"
-            })
-        };
-
-
-        moodEntries.push(newMoodEntry);
-
-
-        moodMessage.textContent =
-            "✓ Your mood has been saved for today.";
-    }
-
-
-    // Save the updated array in localStorage
-    localStorage.setItem(
-        "serenovaMoods",
-        JSON.stringify(moodEntries)
-    );
-
-
-    // Refresh visible information
-    displayMoodHistory();
-
-    updateDashboard();
-
-});
-
-
-/* ==================================================
-   DISPLAY MOOD HISTORY
-   ================================================== */
-
-function displayMoodHistory() {
-
-    let moodEntries =
-        JSON.parse(localStorage.getItem("serenovaMoods")) || [];
-
-    let moodHistory =
-        document.getElementById("moodHistory");
-
-
-    // Clear old display
-    moodHistory.textContent = "";
-
-
-    if (moodEntries.length === 0) {
-
-        let message = document.createElement("p");
-
-        message.className = "empty-message";
-
-        message.textContent =
-            "Your mood history will appear here.";
-
-        moodHistory.appendChild(message);
-
-        return;
-    }
-
-
-    // Show newest entries first
-    for (let i = moodEntries.length - 1; i >= 0; i--) {
-
-        let entry = document.createElement("div");
-
-        entry.className = "history-entry";
-
-
-        let moodSide = document.createElement("div");
-
-        moodSide.className = "history-mood";
-
-
-        let emoji = document.createElement("span");
-
-        emoji.className = "history-emoji";
-
-        emoji.textContent = moodEntries[i].emoji;
-
-
-        let moodName = document.createElement("strong");
-
-        moodName.textContent = moodEntries[i].mood;
-
-
-        moodSide.appendChild(emoji);
-
-        moodSide.appendChild(moodName);
-
-
-        let date = document.createElement("span");
-
-        date.textContent =
-            moodEntries[i].date +
-            " • " +
-            moodEntries[i].time;
-
-
-        entry.appendChild(moodSide);
-
-        entry.appendChild(date);
-
-        moodHistory.appendChild(entry);
-    }
-}
-
-
-/* ==================================================
-   JOURNAL CHARACTER COUNTER
-   ================================================== */
-
-journalInput.addEventListener("input", function () {
-
-    characterCount.textContent =
-        journalInput.value.length +
-        " / 1500 characters";
-});
-
-
-/* ==================================================
-   SAVE JOURNAL ENTRY
-   ================================================== */
-
-saveJournalButton.addEventListener("click", function () {
-
-    let journalText = journalInput.value.trim();
-
-
-    // Prevent empty journal entries
-    if (journalText === "") {
-
-        journalMessage.textContent =
-            "Please write something before saving.";
-
-        return;
-    }
-
-
-    // Get previous journal entries
-    let journalEntries =
-        JSON.parse(localStorage.getItem("serenovaJournal")) || [];
-
-
-    // Create new journal entry
-    let newJournalEntry = {
-
-        text: journalText,
-
-        date: getCurrentDate(),
-
-        time: new Date().toLocaleTimeString([], {
+    let now = new Date();
+
+    let newEntry = {
+        mood: selectedMood,
+        emoji: selectedEmoji,
+        date: today,
+        time: now.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit"
-        })
+        }),
+        timestamp: now.toISOString()
     };
 
+    let existingIndex = entries.findIndex(function (entry) {
+        return getDateKeyFromEntry(entry) === getLocalDateKey(now);
+    });
 
-    // Add journal entry
-    journalEntries.push(newJournalEntry);
+    if (existingIndex >= 0) {
+        entries[existingIndex] = newEntry;
+        moodMessage.textContent = "✓ Today's mood has been updated.";
+    } else {
+        entries.push(newEntry);
+        moodMessage.textContent = "✓ Your mood has been saved.";
+    }
 
-
-    // Save journal entries
-    localStorage.setItem(
-        "serenovaJournal",
-        JSON.stringify(journalEntries)
-    );
-
-
-    // Clear textarea
-    journalInput.value = "";
-
-
-    // Reset character counter
-    characterCount.textContent =
-        "0 / 1500 characters";
-
-
-    journalMessage.textContent =
-        "✓ Your reflection has been saved.";
-
-
-    // Refresh journal and dashboard
-    displayJournalEntries();
-
-    updateDashboard();
-
-});
-
-
-/* ==================================================
-   DISPLAY JOURNAL ENTRIES
-   ================================================== */
-
-function displayJournalEntries() {
-
-    let journalEntries =
-        JSON.parse(localStorage.getItem("serenovaJournal")) || [];
-
-    let journalContainer =
-        document.getElementById("journalEntries");
-
-
-    // Clear old display
-    journalContainer.textContent = "";
-
-
-    if (journalEntries.length === 0) {
-
-        let message = document.createElement("p");
-
-        message.className = "empty-message";
-
-        message.textContent =
-            "Your saved reflections will appear here.";
-
-        journalContainer.appendChild(message);
-
+    if (!saveData("serenovaMoods", entries)) {
+        moodMessage.textContent = "Unable to save. Check browser storage.";
         return;
     }
 
+    displayMoodHistory();
+    updateDashboard();
+    updateNotificationState();
+});
 
-    // Display newest entries first
-    for (let i = journalEntries.length - 1; i >= 0; i--) {
+/* ---------- MOOD HISTORY ---------- */
 
-        let entry = document.createElement("div");
+function displayMoodHistory() {
+    let entries = readData("serenovaMoods");
+    let container = document.getElementById("moodHistory");
+    container.replaceChildren();
 
-        entry.className = "journal-entry";
+    if (entries.length === 0) {
+        emptyMessage(container, "Your mood history will appear here.");
+        return;
+    }
 
+    for (let i = entries.length - 1; i >= 0; i--) {
+        let row = makeElement("div", "history-entry");
+        let mood = makeElement("div", "history-mood");
 
-        let date = document.createElement("p");
+        mood.appendChild(makeElement(
+            "span", "history-emoji", entries[i].emoji
+        ));
 
-        date.className = "journal-entry-date";
+        mood.appendChild(makeElement(
+            "strong", "", entries[i].mood
+        ));
 
-        date.textContent =
-            journalEntries[i].date +
-            " • " +
-            journalEntries[i].time;
+        row.appendChild(mood);
+        row.appendChild(makeElement(
+            "span", "", entries[i].date + " • " + entries[i].time
+        ));
 
+        container.appendChild(row);
+    }
+}
 
-        let text = document.createElement("p");
+/* ---------- JOURNAL ---------- */
 
-        text.className = "journal-entry-text";
+let journalInput = document.getElementById("journalInput");
+let journalMessage = document.getElementById("journalMessage");
+let characterCount = document.getElementById("characterCount");
 
+journalInput.addEventListener("input", function () {
+    characterCount.textContent =
+        journalInput.value.length + " / 1500 characters";
+});
 
-        /*
-           textContent is used instead of innerHTML.
+document.getElementById("saveJournalButton")
+    .addEventListener("click", function () {
 
-           This displays user-written journal text
-           safely as normal text.
-        */
+    let text = journalInput.value.trim();
 
-        text.textContent =
-            journalEntries[i].text;
+    if (text === "") {
+        journalMessage.textContent = "Please write something first.";
+        return;
+    }
 
+    let entries = readData("serenovaJournal");
+    let now = new Date();
 
-        // Create delete button
-        let deleteButton =
-            document.createElement("button");
+    entries.push({
+        text: text,
+        date: getCurrentDate(),
+        time: now.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        }),
+        timestamp: now.toISOString()
+    });
 
-        deleteButton.className =
-            "delete-button";
+    if (!saveData("serenovaJournal", entries)) {
+        journalMessage.textContent = "Unable to save this reflection.";
+        return;
+    }
 
-        deleteButton.textContent =
-            "Delete Entry";
+    journalInput.value = "";
+    characterCount.textContent = "0 / 1500 characters";
+    journalMessage.textContent = "✓ Your reflection has been saved.";
 
+    displayJournalEntries();
+    updateDashboard();
+    updateReflectionStreak();
+    updateNotificationState();
+});
 
-        // Store the original array position
-        deleteButton.setAttribute(
-            "data-index",
-            i
+/* ---------- DISPLAY JOURNAL ---------- */
+
+function displayJournalEntries() {
+    let entries = readData("serenovaJournal");
+    let container = document.getElementById("journalEntries");
+    container.replaceChildren();
+
+    if (entries.length === 0) {
+        emptyMessage(container, "Your saved reflections will appear here.");
+        return;
+    }
+
+    for (let i = entries.length - 1; i >= 0; i--) {
+        let card = makeElement("div", "journal-entry");
+
+        card.appendChild(makeElement(
+            "p", "journal-entry-date",
+            entries[i].date + " • " + entries[i].time
+        ));
+
+        card.appendChild(makeElement(
+            "p", "journal-entry-text", entries[i].text
+        ));
+
+        let deleteButton = makeElement(
+            "button", "delete-button", "Delete Entry"
         );
 
+        deleteButton.addEventListener("click", function () {
+            if (confirm("Delete this reflection?")) {
+                let latest = readData("serenovaJournal");
+                latest.splice(i, 1);
 
-        deleteButton.addEventListener(
-            "click",
-            function () {
-
-                let index =
-                    Number(
-                        this.getAttribute("data-index")
-                    );
-
-                deleteJournalEntry(index);
+                if (saveData("serenovaJournal", latest)) {
+                    displayJournalEntries();
+                    updateDashboard();
+                    updateReflectionStreak();
+                    updateNotificationState();
+                }
             }
-        );
+        });
 
-
-        entry.appendChild(date);
-
-        entry.appendChild(text);
-
-        entry.appendChild(deleteButton);
-
-
-        journalContainer.appendChild(entry);
+        card.appendChild(deleteButton);
+        container.appendChild(card);
     }
 }
 
+/* ---------- DASHBOARD ---------- */
 
-/* ==================================================
-   DELETE JOURNAL ENTRY
-   ================================================== */
-
-function deleteJournalEntry(index) {
-
-    let journalEntries =
-        JSON.parse(localStorage.getItem("serenovaJournal")) || [];
-
-
-    let confirmDelete =
-        confirm(
-            "Are you sure you want to delete this journal entry?"
-        );
-
-
-    if (confirmDelete === true) {
-
-        // Remove selected entry
-        journalEntries.splice(index, 1);
-
-
-        // Save updated journal
-        localStorage.setItem(
-            "serenovaJournal",
-            JSON.stringify(journalEntries)
-        );
-
-
-        // Refresh page information
-        displayJournalEntries();
-
-        updateDashboard();
-    }
-}
-
-
-/* ==================================================
-   DASHBOARD
-   ================================================== */
+let moodNames = ["Happy", "Calm", "Okay", "Sad", "Stressed"];
 
 function updateDashboard() {
+    let moods = readData("serenovaMoods");
+    let journals = readData("serenovaJournal");
 
-    let moodEntries =
-        JSON.parse(localStorage.getItem("serenovaMoods")) || [];
-
-    let journalEntries =
-        JSON.parse(localStorage.getItem("serenovaJournal")) || [];
-
-
-    // Display total mood entries
     document.getElementById("totalMoodEntries").textContent =
-        moodEntries.length;
+        moods.length;
 
-
-    // Display total journal entries
     document.getElementById("totalJournalEntries").textContent =
-        journalEntries.length;
+        journals.length;
 
-
-    // Create mood counters
-    let moodCounts = {
-
+    let counts = {
         Happy: 0,
-
         Calm: 0,
-
         Okay: 0,
-
         Sad: 0,
-
         Stressed: 0
     };
 
-
-    // Count each mood
-    for (let i = 0; i < moodEntries.length; i++) {
-
-        let moodName =
-            moodEntries[i].mood;
-
-
-        if (moodCounts[moodName] !== undefined) {
-
-            moodCounts[moodName]++;
+    for (let entry of moods) {
+        if (counts[entry.mood] !== undefined) {
+            counts[entry.mood]++;
         }
     }
 
+    let frequent = document.getElementById("frequentMood");
 
-    // Update dashboard sections
-    updateMostFrequentMood(
-        moodCounts,
-        moodEntries.length
-    );
+    if (moods.length === 0) {
+        frequent.textContent = "—";
+    } else {
+        let highest = Math.max(...Object.values(counts));
+        let winners = moodNames.filter(function (mood) {
+            return counts[mood] === highest;
+        });
 
-    updateMoodChart(moodCounts);
+        frequent.textContent = winners.length > 1 ?
+            "Tie: " + winners.join(", ") : winners[0];
+    }
 
-    updatePatternSummary(
-        moodCounts,
-        moodEntries.length
-    );
+    let barIds = [
+        "happyBar", "calmBar", "okayBar",
+        "sadBar", "stressedBar"
+    ];
 
-    displayRecentMoods(moodEntries);
-}
+    let highestCount = Math.max(1, ...Object.values(counts));
 
+    for (let i = 0; i < moodNames.length; i++) {
+        let count = counts[moodNames[i]];
+        let bar = document.getElementById(barIds[i]);
 
-/* ==================================================
-   MOST FREQUENT MOOD
-   ================================================== */
+        bar.style.height =
+            Math.max(5, count / highestCount * 160) + "px";
 
-function updateMostFrequentMood(
-    moodCounts,
-    totalEntries
-) {
+        bar.title = count + " entries";
+        bar.setAttribute("aria-label",
+            moodNames[i] + ": " + count + " entries");
+    }
 
-    let frequentMoodElement =
-        document.getElementById("frequentMood");
+    let positive = counts.Happy + counts.Calm;
+    let difficult = counts.Sad + counts.Stressed;
+    let summary = document.getElementById("patternSummary");
 
+    if (moods.length === 0) {
+        summary.textContent = "Start recording your moods to see patterns.";
+    } else if (positive > difficult) {
+        summary.textContent =
+            "Your entries contain more Happy and Calm selections.";
+    } else if (difficult > positive) {
+        summary.textContent =
+            "Your entries contain more Sad and Stressed selections. " +
+            "This is not a diagnosis.";
+    } else {
+        summary.textContent =
+            "Your recorded moods show a mixed pattern.";
+    }
 
-    if (totalEntries === 0) {
+    let recent = document.getElementById("recentMoodHistory");
+    recent.replaceChildren();
 
-        frequentMoodElement.textContent = "—";
-
+    if (moods.length === 0) {
+        emptyMessage(recent, "No mood entries yet.");
         return;
     }
 
+    for (let entry of moods.slice(-5).reverse()) {
+        let row = makeElement("div", "recent-entry");
 
-    let moods = [
-        "Happy",
-        "Calm",
-        "Okay",
-        "Sad",
-        "Stressed"
-    ];
+        row.appendChild(makeElement(
+            "span", "", entry.emoji + " " + entry.mood
+        ));
 
+        row.appendChild(makeElement("span", "", entry.date));
+        recent.appendChild(row);
+    }
+}
 
-    let mostFrequentMood =
-        moods[0];
+/* ---------- POPUP CONTROLS ---------- */
 
-    let highestCount =
-        moodCounts[moods[0]];
+let lastFocusedElement = null;
 
+function openPopup(id) {
+    let popup = document.getElementById(id);
+    if (!popup) return;
 
-    for (let i = 1; i < moods.length; i++) {
+    lastFocusedElement = document.activeElement;
+    popup.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
 
-        if (moodCounts[moods[i]] > highestCount) {
+    let closeButton = popup.querySelector(".close-popup");
+    if (closeButton) closeButton.focus();
 
-            highestCount =
-                moodCounts[moods[i]];
+    if (id === "memoryPopup") displayMemories();
+    if (id === "streakPopup") updateReflectionStreak();
+}
 
-            mostFrequentMood =
-                moods[i];
+function closePopup(id) {
+    let popup = document.getElementById(id);
+    popup.classList.add("hidden");
+    document.body.style.overflow = "";
+
+    if (lastFocusedElement) lastFocusedElement.focus();
+}
+
+document.querySelectorAll("[data-open]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        openPopup(this.dataset.open);
+    });
+});
+
+document.querySelectorAll("[data-close]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        closePopup(this.dataset.close);
+    });
+});
+
+document.querySelectorAll(".popup-overlay").forEach(function (popup) {
+    popup.addEventListener("click", function (event) {
+        if (event.target === popup) closePopup(popup.id);
+    });
+});
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        document.querySelectorAll(".popup-overlay").forEach(function (popup) {
+            if (!popup.classList.contains("hidden")) {
+                closePopup(popup.id);
+            }
+        });
+    }
+
+    // Keep keyboard focus inside the open popup.
+    if (event.key === "Tab") {
+        let popup = document.querySelector(
+            ".popup-overlay:not(.hidden)"
+        );
+
+        if (!popup) return;
+
+        let elements = Array.from(popup.querySelectorAll(
+            "button:not([disabled]), input:not([disabled]), " +
+            "textarea:not([disabled]), a[href]"
+        )).filter(function (element) {
+            return element.getClientRects().length > 0;
+        });
+
+        if (elements.length === 0) return;
+
+        let first = elements[0];
+        let last = elements[elements.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey &&
+                   document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
         }
     }
+});
 
+/* ---------- MEMORY LANE DATABASE ---------- */
 
-    let emoji =
-        getMoodEmoji(mostFrequentMood);
+let memoryDatabase = null;
 
+function openMemoryDatabase() {
+    return new Promise(function (resolve, reject) {
+        let request = indexedDB.open("SerenovaMemories", 1);
 
-    frequentMoodElement.textContent =
-        emoji + " " + mostFrequentMood;
+        request.onupgradeneeded = function () {
+            let db = request.result;
+
+            if (!db.objectStoreNames.contains("photos")) {
+                db.createObjectStore("photos", {
+                    keyPath: "id",
+                    autoIncrement: true
+                });
+            }
+        };
+
+        request.onsuccess = function () {
+            memoryDatabase = request.result;
+            resolve(memoryDatabase);
+        };
+
+        request.onerror = function () {
+            reject(request.error);
+        };
+    });
 }
 
-
-/* ==================================================
-   GET MOOD EMOJI
-   ================================================== */
-
-function getMoodEmoji(mood) {
-
-    if (mood === "Happy") {
-
-        return "😊";
-    }
-
-    if (mood === "Calm") {
-
-        return "😌";
-    }
-
-    if (mood === "Okay") {
-
-        return "😐";
-    }
-
-    if (mood === "Sad") {
-
-        return "😔";
-    }
-
-    if (mood === "Stressed") {
-
-        return "😣";
-    }
-
-    return "";
+function memoryStore(mode) {
+    return memoryDatabase.transaction("photos", mode)
+        .objectStore("photos");
 }
 
+function getAllMemories() {
+    return new Promise(function (resolve, reject) {
+        let request = memoryStore("readonly").getAll();
 
-/* ==================================================
-   MOOD CHART
-   ================================================== */
+        request.onsuccess = function () {
+            resolve(request.result);
+        };
 
-function updateMoodChart(moodCounts) {
-
-    let values = [
-
-        moodCounts.Happy,
-
-        moodCounts.Calm,
-
-        moodCounts.Okay,
-
-        moodCounts.Sad,
-
-        moodCounts.Stressed
-    ];
-
-
-    // Find the largest mood count
-    let highestValue = Math.max(
-        moodCounts.Happy,
-        moodCounts.Calm,
-        moodCounts.Okay,
-        moodCounts.Sad,
-        moodCounts.Stressed
-    );
-
-
-    /*
-       Avoid division by zero if there
-       are no mood entries.
-    */
-
-    if (highestValue === 0) {
-
-        highestValue = 1;
-    }
-
-
-    let bars = [
-
-        document.getElementById("happyBar"),
-
-        document.getElementById("calmBar"),
-
-        document.getElementById("okayBar"),
-
-        document.getElementById("sadBar"),
-
-        document.getElementById("stressedBar")
-    ];
-
-
-    for (let i = 0; i < bars.length; i++) {
-
-        let height =
-            (values[i] / highestValue) * 160;
-
-
-        // Keep empty bars slightly visible
-        if (values[i] === 0) {
-
-            height = 5;
-        }
-
-
-        bars[i].style.height =
-            height + "px";
-
-
-        bars[i].title =
-            values[i] + " entries";
-    }
+        request.onerror = function () {
+            reject(request.error);
+        };
+    });
 }
 
+function addMemory(photo) {
+    return new Promise(function (resolve, reject) {
+        let request = memoryStore("readwrite").add(photo);
 
-/* ==================================================
-   SIMPLE EMOTIONAL PATTERN SUMMARY
-   ================================================== */
+        request.onsuccess = function () {
+            resolve();
+        };
 
-function updatePatternSummary(
-    moodCounts,
-    totalEntries
-) {
+        request.onerror = function () {
+            reject(request.error);
+        };
+    });
+}
 
-    let patternSummary =
-        document.getElementById("patternSummary");
+function removeMemory(id) {
+    return new Promise(function (resolve, reject) {
+        let request = memoryStore("readwrite").delete(id);
 
+        request.onsuccess = function () {
+            resolve();
+        };
 
-    // No entries
-    if (totalEntries === 0) {
+        request.onerror = function () {
+            reject(request.error);
+        };
+    });
+}
 
-        patternSummary.textContent =
-            "Start recording your moods and a simple pattern summary will appear here.";
+/* ---------- PHOTO PREVIEW ---------- */
 
+let memoryPhoto = document.getElementById("memoryPhoto");
+let previewImage = document.getElementById("previewImage");
+let previewUrl = null;
+
+memoryPhoto.addEventListener("change", function () {
+    let file = memoryPhoto.files[0];
+
+    if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+    }
+
+    if (!file) {
+        document.getElementById("photoPreview")
+            .classList.add("hidden");
         return;
     }
 
+    if (!file.type.startsWith("image/")) {
+        alert("Please select an image.");
+        memoryPhoto.value = "";
+        return;
+    }
 
-    /*
-       Happy and Calm are grouped only for
-       this simple prototype summary.
+    previewUrl = URL.createObjectURL(file);
+    previewImage.src = previewUrl;
 
-       This is NOT a psychological evaluation.
-    */
+    document.getElementById("photoPreview")
+        .classList.remove("hidden");
+});
 
-    let positiveMoods =
-        moodCounts.Happy +
-        moodCounts.Calm;
+/* ---------- SAVE POLAROID ---------- */
 
+document.getElementById("saveMemoryButton")
+    .addEventListener("click", async function () {
 
-    let difficultMoods =
-        moodCounts.Sad +
-        moodCounts.Stressed;
+    let file = memoryPhoto.files[0];
+    let caption = document.getElementById("memoryCaption")
+        .value.trim();
 
+    let message = document.getElementById("memoryMessage");
 
-    if (positiveMoods > difficultMoods) {
+    if (!file) {
+        message.textContent = "Please select a photograph.";
+        return;
+    }
 
-        patternSummary.textContent =
-            "Your recorded check-ins currently contain more Happy and Calm selections than Sad and Stressed selections.";
+    if (!file.type.startsWith("image/")) {
+        message.textContent = "Only image files are allowed.";
+        return;
+    }
 
-    } else if (difficultMoods > positiveMoods) {
+    if (file.size > 5 * 1024 * 1024) {
+        message.textContent = "Please choose an image under 5 MB.";
+        return;
+    }
 
-        patternSummary.textContent =
-            "Your recorded check-ins currently contain more Sad and Stressed selections than Happy and Calm selections. This is only a summary of your selections, not a diagnosis.";
+    if (!memoryDatabase) {
+        message.textContent = "Photo storage is unavailable.";
+        return;
+    }
+
+    try {
+        await addMemory({
+            image: file,
+            caption: caption || "A little moment worth remembering",
+            date: getCurrentDate(),
+            timestamp: new Date().toISOString()
+        });
+
+        memoryPhoto.value = "";
+        document.getElementById("memoryCaption").value = "";
+
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+        }
+
+        document.getElementById("photoPreview")
+            .classList.add("hidden");
+
+        message.textContent = "💜 Your Polaroid has been saved.";
+        displayMemories();
+
+    } catch (error) {
+        message.textContent =
+            "Unable to save photograph. Check browser storage.";
+    }
+});
+
+/* ---------- DISPLAY POLAROIDS ---------- */
+
+async function displayMemories() {
+    let gallery = document.getElementById("memoryGallery");
+    gallery.replaceChildren();
+
+    if (!memoryDatabase) {
+        emptyMessage(gallery, "Photo storage is unavailable.");
+        return;
+    }
+
+    try {
+        let memories = await getAllMemories();
+
+        if (memories.length === 0) {
+            emptyMessage(gallery, "Your memories will appear here.");
+            return;
+        }
+
+        memories.reverse();
+
+        for (let memory of memories) {
+            let card = makeElement("div", "polaroid");
+            let img = document.createElement("img");
+            let imageUrl = URL.createObjectURL(memory.image);
+
+            img.src = imageUrl;
+            img.alt = memory.caption;
+            img.onload = function () {
+                URL.revokeObjectURL(imageUrl);
+            };
+
+            card.appendChild(img);
+            card.appendChild(makeElement("p", "", memory.caption));
+            card.appendChild(makeElement("small", "", memory.date));
+
+            let deleteButton = makeElement(
+                "button", "delete-button", "Delete Memory"
+            );
+
+            deleteButton.addEventListener("click", async function () {
+                if (confirm("Delete this memory?")) {
+                    await removeMemory(memory.id);
+                    displayMemories();
+                }
+            });
+
+            card.appendChild(deleteButton);
+            gallery.appendChild(card);
+        }
+
+    } catch (error) {
+        emptyMessage(gallery, "Unable to load memories.");
+    }
+}
+
+/* ---------- REFLECTION STREAK ---------- */
+
+function updateReflectionStreak() {
+    let entries = readData("serenovaJournal");
+
+    let dates = [];
+
+    for (let entry of entries) {
+        let key = getDateKeyFromEntry(entry);
+        if (key && !dates.includes(key)) dates.push(key);
+    }
+
+    dates.sort();
+
+    let longest = 0;
+    let running = 0;
+    let previousDate = null;
+
+    for (let key of dates) {
+        let currentDate = new Date(key + "T12:00:00");
+
+        if (previousDate) {
+            let difference = Math.round(
+                (currentDate - previousDate) / 86400000
+            );
+
+            running = difference === 1 ? running + 1 : 1;
+        } else {
+            running = 1;
+        }
+
+        longest = Math.max(longest, running);
+        previousDate = currentDate;
+    }
+
+    let current = 0;
+    let today = new Date();
+    today.setHours(12, 0, 0, 0);
+
+    let yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    let todayKey = getLocalDateKey(today);
+    let yesterdayKey = getLocalDateKey(yesterday);
+
+    if (dates.includes(todayKey) || dates.includes(yesterdayKey)) {
+        let cursor = dates.includes(todayKey) ? today : yesterday;
+
+        while (dates.includes(getLocalDateKey(cursor))) {
+            current++;
+            cursor.setDate(cursor.getDate() - 1);
+        }
+    }
+
+    document.getElementById("currentStreak").textContent = current;
+    document.getElementById("longestStreak").textContent = longest;
+
+    updateReflectionTimes(entries);
+}
+
+/* ---------- REFLECTION TIME ANALYSIS ---------- */
+
+function timeToMinutes(time) {
+    if (!time) return null;
+
+    let match = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    if (!match) return null;
+
+    let hours = Number(match[1]);
+    let minutes = Number(match[2]);
+    let period = match[3];
+
+    if (period) {
+        if (hours === 12) hours = 0;
+        if (period.toUpperCase() === "PM") hours += 12;
+    }
+
+    return hours * 60 + minutes;
+}
+
+function formatMinutes(minutes) {
+    let hours = Math.floor(minutes / 60) % 24;
+    let mins = minutes % 60;
+    let period = hours >= 12 ? "PM" : "AM";
+    let displayHour = hours % 12 || 12;
+
+    return displayHour + ":" +
+        String(mins).padStart(2, "0") + " " + period;
+}
+
+function updateReflectionTimes(entries) {
+    let timeline = document.getElementById("reflectionTimeline");
+    timeline.replaceChildren();
+
+    if (entries.length === 0) {
+        document.getElementById("usualTime").textContent = "—";
+        emptyMessage(timeline, "Start journaling to see your timeline.");
+        return;
+    }
+
+    let timeValues = [];
+    let lateCount = 0;
+
+    for (let entry of entries) {
+        let minutes = null;
+
+        if (entry.timestamp) {
+            let date = new Date(entry.timestamp);
+            if (!isNaN(date.getTime())) {
+                minutes = date.getHours() * 60 + date.getMinutes();
+            }
+        } else {
+            minutes = timeToMinutes(entry.time);
+        }
+
+        if (minutes !== null) {
+            timeValues.push(minutes);
+            if (minutes >= 22 * 60) lateCount++;
+        }
+    }
+
+    if (timeValues.length > 0) {
+        // Circular average handles times around midnight.
+        let sinTotal = 0;
+        let cosTotal = 0;
+
+        for (let minutes of timeValues) {
+            let angle = minutes / 1440 * 2 * Math.PI;
+            sinTotal += Math.sin(angle);
+            cosTotal += Math.cos(angle);
+        }
+
+        let angle = Math.atan2(sinTotal, cosTotal);
+        if (angle < 0) angle += 2 * Math.PI;
+
+        let average = Math.round(angle / (2 * Math.PI) * 1440) % 1440;
+
+        document.getElementById("usualTime").textContent =
+            formatMinutes(average);
+    } else {
+        document.getElementById("usualTime").textContent = "—";
+    }
+
+    for (let entry of entries.slice(-10).reverse()) {
+        let row = makeElement("div", "timeline-entry");
+
+        row.appendChild(makeElement(
+            "span", "", "📖 " + entry.date
+        ));
+
+        row.appendChild(makeElement(
+            "strong", "", entry.time || "Time unavailable"
+        ));
+
+        timeline.appendChild(row);
+    }
+
+    let sleepMessage = document.getElementById("sleepMessage");
+
+    if (timeValues.length >= 3 &&
+        lateCount / timeValues.length >= 0.5) {
+
+        sleepMessage.textContent =
+            "Many of your reflections were saved after 10 PM. " +
+            "If this is close to your bedtime, consider leaving " +
+            "enough time to unwind and rest.";
 
     } else {
-
-        patternSummary.textContent =
-            "Your recorded moods currently show a fairly mixed pattern. Continuing to check in may help you notice changes over time.";
+        sleepMessage.textContent =
+            "Your reflections are part of your routine. " +
+            "Remember to make space for rest and sleep too. 💜";
     }
 }
 
+/* ---------- REMINDER SETTINGS ---------- */
 
-/* ==================================================
-   RECENT MOOD HISTORY
-   ================================================== */
+let reminderTime = document.getElementById("reminderTime");
+let remindersEnabled = document.getElementById("remindersEnabled");
 
-function displayRecentMoods(moodEntries) {
+function loadReminderSettings() {
+    reminderTime.value =
+        localStorage.getItem("serenovaReminderTime") || "21:30";
 
-    let recentContainer =
-        document.getElementById("recentMoodHistory");
+    remindersEnabled.checked =
+        localStorage.getItem("serenovaRemindersEnabled") !== "false";
+}
 
+document.getElementById("saveReminderButton")
+    .addEventListener("click", function () {
 
-    // Clear old display
-    recentContainer.textContent = "";
+    try {
+        localStorage.setItem(
+            "serenovaReminderTime", reminderTime.value
+        );
 
+        localStorage.setItem(
+            "serenovaRemindersEnabled",
+            String(remindersEnabled.checked)
+        );
 
-    if (moodEntries.length === 0) {
+        document.getElementById("reminderMessage").textContent =
+            "✓ Your reminder settings have been saved.";
 
-        let message =
-            document.createElement("p");
+    } catch (error) {
+        document.getElementById("reminderMessage").textContent =
+            "Unable to save reminder settings.";
+    }
+});
 
-        message.className =
-            "empty-message";
+/* ---------- WELCOME NOTIFICATIONS ---------- */
 
-        message.textContent =
-            "No mood entries yet.";
+let welcomeMessages = [
+    "Hello! How are you feeling today? 💜",
+    "A little moment of reflection can be meaningful. 🌷",
+    "Your thoughts deserve a peaceful space. ✨",
+    "How was your day? Happy, sad or somewhere in between?",
+    "Your journal is waiting whenever you're ready. 📖",
+    "Remember to be gentle with yourself today. 🌸",
+    "Every feeling matters, even the difficult ones. 💕",
+    "Would you like to capture a little memory today? 📸",
+    "A fresh day, a fresh opportunity to reflect. 🌿",
+    "Welcome back! Take your time, there's no pressure. 💜"
+];
 
-        recentContainer.appendChild(message);
+let notification = document.getElementById("welcomeNotification");
+let notificationTitle = document.getElementById("notificationTitle");
+let notificationText = document.getElementById("notificationText");
+let notificationAction = document.getElementById("notificationAction");
 
-        return;
+let notificationTarget = "#mood";
+
+function getRandomWelcomeMessage() {
+    let previous = Number(
+        sessionStorage.getItem("serenovaLastMessage")
+    );
+
+    let index = Math.floor(Math.random() * welcomeMessages.length);
+
+    if (welcomeMessages.length > 1 && index === previous) {
+        index = (index + 1) % welcomeMessages.length;
     }
 
+    sessionStorage.setItem("serenovaLastMessage", index);
+    return welcomeMessages[index];
+}
 
-    /*
-       Display maximum five recent
-       mood entries.
-    */
+function hasTodayEntry(key) {
+    let today = getLocalDateKey(new Date());
 
-    let startingIndex =
-        moodEntries.length - 1;
+    return readData(key).some(function (entry) {
+        return getDateKeyFromEntry(entry) === today;
+    });
+}
 
-    let endingIndex =
-        moodEntries.length - 5;
+function showWelcomeNotification() {
+    if (!remindersEnabled.checked) return;
 
+    let moodDone = hasTodayEntry("serenovaMoods");
+    let journalDone = hasTodayEntry("serenovaJournal");
 
-    if (endingIndex < 0) {
+    notificationTitle.textContent = "Hello from SERENOVA 💜";
 
-        endingIndex = 0;
+    if (!moodDone) {
+        notificationText.textContent =
+            getRandomWelcomeMessage() +
+            " You haven't recorded today's mood yet.";
+        notificationTarget = "#mood";
+        notificationAction.textContent = "Record My Mood →";
+
+    } else if (!journalDone) {
+        notificationText.textContent =
+            "You've recorded your mood. Would you like to " +
+            "write a little reflection too?";
+        notificationTarget = "#journal";
+        notificationAction.textContent = "Open Journal →";
+
+    } else {
+        notificationText.textContent =
+            "You've checked in today! Thank you for taking " +
+            "a moment for yourself. 🌷";
+        notificationTarget = "#dashboard";
+        notificationAction.textContent = "View Dashboard →";
     }
 
+    notification.classList.remove("hidden");
+}
 
-    for (
-        let i = startingIndex;
-        i >= endingIndex;
-        i--
-    ) {
-
-        let entry =
-            document.createElement("div");
-
-        entry.className =
-            "recent-entry";
-
-
-        let mood =
-            document.createElement("span");
-
-        mood.textContent =
-            moodEntries[i].emoji +
-            " " +
-            moodEntries[i].mood;
-
-
-        let date =
-            document.createElement("span");
-
-        date.textContent =
-            moodEntries[i].date;
-
-
-        entry.appendChild(mood);
-
-        entry.appendChild(date);
-
-        recentContainer.appendChild(entry);
+function updateNotificationState() {
+    if (!notification.classList.contains("hidden")) {
+        showWelcomeNotification();
     }
 }
 
+document.getElementById("closeNotification")
+    .addEventListener("click", function () {
+        notification.classList.add("hidden");
+    });
 
-/* ==================================================
-   INITIAL PAGE LOAD
-   ================================================== */
+notificationAction.addEventListener("click", function () {
+    notification.classList.add("hidden");
+    document.querySelector(notificationTarget)
+        .scrollIntoView({ behavior: "smooth" });
+});
 
-/*
-   When SERENOVA opens, these functions
-   read saved information from localStorage
-   and display it on the website.
-*/
+/* ---------- TIMED REMINDERS ---------- */
+
+let lastReminderDate = "";
+
+function checkDailyReminder() {
+    if (!remindersEnabled.checked) return;
+
+    let now = new Date();
+    let currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    let parts = reminderTime.value.split(":");
+    let targetMinutes = Number(parts[0]) * 60 + Number(parts[1]);
+
+    let today = getLocalDateKey(now);
+
+    if (currentMinutes >= targetMinutes &&
+        lastReminderDate !== today) {
+
+        let moodDone = hasTodayEntry("serenovaMoods");
+        let journalDone = hasTodayEntry("serenovaJournal");
+
+        if (!moodDone || !journalDone) {
+            notificationTitle.textContent = "A Gentle Reminder 🌙";
+
+            notificationText.textContent =
+                "Your daily check-in is still waiting. " +
+                "Take a moment whenever you're comfortable.";
+
+            notificationTarget = !moodDone ? "#mood" : "#journal";
+
+            notificationAction.textContent =
+                !moodDone ? "Record Mood →" : "Write Reflection →";
+
+            notification.classList.remove("hidden");
+            lastReminderDate = today;
+        }
+    }
+}
+
+/* ---------- INITIAL PAGE LOAD ---------- */
 
 displayMoodHistory();
-
 displayJournalEntries();
-
 updateDashboard();
+updateReflectionStreak();
+loadReminderSettings();
+
+openMemoryDatabase()
+    .then(function () {
+        displayMemories();
+    })
+    .catch(function (error) {
+        console.error("IndexedDB unavailable:", error);
+    });
+
+showWelcomeNotification();
+
+setInterval(checkDailyReminder, 60000);
