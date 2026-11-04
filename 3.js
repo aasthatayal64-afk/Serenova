@@ -61,13 +61,14 @@ for (let i = 0; i < moodButtons.length; i++) {
 
         // Remove selection from every mood button
         for (let j = 0; j < moodButtons.length; j++) {
+
             moodButtons[j].classList.remove("selected");
         }
 
         // Highlight the clicked button
         this.classList.add("selected");
 
-        // Save the selected mood temporarily
+        // Store selected mood
         selectedMood = this.getAttribute("data-mood");
 
         selectedEmoji = this.getAttribute("data-emoji");
@@ -75,6 +76,7 @@ for (let i = 0; i < moodButtons.length; i++) {
         moodMessage.textContent =
             selectedEmoji + " You selected " + selectedMood + ".";
 
+        // Show wellness suggestion
         showMoodSuggestion(selectedMood);
 
     });
@@ -123,11 +125,12 @@ function showMoodSuggestion(mood) {
 
 
 /* ==================================================
-   SAVE MOOD
+   SAVE OR UPDATE TODAY'S MOOD
    ================================================== */
 
 saveMoodButton.addEventListener("click", function () {
 
+    // Do not save if no mood is selected
     if (selectedMood === "") {
 
         moodMessage.textContent =
@@ -137,44 +140,95 @@ saveMoodButton.addEventListener("click", function () {
     }
 
 
-    // Get old entries from localStorage
-
+    // Get previous mood entries from localStorage
     let moodEntries =
         JSON.parse(localStorage.getItem("serenovaMoods")) || [];
 
 
-    // Create a new mood object
+    let today = getCurrentDate();
 
-    let newMoodEntry = {
-        mood: selectedMood,
-        emoji: selectedEmoji,
-        date: getCurrentDate(),
-        time: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        })
-    };
+    let existingEntryIndex = -1;
 
 
-    // Add new entry to the array
+    /*
+       Check whether an entry for today's date
+       already exists.
+    */
 
-    moodEntries.push(newMoodEntry);
+    for (let i = 0; i < moodEntries.length; i++) {
+
+        if (moodEntries[i].date === today) {
+
+            existingEntryIndex = i;
+
+            break;
+        }
+    }
 
 
-    // Save updated array
+    /*
+       If today's mood already exists,
+       update the existing entry.
+    */
 
+    if (existingEntryIndex !== -1) {
+
+        moodEntries[existingEntryIndex].mood =
+            selectedMood;
+
+        moodEntries[existingEntryIndex].emoji =
+            selectedEmoji;
+
+        moodEntries[existingEntryIndex].time =
+            new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+
+
+        moodMessage.textContent =
+            "✓ Today's mood has been updated.";
+
+    }
+
+    /*
+       If there is no mood for today,
+       create a new entry.
+    */
+
+    else {
+
+        let newMoodEntry = {
+
+            mood: selectedMood,
+
+            emoji: selectedEmoji,
+
+            date: today,
+
+            time: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+            })
+        };
+
+
+        moodEntries.push(newMoodEntry);
+
+
+        moodMessage.textContent =
+            "✓ Your mood has been saved for today.";
+    }
+
+
+    // Save the updated array in localStorage
     localStorage.setItem(
         "serenovaMoods",
         JSON.stringify(moodEntries)
     );
 
 
-    moodMessage.textContent =
-        "✓ Your mood has been saved for today.";
-
-
     // Refresh visible information
-
     displayMoodHistory();
 
     updateDashboard();
@@ -196,7 +250,6 @@ function displayMoodHistory() {
 
 
     // Clear old display
-
     moodHistory.textContent = "";
 
 
@@ -216,7 +269,6 @@ function displayMoodHistory() {
 
 
     // Show newest entries first
-
     for (let i = moodEntries.length - 1; i >= 0; i--) {
 
         let entry = document.createElement("div");
@@ -285,7 +337,6 @@ saveJournalButton.addEventListener("click", function () {
 
 
     // Prevent empty journal entries
-
     if (journalText === "") {
 
         journalMessage.textContent =
@@ -295,13 +346,18 @@ saveJournalButton.addEventListener("click", function () {
     }
 
 
+    // Get previous journal entries
     let journalEntries =
         JSON.parse(localStorage.getItem("serenovaJournal")) || [];
 
 
+    // Create new journal entry
     let newJournalEntry = {
+
         text: journalText,
+
         date: getCurrentDate(),
+
         time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit"
@@ -309,17 +365,22 @@ saveJournalButton.addEventListener("click", function () {
     };
 
 
+    // Add journal entry
     journalEntries.push(newJournalEntry);
 
 
+    // Save journal entries
     localStorage.setItem(
         "serenovaJournal",
         JSON.stringify(journalEntries)
     );
 
 
+    // Clear textarea
     journalInput.value = "";
 
+
+    // Reset character counter
     characterCount.textContent =
         "0 / 1500 characters";
 
@@ -328,9 +389,11 @@ saveJournalButton.addEventListener("click", function () {
         "✓ Your reflection has been saved.";
 
 
+    // Refresh journal and dashboard
     displayJournalEntries();
 
     updateDashboard();
+
 });
 
 
@@ -347,6 +410,7 @@ function displayJournalEntries() {
         document.getElementById("journalEntries");
 
 
+    // Clear old display
     journalContainer.textContent = "";
 
 
@@ -365,8 +429,7 @@ function displayJournalEntries() {
     }
 
 
-    // Display newest first
-
+    // Display newest entries first
     for (let i = journalEntries.length - 1; i >= 0; i--) {
 
         let entry = document.createElement("div");
@@ -388,35 +451,48 @@ function displayJournalEntries() {
 
         text.className = "journal-entry-text";
 
-        /*
-        textContent is used instead of innerHTML.
 
-        This means user-written text is displayed as normal
-        text instead of being interpreted as HTML.
+        /*
+           textContent is used instead of innerHTML.
+
+           This displays user-written journal text
+           safely as normal text.
         */
 
-        text.textContent = journalEntries[i].text;
+        text.textContent =
+            journalEntries[i].text;
 
 
-        let deleteButton = document.createElement("button");
+        // Create delete button
+        let deleteButton =
+            document.createElement("button");
 
-        deleteButton.className = "delete-button";
+        deleteButton.className =
+            "delete-button";
 
-        deleteButton.textContent = "Delete Entry";
+        deleteButton.textContent =
+            "Delete Entry";
 
 
         // Store the original array position
+        deleteButton.setAttribute(
+            "data-index",
+            i
+        );
 
-        deleteButton.setAttribute("data-index", i);
 
+        deleteButton.addEventListener(
+            "click",
+            function () {
 
-        deleteButton.addEventListener("click", function () {
+                let index =
+                    Number(
+                        this.getAttribute("data-index")
+                    );
 
-            let index =
-                Number(this.getAttribute("data-index"));
-
-            deleteJournalEntry(index);
-        });
+                deleteJournalEntry(index);
+            }
+        );
 
 
         entry.appendChild(date);
@@ -442,20 +518,25 @@ function deleteJournalEntry(index) {
 
 
     let confirmDelete =
-        confirm("Are you sure you want to delete this journal entry?");
+        confirm(
+            "Are you sure you want to delete this journal entry?"
+        );
 
 
     if (confirmDelete === true) {
 
+        // Remove selected entry
         journalEntries.splice(index, 1);
 
 
+        // Save updated journal
         localStorage.setItem(
             "serenovaJournal",
             JSON.stringify(journalEntries)
         );
 
 
+        // Refresh page information
         displayJournalEntries();
 
         updateDashboard();
@@ -476,34 +557,37 @@ function updateDashboard() {
         JSON.parse(localStorage.getItem("serenovaJournal")) || [];
 
 
-    // Total mood entries
-
+    // Display total mood entries
     document.getElementById("totalMoodEntries").textContent =
         moodEntries.length;
 
 
-    // Total journal entries
-
+    // Display total journal entries
     document.getElementById("totalJournalEntries").textContent =
         journalEntries.length;
 
 
-    // Mood counters
-
+    // Create mood counters
     let moodCounts = {
+
         Happy: 0,
+
         Calm: 0,
+
         Okay: 0,
+
         Sad: 0,
+
         Stressed: 0
     };
 
 
     // Count each mood
-
     for (let i = 0; i < moodEntries.length; i++) {
 
-        let moodName = moodEntries[i].mood;
+        let moodName =
+            moodEntries[i].mood;
+
 
         if (moodCounts[moodName] !== undefined) {
 
@@ -512,11 +596,18 @@ function updateDashboard() {
     }
 
 
-    updateMostFrequentMood(moodCounts, moodEntries.length);
+    // Update dashboard sections
+    updateMostFrequentMood(
+        moodCounts,
+        moodEntries.length
+    );
 
     updateMoodChart(moodCounts);
 
-    updatePatternSummary(moodCounts, moodEntries.length);
+    updatePatternSummary(
+        moodCounts,
+        moodEntries.length
+    );
 
     displayRecentMoods(moodEntries);
 }
@@ -526,7 +617,10 @@ function updateDashboard() {
    MOST FREQUENT MOOD
    ================================================== */
 
-function updateMostFrequentMood(moodCounts, totalEntries) {
+function updateMostFrequentMood(
+    moodCounts,
+    totalEntries
+) {
 
     let frequentMoodElement =
         document.getElementById("frequentMood");
@@ -540,27 +634,37 @@ function updateMostFrequentMood(moodCounts, totalEntries) {
     }
 
 
-    let moods =
-        ["Happy", "Calm", "Okay", "Sad", "Stressed"];
+    let moods = [
+        "Happy",
+        "Calm",
+        "Okay",
+        "Sad",
+        "Stressed"
+    ];
 
 
-    let mostFrequentMood = moods[0];
+    let mostFrequentMood =
+        moods[0];
 
-    let highestCount = moodCounts[moods[0]];
+    let highestCount =
+        moodCounts[moods[0]];
 
 
     for (let i = 1; i < moods.length; i++) {
 
         if (moodCounts[moods[i]] > highestCount) {
 
-            highestCount = moodCounts[moods[i]];
+            highestCount =
+                moodCounts[moods[i]];
 
-            mostFrequentMood = moods[i];
+            mostFrequentMood =
+                moods[i];
         }
     }
 
 
-    let emoji = getMoodEmoji(mostFrequentMood);
+    let emoji =
+        getMoodEmoji(mostFrequentMood);
 
 
     frequentMoodElement.textContent =
@@ -569,28 +673,33 @@ function updateMostFrequentMood(moodCounts, totalEntries) {
 
 
 /* ==================================================
-   MOOD EMOJI
+   GET MOOD EMOJI
    ================================================== */
 
 function getMoodEmoji(mood) {
 
     if (mood === "Happy") {
+
         return "😊";
     }
 
     if (mood === "Calm") {
+
         return "😌";
     }
 
     if (mood === "Okay") {
+
         return "😐";
     }
 
     if (mood === "Sad") {
+
         return "😔";
     }
 
     if (mood === "Stressed") {
+
         return "😣";
     }
 
@@ -605,14 +714,20 @@ function getMoodEmoji(mood) {
 function updateMoodChart(moodCounts) {
 
     let values = [
+
         moodCounts.Happy,
+
         moodCounts.Calm,
+
         moodCounts.Okay,
+
         moodCounts.Sad,
+
         moodCounts.Stressed
     ];
 
 
+    // Find the largest mood count
     let highestValue = Math.max(
         moodCounts.Happy,
         moodCounts.Calm,
@@ -622,18 +737,27 @@ function updateMoodChart(moodCounts) {
     );
 
 
-    // Avoid division by zero
+    /*
+       Avoid division by zero if there
+       are no mood entries.
+    */
 
     if (highestValue === 0) {
+
         highestValue = 1;
     }
 
 
     let bars = [
+
         document.getElementById("happyBar"),
+
         document.getElementById("calmBar"),
+
         document.getElementById("okayBar"),
+
         document.getElementById("sadBar"),
+
         document.getElementById("stressedBar")
     ];
 
@@ -644,7 +768,9 @@ function updateMoodChart(moodCounts) {
             (values[i] / highestValue) * 160;
 
 
+        // Keep empty bars slightly visible
         if (values[i] === 0) {
+
             height = 5;
         }
 
@@ -660,15 +786,19 @@ function updateMoodChart(moodCounts) {
 
 
 /* ==================================================
-   SIMPLE PATTERN SUMMARY
+   SIMPLE EMOTIONAL PATTERN SUMMARY
    ================================================== */
 
-function updatePatternSummary(moodCounts, totalEntries) {
+function updatePatternSummary(
+    moodCounts,
+    totalEntries
+) {
 
     let patternSummary =
         document.getElementById("patternSummary");
 
 
+    // No entries
     if (totalEntries === 0) {
 
         patternSummary.textContent =
@@ -678,12 +808,21 @@ function updatePatternSummary(moodCounts, totalEntries) {
     }
 
 
+    /*
+       Happy and Calm are grouped only for
+       this simple prototype summary.
+
+       This is NOT a psychological evaluation.
+    */
+
     let positiveMoods =
-        moodCounts.Happy + moodCounts.Calm;
+        moodCounts.Happy +
+        moodCounts.Calm;
 
 
     let difficultMoods =
-        moodCounts.Sad + moodCounts.Stressed;
+        moodCounts.Sad +
+        moodCounts.Stressed;
 
 
     if (positiveMoods > difficultMoods) {
@@ -714,14 +853,17 @@ function displayRecentMoods(moodEntries) {
         document.getElementById("recentMoodHistory");
 
 
+    // Clear old display
     recentContainer.textContent = "";
 
 
     if (moodEntries.length === 0) {
 
-        let message = document.createElement("p");
+        let message =
+            document.createElement("p");
 
-        message.className = "empty-message";
+        message.className =
+            "empty-message";
 
         message.textContent =
             "No mood entries yet.";
@@ -732,26 +874,39 @@ function displayRecentMoods(moodEntries) {
     }
 
 
-    // Display maximum five recent entries
+    /*
+       Display maximum five recent
+       mood entries.
+    */
 
-    let startingIndex = moodEntries.length - 1;
+    let startingIndex =
+        moodEntries.length - 1;
 
-    let endingIndex = moodEntries.length - 5;
+    let endingIndex =
+        moodEntries.length - 5;
 
 
     if (endingIndex < 0) {
+
         endingIndex = 0;
     }
 
 
-    for (let i = startingIndex; i >= endingIndex; i--) {
+    for (
+        let i = startingIndex;
+        i >= endingIndex;
+        i--
+    ) {
 
-        let entry = document.createElement("div");
+        let entry =
+            document.createElement("div");
 
-        entry.className = "recent-entry";
+        entry.className =
+            "recent-entry";
 
 
-        let mood = document.createElement("span");
+        let mood =
+            document.createElement("span");
 
         mood.textContent =
             moodEntries[i].emoji +
@@ -759,7 +914,8 @@ function displayRecentMoods(moodEntries) {
             moodEntries[i].mood;
 
 
-        let date = document.createElement("span");
+        let date =
+            document.createElement("span");
 
         date.textContent =
             moodEntries[i].date;
@@ -779,8 +935,9 @@ function displayRecentMoods(moodEntries) {
    ================================================== */
 
 /*
-When the website opens, these functions read saved
-information from localStorage and display it.
+   When SERENOVA opens, these functions
+   read saved information from localStorage
+   and display it on the website.
 */
 
 displayMoodHistory();
