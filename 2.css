@@ -1526,3 +1526,62 @@ footer {
         scroll-behavior: auto !important;
     }
 }
+
+/* ==========================================
+   SERENOVA - CUSTOM FLORAL BRAND LOGO
+   ========================================== */
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* Lotus-inspired flower symbol */
+.serenova-logo-symbol {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: block;
+    transition: transform 0.35s ease;
+}
+
+/* Brand name */
+.logo-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    color: var(--primary);
+}
+
+/* Gentle hover interaction */
+.logo:hover .serenova-logo-symbol {
+    transform: translateY(-2px);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .serenova-logo-symbol {
+        width: 38px;
+        height: 38px;
+    }
+
+    .logo-name {
+        font-size: 21px;
+        letter-spacing: 1.5px;
+    }
+
+    .logo {
+        gap: 8px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .serenova-logo-symbol {
+        transition: none;
+    }
+}
