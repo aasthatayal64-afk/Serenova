@@ -1,11 +1,23 @@
 
-/* SERENOVA - PROTOTYPE 2 */
-/* Mood, Journal, Dashboard, Memories, Streaks and Reminders */
+/* SERENOVA - COMPLETE JAVASCRIPT */
+/* Mood, Journal, Stickers, Dashboard, Popups, Themes, Memories */
 
-/* ---------- BASIC HELPERS ---------- */
+/* ---------- BASIC VARIABLES ---------- */
 
 let selectedMood = "";
 let selectedEmoji = "";
+
+const moodNames = ["Happy", "Calm", "Okay", "Sad", "Stressed"];
+
+const suggestions = {
+    Happy: "Celebrate a positive moment. Write down something that made you smile today.",
+    Calm: "Take a moment to appreciate what helped you feel balanced.",
+    Okay: "An ordinary day is valid too. Enjoy a favourite activity.",
+    Sad: "Be gentle with yourself. Rest or connect with someone you trust.",
+    Stressed: "Consider a short break, slow breathing or organizing one small task."
+};
+
+/* ---------- DATE HELPERS ---------- */
 
 function getCurrentDate() {
     return new Date().toLocaleDateString("en-IN", {
@@ -30,7 +42,6 @@ function getDateKeyFromEntry(entry) {
         }
     }
 
-    // Support entries created in Prototype 1.
     if (entry.date) {
         let parts = entry.date.split(" ");
         let months = [
@@ -54,6 +65,8 @@ function getDateKeyFromEntry(entry) {
     return "";
 }
 
+/* ---------- STORAGE HELPERS ---------- */
+
 function readData(key) {
     try {
         let data = JSON.parse(localStorage.getItem(key));
@@ -69,7 +82,7 @@ function saveData(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
         return true;
     } catch (error) {
-        console.error("Unable to save data:", error);
+        console.error("Save error:", error);
         return false;
     }
 }
@@ -87,20 +100,148 @@ function emptyMessage(container, text) {
     );
 }
 
-document.getElementById("currentDate").textContent = getCurrentDate();
+/* ---------- POPUP FUNCTIONS ---------- */
+
+let lastFocusedElement = null;
+
+function openPopup(id) {
+    let popup = document.getElementById(id);
+    if (!popup) return;
+
+    lastFocusedElement = document.activeElement;
+    popup.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+
+    let closeButton = popup.querySelector(".close-popup");
+    if (closeButton) closeButton.focus();
+
+    if (id === "memoryPopup") displayMemories();
+    if (id === "streakPopup") updateReflectionStreak();
+    if (id === "themePopup") updateThemeButtons();
+}
+
+function closePopup(id) {
+    let popup = document.getElementById(id);
+    if (!popup) return;
+
+    popup.classList.add("hidden");
+    document.body.style.overflow = "";
+
+    if (lastFocusedElement) lastFocusedElement.focus();
+}
+
+document.querySelectorAll("[data-open]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        openPopup(this.dataset.open);
+    });
+});
+
+document.querySelectorAll("[data-close]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        closePopup(this.dataset.close);
+    });
+});
+
+document.querySelectorAll(".popup-overlay").forEach(function (popup) {
+    popup.addEventListener("click", function (event) {
+        if (event.target === popup) closePopup(popup.id);
+    });
+});
+
+document.addEventListener("keydown", function (event) {
+    let popup = document.querySelector(".popup-overlay:not(.hidden)");
+    if (!popup) return;
+
+    if (event.key === "Escape") {
+        closePopup(popup.id);
+        return;
+    }
+
+    if (event.key !== "Tab") return;
+
+    let elements = Array.from(popup.querySelectorAll(
+        "button:not([disabled]), input:not([disabled]), " +
+        "textarea:not([disabled]), a[href]"
+    )).filter(function (element) {
+        return element.getClientRects().length > 0;
+    });
+
+    if (elements.length === 0) return;
+
+    let first = elements[0];
+    let last = elements[elements.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey &&
+               document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    } else if (!popup.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+    }
+});
+
+/* ---------- THEME CHANGER ---------- */
+
+const allowedThemes = [
+    "lavender", "blue", "green",
+    "yellow", "pink", "peach"
+];
+
+function applyTheme(theme) {
+    if (!allowedThemes.includes(theme)) theme = "lavender";
+
+    document.documentElement.dataset.theme = theme;
+
+    try {
+        localStorage.setItem("serenovaTheme", theme);
+    } catch (error) {
+        console.warn("Theme could not be saved.");
+    }
+
+    updateThemeButtons();
+
+    let message = document.getElementById("themeMessage");
+    if (message) {
+        message.textContent =
+            "✓ " + theme.charAt(0).toUpperCase() +
+            theme.slice(1) + " theme selected!";
+    }
+}
+
+function updateThemeButtons() {
+    let current = document.documentElement.dataset.theme;
+
+    document.querySelectorAll(".theme-choice").forEach(function (button) {
+        let active = button.dataset.theme === current;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+    });
+}
+
+document.getElementById("themeButton")
+    .addEventListener("click", function () {
+        openPopup("themePopup");
+    });
+
+document.querySelectorAll(".theme-choice").forEach(function (button) {
+    button.addEventListener("click", function () {
+        applyTheme(this.dataset.theme);
+    });
+});
+
+document.getElementById("resetThemeButton")
+    .addEventListener("click", function () {
+        applyTheme("lavender");
+    });
 
 /* ---------- MOOD SELECTION ---------- */
 
 let moodButtons = document.querySelectorAll(".mood-button");
 let moodMessage = document.getElementById("moodMessage");
-
-let suggestions = {
-    Happy: "Celebrate a positive moment. You could write down something that made you smile today.",
-    Calm: "Take a moment to appreciate what helped you feel balanced.",
-    Okay: "An ordinary day is valid too. Perhaps enjoy a favourite activity.",
-    Sad: "Be gentle with yourself. Rest or connect with someone you trust.",
-    Stressed: "Consider a short break, slow breathing or organizing one small task."
-};
 
 for (let button of moodButtons) {
     button.addEventListener("click", function () {
@@ -134,13 +275,12 @@ document.getElementById("saveMoodButton")
     }
 
     let entries = readData("serenovaMoods");
-    let today = getCurrentDate();
     let now = new Date();
 
     let newEntry = {
         mood: selectedMood,
         emoji: selectedEmoji,
-        date: today,
+        date: getCurrentDate(),
         time: now.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit"
@@ -148,12 +288,12 @@ document.getElementById("saveMoodButton")
         timestamp: now.toISOString()
     };
 
-    let existingIndex = entries.findIndex(function (entry) {
+    let index = entries.findIndex(function (entry) {
         return getDateKeyFromEntry(entry) === getLocalDateKey(now);
     });
 
-    if (existingIndex >= 0) {
-        entries[existingIndex] = newEntry;
+    if (index >= 0) {
+        entries[index] = newEntry;
         moodMessage.textContent = "✓ Today's mood has been updated.";
     } else {
         entries.push(newEntry);
@@ -161,14 +301,14 @@ document.getElementById("saveMoodButton")
     }
 
     if (!saveData("serenovaMoods", entries)) {
-        moodMessage.textContent = "Unable to save. Check browser storage.";
+        moodMessage.textContent = "Unable to save mood.";
         return;
     }
 
     displayMoodHistory();
     updateDashboard();
     updateNotificationState();
-});
+}
 
 /* ---------- MOOD HISTORY ---------- */
 
@@ -203,16 +343,177 @@ function displayMoodHistory() {
     }
 }
 
-/* ---------- JOURNAL ---------- */
+/* ---------- JOURNAL VARIABLES ---------- */
 
 let journalInput = document.getElementById("journalInput");
 let journalMessage = document.getElementById("journalMessage");
 let characterCount = document.getElementById("characterCount");
 
 journalInput.addEventListener("input", function () {
+    updateCharacterCount();
+});
+
+function updateCharacterCount() {
     characterCount.textContent =
         journalInput.value.length + " / 1500 characters";
+}
+
+/* ==================================================
+   JOURNAL STICKER COLLECTION
+   ================================================== */
+
+const stickerCategories = {
+    flowers: [
+        "🌸", "🌷", "🌹", "🌺", "🌻", "🌼",
+        "💐", "🪷", "🏵️", "🥀", "🌿", "🍀"
+    ],
+    hearts: [
+        "💜", "💕", "💗", "💖", "💝", "💞",
+        "💓", "💘", "🩷", "🤍", "❤️", "💟"
+    ],
+    stars: [
+        "⭐", "🌟", "✨", "💫", "🌙", "🌛",
+        "🌠", "☀️", "🌈", "☁️", "🌤️", "🪐"
+    ],
+    nature: [
+        "🦋", "🐝", "🐞", "🐛", "🍃", "🌱",
+        "🌳", "🍄", "🐚", "🌊", "🪻", "🪺"
+    ],
+    cute: [
+        "🧸", "🎀", "🫧", "🕯️", "🪄", "🧁",
+        "🍓", "🍒", "🍰", "🎨", "🩰", "🎁"
+    ]
+};
+
+let stickerToggle = document.getElementById("stickerToggle");
+let stickerCollection = document.getElementById("stickerCollection");
+let stickerGrid = document.getElementById("stickerGrid");
+let stickerMessage = document.getElementById("stickerMessage");
+
+let lastCursorStart = 0;
+let lastCursorEnd = 0;
+
+/* Remember cursor position while writing */
+
+journalInput.addEventListener("click", rememberCursor);
+journalInput.addEventListener("keyup", rememberCursor);
+journalInput.addEventListener("select", rememberCursor);
+journalInput.addEventListener("input", rememberCursor);
+
+function rememberCursor() {
+    lastCursorStart = journalInput.selectionStart;
+    lastCursorEnd = journalInput.selectionEnd;
+}
+
+/* Open or close sticker collection */
+
+stickerToggle.addEventListener("click", function () {
+    let isHidden = stickerCollection.classList.contains("hidden");
+
+    stickerCollection.classList.toggle("hidden", !isHidden);
+    stickerToggle.setAttribute("aria-expanded", String(isHidden));
+
+    if (isHidden) {
+        displayStickers("all");
+    }
 });
+
+document.getElementById("closeStickers")
+    .addEventListener("click", function () {
+        stickerCollection.classList.add("hidden");
+        stickerToggle.setAttribute("aria-expanded", "false");
+        stickerToggle.focus();
+    });
+
+/* Display stickers by category */
+
+function displayStickers(category) {
+    stickerGrid.replaceChildren();
+
+    let stickers = [];
+
+    if (category === "all") {
+        for (let key in stickerCategories) {
+            stickers = stickers.concat(stickerCategories[key]);
+        }
+    } else {
+        stickers = stickerCategories[category] || [];
+    }
+
+    for (let sticker of stickers) {
+        let button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "sticker-item";
+        button.textContent = sticker;
+        button.title = "Insert " + sticker;
+        button.setAttribute("aria-label", "Insert sticker " + sticker);
+
+        button.addEventListener("click", function () {
+            insertSticker(sticker);
+        });
+
+        stickerGrid.appendChild(button);
+    }
+
+    document.querySelectorAll(".sticker-tab")
+        .forEach(function (button) {
+            let active = button.dataset.category === category;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-pressed", String(active));
+        });
+}
+
+/* Insert sticker at cursor position */
+
+function insertSticker(sticker) {
+    let text = journalInput.value;
+    let start = lastCursorStart;
+    let end = lastCursorEnd;
+
+    start = Math.min(start, text.length);
+    end = Math.min(end, text.length);
+
+    let newText =
+        text.substring(0, start) +
+        sticker +
+        text.substring(end);
+
+    if (newText.length > journalInput.maxLength) {
+        stickerMessage.textContent =
+            "Your journal has reached the character limit.";
+        return;
+    }
+
+    journalInput.value = newText;
+
+    let newPosition = start + sticker.length;
+    journalInput.focus();
+    journalInput.setSelectionRange(newPosition, newPosition);
+
+    lastCursorStart = newPosition;
+    lastCursorEnd = newPosition;
+
+    updateCharacterCount();
+
+    stickerMessage.textContent =
+        sticker + " Sticker added to your reflection!";
+}
+
+/* Sticker category buttons */
+
+document.querySelectorAll(".sticker-tab")
+    .forEach(function (button) {
+        button.addEventListener("click", function () {
+            displayStickers(this.dataset.category);
+        });
+    });
+
+/* Load all stickers initially */
+
+displayStickers("all");
+
+/* ---------- SAVE JOURNAL ---------- */
 
 document.getElementById("saveJournalButton")
     .addEventListener("click", function () {
@@ -238,13 +539,18 @@ document.getElementById("saveJournalButton")
     });
 
     if (!saveData("serenovaJournal", entries)) {
-        journalMessage.textContent = "Unable to save this reflection.";
+        journalMessage.textContent = "Unable to save reflection.";
         return;
     }
 
     journalInput.value = "";
-    characterCount.textContent = "0 / 1500 characters";
-    journalMessage.textContent = "✓ Your reflection has been saved.";
+    updateCharacterCount();
+
+    lastCursorStart = 0;
+    lastCursorEnd = 0;
+
+    journalMessage.textContent =
+        "✓ Your reflection and stickers have been saved! 💜";
 
     displayJournalEntries();
     updateDashboard();
@@ -252,7 +558,7 @@ document.getElementById("saveJournalButton")
     updateNotificationState();
 });
 
-/* ---------- DISPLAY JOURNAL ---------- */
+/* ---------- DISPLAY JOURNAL ENTRIES ---------- */
 
 function displayJournalEntries() {
     let entries = readData("serenovaJournal");
@@ -272,6 +578,7 @@ function displayJournalEntries() {
             entries[i].date + " • " + entries[i].time
         ));
 
+        /* textContent preserves stickers as Unicode text */
         card.appendChild(makeElement(
             "p", "journal-entry-text", entries[i].text
         ));
@@ -281,16 +588,16 @@ function displayJournalEntries() {
         );
 
         deleteButton.addEventListener("click", function () {
-            if (confirm("Delete this reflection?")) {
-                let latest = readData("serenovaJournal");
-                latest.splice(i, 1);
+            if (!confirm("Delete this reflection?")) return;
 
-                if (saveData("serenovaJournal", latest)) {
-                    displayJournalEntries();
-                    updateDashboard();
-                    updateReflectionStreak();
-                    updateNotificationState();
-                }
+            let latest = readData("serenovaJournal");
+            latest.splice(i, 1);
+
+            if (saveData("serenovaJournal", latest)) {
+                displayJournalEntries();
+                updateDashboard();
+                updateReflectionStreak();
+                updateNotificationState();
             }
         });
 
@@ -300,8 +607,6 @@ function displayJournalEntries() {
 }
 
 /* ---------- DASHBOARD ---------- */
-
-let moodNames = ["Happy", "Calm", "Okay", "Sad", "Stressed"];
 
 function updateDashboard() {
     let moods = readData("serenovaMoods");
@@ -333,6 +638,7 @@ function updateDashboard() {
         frequent.textContent = "—";
     } else {
         let highest = Math.max(...Object.values(counts));
+
         let winners = moodNames.filter(function (mood) {
             return counts[mood] === highest;
         });
@@ -344,6 +650,11 @@ function updateDashboard() {
     let barIds = [
         "happyBar", "calmBar", "okayBar",
         "sadBar", "stressedBar"
+    ];
+
+    let countIds = [
+        "happyCount", "calmCount", "okayCount",
+        "sadCount", "stressedCount"
     ];
 
     let highestCount = Math.max(1, ...Object.values(counts));
@@ -358,6 +669,8 @@ function updateDashboard() {
         bar.title = count + " entries";
         bar.setAttribute("aria-label",
             moodNames[i] + ": " + count + " entries");
+
+        document.getElementById(countIds[i]).textContent = count;
     }
 
     let positive = counts.Happy + counts.Calm;
@@ -365,7 +678,8 @@ function updateDashboard() {
     let summary = document.getElementById("patternSummary");
 
     if (moods.length === 0) {
-        summary.textContent = "Start recording your moods to see patterns.";
+        summary.textContent =
+            "Start recording your moods to see patterns.";
     } else if (positive > difficult) {
         summary.textContent =
             "Your entries contain more Happy and Calm selections.";
@@ -397,91 +711,6 @@ function updateDashboard() {
         recent.appendChild(row);
     }
 }
-
-/* ---------- POPUP CONTROLS ---------- */
-
-let lastFocusedElement = null;
-
-function openPopup(id) {
-    let popup = document.getElementById(id);
-    if (!popup) return;
-
-    lastFocusedElement = document.activeElement;
-    popup.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-
-    let closeButton = popup.querySelector(".close-popup");
-    if (closeButton) closeButton.focus();
-
-    if (id === "memoryPopup") displayMemories();
-    if (id === "streakPopup") updateReflectionStreak();
-}
-
-function closePopup(id) {
-    let popup = document.getElementById(id);
-    popup.classList.add("hidden");
-    document.body.style.overflow = "";
-
-    if (lastFocusedElement) lastFocusedElement.focus();
-}
-
-document.querySelectorAll("[data-open]").forEach(function (button) {
-    button.addEventListener("click", function () {
-        openPopup(this.dataset.open);
-    });
-});
-
-document.querySelectorAll("[data-close]").forEach(function (button) {
-    button.addEventListener("click", function () {
-        closePopup(this.dataset.close);
-    });
-});
-
-document.querySelectorAll(".popup-overlay").forEach(function (popup) {
-    popup.addEventListener("click", function (event) {
-        if (event.target === popup) closePopup(popup.id);
-    });
-});
-
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        document.querySelectorAll(".popup-overlay").forEach(function (popup) {
-            if (!popup.classList.contains("hidden")) {
-                closePopup(popup.id);
-            }
-        });
-    }
-
-    // Keep keyboard focus inside the open popup.
-    if (event.key === "Tab") {
-        let popup = document.querySelector(
-            ".popup-overlay:not(.hidden)"
-        );
-
-        if (!popup) return;
-
-        let elements = Array.from(popup.querySelectorAll(
-            "button:not([disabled]), input:not([disabled]), " +
-            "textarea:not([disabled]), a[href]"
-        )).filter(function (element) {
-            return element.getClientRects().length > 0;
-        });
-
-        if (elements.length === 0) return;
-
-        let first = elements[0];
-        let last = elements[elements.length - 1];
-
-        if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-        } else if (!event.shiftKey &&
-                   document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-        }
-    }
-});
 
 /* ---------- MEMORY LANE DATABASE ---------- */
 
@@ -615,7 +844,7 @@ document.getElementById("saveMemoryButton")
     }
 
     if (file.size > 5 * 1024 * 1024) {
-        message.textContent = "Please choose an image under 5 MB.";
+        message.textContent = "Choose an image under 5 MB.";
         return;
     }
 
@@ -647,8 +876,7 @@ document.getElementById("saveMemoryButton")
         displayMemories();
 
     } catch (error) {
-        message.textContent =
-            "Unable to save photograph. Check browser storage.";
+        message.textContent = "Unable to save photograph.";
     }
 });
 
@@ -680,6 +908,7 @@ async function displayMemories() {
 
             img.src = imageUrl;
             img.alt = memory.caption;
+
             img.onload = function () {
                 URL.revokeObjectURL(imageUrl);
             };
@@ -694,8 +923,12 @@ async function displayMemories() {
 
             deleteButton.addEventListener("click", async function () {
                 if (confirm("Delete this memory?")) {
-                    await removeMemory(memory.id);
-                    displayMemories();
+                    try {
+                        await removeMemory(memory.id);
+                        displayMemories();
+                    } catch (error) {
+                        alert("Unable to delete memory.");
+                    }
                 }
             });
 
@@ -712,7 +945,6 @@ async function displayMemories() {
 
 function updateReflectionStreak() {
     let entries = readData("serenovaJournal");
-
     let dates = [];
 
     for (let entry of entries) {
@@ -804,6 +1036,8 @@ function updateReflectionTimes(entries) {
 
     if (entries.length === 0) {
         document.getElementById("usualTime").textContent = "—";
+        document.getElementById("sleepMessage").textContent =
+            "Your rest matters as much as your reflections.";
         emptyMessage(timeline, "Start journaling to see your timeline.");
         return;
     }
@@ -816,6 +1050,7 @@ function updateReflectionTimes(entries) {
 
         if (entry.timestamp) {
             let date = new Date(entry.timestamp);
+
             if (!isNaN(date.getTime())) {
                 minutes = date.getHours() * 60 + date.getMinutes();
             }
@@ -830,7 +1065,6 @@ function updateReflectionTimes(entries) {
     }
 
     if (timeValues.length > 0) {
-        // Circular average handles times around midnight.
         let sinTotal = 0;
         let cosTotal = 0;
 
@@ -843,7 +1077,8 @@ function updateReflectionTimes(entries) {
         let angle = Math.atan2(sinTotal, cosTotal);
         if (angle < 0) angle += 2 * Math.PI;
 
-        let average = Math.round(angle / (2 * Math.PI) * 1440) % 1440;
+        let average =
+            Math.round(angle / (2 * Math.PI) * 1440) % 1440;
 
         document.getElementById("usualTime").textContent =
             formatMinutes(average);
@@ -874,7 +1109,6 @@ function updateReflectionTimes(entries) {
             "Many of your reflections were saved after 10 PM. " +
             "If this is close to your bedtime, consider leaving " +
             "enough time to unwind and rest.";
-
     } else {
         sleepMessage.textContent =
             "Your reflections are part of your routine. " +
@@ -888,11 +1122,16 @@ let reminderTime = document.getElementById("reminderTime");
 let remindersEnabled = document.getElementById("remindersEnabled");
 
 function loadReminderSettings() {
-    reminderTime.value =
-        localStorage.getItem("serenovaReminderTime") || "21:30";
+    try {
+        reminderTime.value =
+            localStorage.getItem("serenovaReminderTime") || "21:30";
 
-    remindersEnabled.checked =
-        localStorage.getItem("serenovaRemindersEnabled") !== "false";
+        remindersEnabled.checked =
+            localStorage.getItem("serenovaRemindersEnabled") !== "false";
+    } catch (error) {
+        reminderTime.value = "21:30";
+        remindersEnabled.checked = true;
+    }
 }
 
 document.getElementById("saveReminderButton")
@@ -910,6 +1149,10 @@ document.getElementById("saveReminderButton")
 
         document.getElementById("reminderMessage").textContent =
             "✓ Your reminder settings have been saved.";
+
+        if (!remindersEnabled.checked) {
+            notification.classList.add("hidden");
+        }
 
     } catch (error) {
         document.getElementById("reminderMessage").textContent =
@@ -940,9 +1183,14 @@ let notificationAction = document.getElementById("notificationAction");
 let notificationTarget = "#mood";
 
 function getRandomWelcomeMessage() {
-    let previous = Number(
-        sessionStorage.getItem("serenovaLastMessage")
-    );
+    let previous = -1;
+
+    try {
+        let stored = sessionStorage.getItem("serenovaLastMessage");
+        if (stored !== null) previous = Number(stored);
+    } catch (error) {
+        // Continue with a random message.
+    }
 
     let index = Math.floor(Math.random() * welcomeMessages.length);
 
@@ -950,7 +1198,12 @@ function getRandomWelcomeMessage() {
         index = (index + 1) % welcomeMessages.length;
     }
 
-    sessionStorage.setItem("serenovaLastMessage", index);
+    try {
+        sessionStorage.setItem("serenovaLastMessage", index);
+    } catch (error) {
+        // The message still displays without storage.
+    }
+
     return welcomeMessages[index];
 }
 
@@ -974,6 +1227,7 @@ function showWelcomeNotification() {
         notificationText.textContent =
             getRandomWelcomeMessage() +
             " You haven't recorded today's mood yet.";
+
         notificationTarget = "#mood";
         notificationAction.textContent = "Record My Mood →";
 
@@ -981,6 +1235,7 @@ function showWelcomeNotification() {
         notificationText.textContent =
             "You've recorded your mood. Would you like to " +
             "write a little reflection too?";
+
         notificationTarget = "#journal";
         notificationAction.textContent = "Open Journal →";
 
@@ -988,6 +1243,7 @@ function showWelcomeNotification() {
         notificationText.textContent =
             "You've checked in today! Thank you for taking " +
             "a moment for yourself. 🌷";
+
         notificationTarget = "#dashboard";
         notificationAction.textContent = "View Dashboard →";
     }
@@ -1008,8 +1264,11 @@ document.getElementById("closeNotification")
 
 notificationAction.addEventListener("click", function () {
     notification.classList.add("hidden");
-    document.querySelector(notificationTarget)
-        .scrollIntoView({ behavior: "smooth" });
+
+    let target = document.querySelector(notificationTarget);
+    if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+    }
 });
 
 /* ---------- TIMED REMINDERS ---------- */
@@ -1023,8 +1282,9 @@ function checkDailyReminder() {
     let currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     let parts = reminderTime.value.split(":");
-    let targetMinutes = Number(parts[0]) * 60 + Number(parts[1]);
+    if (parts.length !== 2) return;
 
+    let targetMinutes = Number(parts[0]) * 60 + Number(parts[1]);
     let today = getLocalDateKey(now);
 
     if (currentMinutes >= targetMinutes &&
@@ -1053,20 +1313,39 @@ function checkDailyReminder() {
 
 /* ---------- INITIAL PAGE LOAD ---------- */
 
-displayMoodHistory();
-displayJournalEntries();
-updateDashboard();
-updateReflectionStreak();
-loadReminderSettings();
+function initializeSerenova() {
+    document.getElementById("currentDate").textContent =
+        getCurrentDate();
 
-openMemoryDatabase()
-    .then(function () {
-        displayMemories();
-    })
-    .catch(function (error) {
-        console.error("IndexedDB unavailable:", error);
-    });
+    let currentTheme = document.documentElement.dataset.theme;
 
-showWelcomeNotification();
+    if (!allowedThemes.includes(currentTheme)) {
+        currentTheme = "lavender";
+    }
 
-setInterval(checkDailyReminder, 60000);
+    document.documentElement.dataset.theme = currentTheme;
+    updateThemeButtons();
+
+    displayMoodHistory();
+    displayJournalEntries();
+    updateDashboard();
+    updateReflectionStreak();
+    loadReminderSettings();
+
+    if ("indexedDB" in window) {
+        openMemoryDatabase()
+            .then(function () {
+                displayMemories();
+            })
+            .catch(function (error) {
+                console.error("IndexedDB unavailable:", error);
+            });
+    }
+
+    showWelcomeNotification();
+    checkDailyReminder();
+
+    setInterval(checkDailyReminder, 60000);
+}
+
+initializeSerenova();
