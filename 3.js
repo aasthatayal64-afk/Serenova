@@ -308,7 +308,7 @@ document.getElementById("saveMoodButton")
     displayMoodHistory();
     updateDashboard();
     updateNotificationState();
-}
+});
 
 /* ---------- MOOD HISTORY ---------- */
 
