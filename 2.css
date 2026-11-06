@@ -1585,3 +1585,134 @@ footer {
         transition: none;
     }
 }
+
+/* ========================================
+   SERENOVA - JOURNAL WRITING INSPIRATION
+   ======================================== */
+
+.journal-inspiration {
+    background: linear-gradient(
+        135deg,
+        var(--surface),
+        var(--surface-alt)
+    );
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 25px;
+    margin: 20px 0 25px;
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.inspiration-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.inspiration-heading h3 {
+    color: var(--primary);
+    font-size: 21px;
+}
+
+.inspiration-icon {
+    font-size: 30px;
+}
+
+.inspiration-description {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 12px 0 18px;
+}
+
+.prompt-display {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 85px;
+}
+
+.prompt-decoration {
+    font-size: 23px;
+}
+
+#journalPrompt {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+    font-style: italic;
+}
+
+.prompt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.shuffle-prompt,
+.use-prompt {
+    padding: 11px 19px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: 0.25s;
+}
+
+.shuffle-prompt {
+    background: var(--surface);
+    color: var(--primary);
+    border: 1px solid var(--border);
+}
+
+.use-prompt {
+    background: var(--primary);
+    color: var(--on-primary);
+    border: 1px solid var(--primary);
+}
+
+.shuffle-prompt:hover {
+    background: var(--soft);
+    transform: translateY(-2px);
+}
+
+.use-prompt:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.prompt-note {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media (max-width: 600px) {
+    .journal-inspiration {
+        padding: 18px;
+    }
+
+    .inspiration-heading h3 {
+        font-size: 18px;
+    }
+
+    .prompt-actions {
+        flex-direction: column;
+    }
+
+    .shuffle-prompt,
+    .use-prompt {
+        width: 100%;
+    }
+
+    .prompt-display {
+        padding: 15px;
+    }
+}
+
