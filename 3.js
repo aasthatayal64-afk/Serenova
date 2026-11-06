@@ -1345,6 +1345,95 @@ function initializeSerenova() {
     showWelcomeNotification();
     checkDailyReminder();
 
+/* ========================================
+   SERENOVA - JOURNAL WRITING PROMPTS
+   ======================================== */
+
+const writingPrompts = [
+    "What is one little thing that made you smile today?",
+    "How would you describe your day in three words?",
+    "What is something you feel grateful for today?",
+    "What was the most peaceful moment of your day?",
+    "Did anything unexpected happen today?",
+    "What is one thing you wish you could tell yourself?",
+    "What made you feel proud of yourself recently?",
+    "What is something that has been on your mind?",
+    "What is one small achievement you want to celebrate?",
+    "Who made your day a little better, and why?",
+    "What is something you learned about yourself today?",
+    "If today had a colour, what colour would it be?",
+    "What is one thing you would like to let go of?",
+    "What made you feel comfortable or safe today?",
+    "What is one thing you're looking forward to?",
+    "How did you take care of yourself today?",
+    "What would you like to do differently tomorrow?",
+    "What is a memory you would love to revisit?",
+    "What is something beautiful you noticed today?",
+    "If you could give today's version of yourself advice, what would it be?",
+    "What was the most challenging part of your day?",
+    "When did you feel most like yourself today?",
+    "What is something you appreciate about your friends?",
+    "What is one thing you want to remember about today?"
+];
+
+let currentPromptIndex = 0;
+
+const journalPromptText = document.getElementById("journalPrompt");
+const shufflePromptButton = document.getElementById("shufflePrompt");
+const usePromptButton = document.getElementById("usePrompt");
+
+/* SHUFFLE PROMPT */
+
+shufflePromptButton.addEventListener("click", function () {
+    let nextIndex;
+
+    do {
+        nextIndex = Math.floor(
+            Math.random() * writingPrompts.length
+        );
+    } while (nextIndex === currentPromptIndex);
+
+    currentPromptIndex = nextIndex;
+
+    journalPromptText.textContent =
+        writingPrompts[currentPromptIndex];
+});
+
+/* USE SELECTED PROMPT */
+
+usePromptButton.addEventListener("click", function () {
+    const journalBox = document.getElementById("journalInput");
+    const selectedPrompt = writingPrompts[currentPromptIndex];
+
+    let newText;
+
+    if (journalBox.value.trim() === "") {
+        newText = selectedPrompt + "\n\n";
+    } else {
+        newText = journalBox.value +
+            (journalBox.value.endsWith("\n") ? "\n" : "\n\n") +
+            selectedPrompt + "\n\n";
+    }
+
+    if (newText.length > journalBox.maxLength) {
+        alert("There isn't enough space to insert this prompt.");
+        return;
+    }
+
+    journalBox.value = newText;
+
+    /* Update the existing character counter */
+    journalBox.dispatchEvent(
+        new Event("input", { bubbles: true })
+    );
+
+    journalBox.focus();
+    journalBox.setSelectionRange(
+        journalBox.value.length,
+        journalBox.value.length
+    );
+});
+
     setInterval(checkDailyReminder, 60000);
 }
 
