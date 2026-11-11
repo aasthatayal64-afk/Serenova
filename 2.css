@@ -1811,3 +1811,446 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - CREATIVE DASHBOARD FEATURES
+   ========================================== */
+
+.creative-dashboard {
+    max-width:1200px;
+    margin:65px auto 0;
+    padding:15px 0;
+}
+
+.creative-feature-grid {
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:22px;
+}
+
+.creative-feature-card {
+    text-align:left;
+    padding:28px;
+    border:1px solid var(--border);
+    border-radius:24px;
+    background:var(--surface);
+    color:var(--text);
+    box-shadow:0 10px 30px var(--shadow);
+    transition:transform .25s,border-color .25s;
+}
+
+.creative-feature-card:hover {
+    transform:translateY(-5px);
+    border-color:var(--primary);
+}
+
+.creative-icon {
+    display:grid;
+    place-items:center;
+    width:62px;
+    height:62px;
+    margin-bottom:18px;
+    border-radius:20px;
+    background:var(--surface-alt);
+    font-size:30px;
+}
+
+.creative-feature-card h3 {
+    margin-bottom:10px;
+}
+
+.creative-feature-card p {
+    color:var(--muted);
+    font-size:14px;
+    min-height:48px;
+}
+
+.creative-feature-card>span:last-child {
+    display:block;
+    margin-top:18px;
+    color:var(--primary);
+    font-size:13px;
+    font-weight:700;
+}
+
+/* POPUP CONTENT */
+
+.creative-popup label {
+    display:block;
+    margin:15px 0 8px;
+    color:var(--text);
+    font-weight:600;
+}
+
+.creative-popup textarea,
+.creative-popup input:not([type="checkbox"]),
+.creative-popup select {
+    display:block;
+    width:100%;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--surface);
+    color:var(--text);
+    font:inherit;
+}
+
+.creative-popup textarea {
+    min-height:110px;
+    resize:vertical;
+    margin-bottom:15px;
+}
+
+.creative-popup .primary-button {
+    margin-top:12px;
+}
+
+.creative-input-row {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.creative-input-row input {
+    flex:1;
+    min-width:0;
+}
+
+.creative-input-row .primary-button {
+    margin-top:0;
+}
+
+.creative-list {
+    margin-top:20px;
+    display:grid;
+    gap:12px;
+}
+
+.creative-record {
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:15px;
+    background:var(--surface);
+    overflow-wrap:anywhere;
+}
+
+.creative-record p {
+    white-space:pre-wrap;
+    margin:8px 0;
+}
+
+.creative-record small {
+    color:var(--muted);
+}
+
+.creative-delete {
+    margin-top:10px;
+    padding:7px 13px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--surface-alt);
+    color:var(--primary);
+}
+
+.creative-detail {
+    margin-top:20px;
+    padding:20px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:var(--surface-alt);
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+
+.creative-check {
+    display:flex!important;
+    align-items:center;
+    gap:10px;
+    font-weight:400!important;
+}
+
+.creative-check input {
+    accent-color:var(--primary);
+}
+
+/* JAR OF EMOTIONS */
+
+.emotion-jar {
+    position:relative;
+    width:min(280px,90%);
+    height:300px;
+    margin:30px auto;
+    border:5px solid rgba(157,125,185,.55);
+    border-top:12px solid var(--primary);
+    border-radius:25px 25px 85px 85px;
+    background:linear-gradient(
+        135deg,rgba(255,255,255,.65),
+        rgba(204,182,230,.15)
+    );
+    box-shadow:inset 12px 0 25px rgba(255,255,255,.45),
+               0 15px 30px var(--shadow);
+    overflow:hidden;
+}
+
+.jar-stars {
+    position:absolute;
+    inset:15px;
+    display:flex;
+    align-content:flex-end;
+    align-items:flex-end;
+    justify-content:center;
+    flex-wrap:wrap-reverse;
+    gap:7px;
+    overflow:hidden;
+}
+
+.jar-star {
+    border:0;
+    background:transparent;
+    font-size:28px;
+    line-height:1;
+    transition:transform .2s;
+}
+
+.jar-star:hover {
+    transform:scale(1.25) rotate(12deg);
+}
+
+.jar-star.lavender {color:#aa7bc5}
+.jar-star.pink {color:#df91b5}
+.jar-star.blue {color:#7db4df}
+.jar-star.yellow {color:#d8ad45}
+.jar-star.green {color:#82b693}
+
+/* WEEKLY GOALS */
+
+.goal-summary {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin:25px 0 15px;
+}
+
+.goal-summary>div {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:22px;
+    border-radius:18px;
+    background:var(--surface-alt);
+}
+
+.goal-summary strong {
+    font-size:30px;
+    color:var(--primary);
+}
+
+.goal-summary span {
+    font-size:13px;
+    color:var(--muted);
+}
+
+.goal-progress {
+    height:12px;
+    overflow:hidden;
+    border-radius:20px;
+    background:var(--surface-alt);
+}
+
+#goalProgressFill {
+    width:0%;
+    height:100%;
+    background:var(--primary);
+    border-radius:20px;
+    transition:width .3s;
+}
+
+.goal-row {
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.goal-row input {
+    width:19px;
+    height:19px;
+    accent-color:var(--primary);
+    flex-shrink:0;
+}
+
+.goal-row span {
+    flex:1;
+    overflow-wrap:anywhere;
+}
+
+.goal-row.done span {
+    text-decoration:line-through;
+    color:var(--muted);
+}
+
+/* INNER GARDEN */
+
+.inner-garden {
+    min-height:300px;
+    padding:25px;
+    display:flex;
+    flex-wrap:wrap;
+    align-content:flex-end;
+    justify-content:center;
+    align-items:flex-end;
+    gap:16px;
+    border-radius:25px;
+    border:1px solid var(--border);
+    background:linear-gradient(
+        to bottom,
+        var(--hero1,#f1dff7) 0%,
+        var(--soft) 68%,
+        #cce6bd 69%,
+        #a8ce9c 100%
+    );
+}
+
+.garden-flower {
+    border:0;
+    background:transparent;
+    font-size:clamp(32px,5vw,54px);
+    transition:transform .25s;
+    animation:flowerGrow .6s ease both;
+}
+
+.garden-flower:hover {
+    transform:scale(1.2);
+}
+
+@keyframes flowerGrow {
+    from {opacity:0;transform:scale(.3) translateY(20px)}
+    to {opacity:1;transform:scale(1) translateY(0)}
+}
+
+.garden-message {
+    margin:15px 0;
+    color:var(--muted);
+    text-align:center;
+}
+
+/* FUTURE LETTERS */
+
+.letter-envelope {
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.letter-envelope-icon {
+    font-size:36px;
+}
+
+.letter-envelope-content {
+    flex:1;
+    min-width:0;
+}
+
+/* CONSTELLATION */
+
+.constellation-sky {
+    position:relative;
+    min-height:340px;
+    margin-top:20px;
+    overflow:hidden;
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 25% 20%,#44386d,transparent 40%),
+        linear-gradient(150deg,#14142e,#28234e,#554777);
+}
+
+.constellation-star {
+    position:absolute;
+    transform:translate(-50%,-50%);
+    border:0;
+    background:transparent;
+    color:#fff2b4;
+    font-size:25px;
+    text-shadow:0 0 12px #fff5b0;
+    transition:transform .2s;
+}
+
+.constellation-star:hover {
+    transform:translate(-50%,-50%) scale(1.4);
+}
+
+/* LET IT FLOAT AWAY */
+
+.river-scene {
+    position:relative;
+    height:200px;
+    margin:25px 0;
+    overflow:hidden;
+    border-radius:25px;
+    background:linear-gradient(
+        to bottom,
+        #e8dafa 0%,
+        #d8e8ff 45%,
+        #9ecbdc 46%,
+        #75b8d4 100%
+    );
+}
+
+.river-water {
+    position:absolute;
+    left:-10%;
+    right:-10%;
+    bottom:20%;
+    height:35px;
+    border-top:3px solid rgba(255,255,255,.6);
+    border-radius:50%;
+}
+
+.floating-boat {
+    position:absolute;
+    bottom:40px;
+    left:10%;
+    font-size:50px;
+}
+
+.floating-boat.sailing {
+    animation:boatSail 4s ease-in forwards;
+}
+
+@keyframes boatSail {
+    from {left:10%;transform:translateY(0) rotate(-5deg)}
+    to {left:110%;transform:translateY(10px) rotate(8deg)}
+}
+
+/* MOBILE */
+
+@media(max-width:900px) {
+    .creative-feature-grid {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:600px) {
+    .creative-feature-grid {
+        grid-template-columns:1fr;
+    }
+
+    .creative-input-row {
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .creative-input-row .primary-button {
+        width:100%;
+    }
+
+    .creative-popup {
+        padding:25px 18px;
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .garden-flower,
+    .floating-boat.sailing {
+        animation:none;
+    }
+}
+
