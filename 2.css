@@ -1716,3 +1716,98 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - THEME RESPONSIVE FLORAL LOGO
+   ========================================== */
+
+/* DEFAULT LAVENDER THEME */
+
+:root,
+:root[data-theme="lavender"] {
+    --flower-light: #EBCFE9;
+    --flower-medium: #C9A5DB;
+    --flower-dark: #8056A0;
+}
+
+/* BABY BLUE THEME */
+
+:root[data-theme="blue"] {
+    --flower-light: #DDF1FF;
+    --flower-medium: #9FCBEA;
+    --flower-dark: #326E9C;
+}
+
+/* SAGE GREEN THEME */
+
+:root[data-theme="green"] {
+    --flower-light: #DDF1DF;
+    --flower-medium: #A5CFB0;
+    --flower-dark: #426E59;
+}
+
+/* BUTTER YELLOW THEME */
+
+:root[data-theme="yellow"] {
+    --flower-light: #FFF3C9;
+    --flower-medium: #E8D18C;
+    --flower-dark: #80601F;
+}
+
+/* BLUSH PINK THEME */
+
+:root[data-theme="pink"] {
+    --flower-light: #FCE0EC;
+    --flower-medium: #E8B0C9;
+    --flower-dark: #985575;
+}
+
+/* PASTEL PEACH THEME */
+
+:root[data-theme="peach"] {
+    --flower-light: #FFE5D5;
+    --flower-medium: #EAB69F;
+    --flower-dark: #995D46;
+}
+
+/* LOGO STYLING */
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.serenova-logo-symbol {
+    width: 48px;
+    height: 48px;
+    display: block;
+    flex-shrink: 0;
+}
+
+/* BRAND NAME ALSO CHANGES WITH THE THEME */
+
+.logo-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    color: var(--primary);
+    transition: color 0.3s ease;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 600px) {
+    .serenova-logo-symbol {
+        width: 38px;
+        height: 38px;
+    }
+
+    .logo-name {
+        font-size: 21px;
+        letter-spacing: 1.5px;
+    }
+}
+
