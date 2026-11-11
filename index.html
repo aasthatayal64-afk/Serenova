@@ -1262,5 +1262,179 @@
 
 </footer>
 
+<!-- 1. JAR OF EMOTIONS -->
+<div id="jarPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="jarTitle">
+    <div class="popup-content creative-popup">
+        <button class="close-popup" data-close="jarPopup"
+                aria-label="Close">×</button>
+
+        <p class="small-heading">COLLECT YOUR FEELINGS</p>
+        <h2 id="jarTitle">⭐ Jar of Emotions</h2>
+        <p>Every feeling deserves a place, even the difficult ones.</p>
+
+        <label for="emotionText">What's on your mind?</label>
+        <textarea id="emotionText" maxlength="300"
+                  placeholder="Write a little feeling or thought..."></textarea>
+
+        <label for="emotionColor">Choose your star colour</label>
+        <select id="emotionColor">
+            <option value="lavender">Lavender 💜</option>
+            <option value="pink">Blush Pink 🌸</option>
+            <option value="blue">Baby Blue 🩵</option>
+            <option value="yellow">Butter Yellow 🌼</option>
+            <option value="green">Sage Green 🌿</option>
+        </select>
+
+        <button id="addEmotionStar" class="primary-button">
+            Fold Into a Star ⭐
+        </button>
+
+        <p id="jarMessage" class="status-message" role="status"></p>
+
+        <div class="emotion-jar">
+            <div id="jarStars" class="jar-stars"></div>
+        </div>
+
+        <h3>Your Collected Feelings</h3>
+        <div id="emotionList" class="creative-list"></div>
+    </div>
+</div>
+
+<!-- 2. WEEKLY RESOLUTIONS -->
+<div id="goalsPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="goalsTitle">
+    <div class="popup-content creative-popup">
+        <button class="close-popup" data-close="goalsPopup"
+                aria-label="Close">×</button>
+
+        <p class="small-heading">LITTLE STEPS MATTER</p>
+        <h2 id="goalsTitle">🌟 Weekly Resolutions</h2>
+        <p>Celebrate progress without pressure.</p>
+
+        <label for="newGoal">Add a weekly goal</label>
+        <div class="creative-input-row">
+            <input id="newGoal" maxlength="120"
+                   placeholder="Something I'd like to accomplish...">
+            <button id="addGoal" class="primary-button">Add</button>
+        </div>
+
+        <div class="goal-summary">
+            <div><strong id="completedGoals">0</strong><span>Completed</span></div>
+            <div><strong id="remainingGoals">0</strong><span>Remaining</span></div>
+        </div>
+
+        <div class="goal-progress">
+            <div id="goalProgressFill"></div>
+        </div>
+
+        <p id="goalMessage" class="status-message" role="status"></p>
+        <div id="goalList" class="creative-list"></div>
+    </div>
+</div>
+
+<!-- 3. INNER GARDEN -->
+<div id="gardenPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="gardenTitle">
+    <div class="popup-content creative-popup">
+        <button class="close-popup" data-close="gardenPopup"
+                aria-label="Close">×</button>
+
+        <p class="small-heading">EVERY FEELING CAN BLOOM</p>
+        <h2 id="gardenTitle">🌷 Your Inner Garden</h2>
+        <p>Your saved moods and reflections help your garden grow.</p>
+
+        <div id="innerGarden" class="inner-garden"></div>
+        <p id="gardenMessage" class="garden-message"></p>
+
+        <div id="gardenDetails" class="creative-detail"
+             role="status">
+            Select a flower to discover its story.
+        </div>
+    </div>
+</div>
+
+<!-- 4. FUTURE SELF LETTERS -->
+<div id="lettersPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="lettersTitle">
+    <div class="popup-content creative-popup">
+        <button class="close-popup" data-close="lettersPopup"
+                aria-label="Close">×</button>
+
+        <p class="small-heading">A MESSAGE THROUGH TIME</p>
+        <h2 id="lettersTitle">💌 Letters to My Future Self</h2>
+
+        <label for="letterText">Dear Future Me...</label>
+        <textarea id="letterText" maxlength="3000"
+                  placeholder="What would you like your future self to remember?"></textarea>
+
+        <label for="letterDate">Open this letter on</label>
+        <input id="letterDate" type="date">
+
+        <button id="saveFutureLetter" class="primary-button">
+            Seal My Letter 💌
+        </button>
+
+        <p id="letterMessage" class="status-message" role="status"></p>
+        <div id="futureLetters" class="creative-list"></div>
+    </div>
+</div>
+
+<!-- 5. CONSTELLATION OF FEELINGS -->
+<div id="starsPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="starsTitle">
+    <div class="popup-content creative-popup">
+        <button class="close-popup" data-close="starsPopup"
+                aria-label="Close">×</button>
+
+        <p class="small-heading">YOUR PERSONAL NIGHT SKY</p>
+        <h2 id="starsTitle">🌌 Constellation of Feelings</h2>
+        <p>Every saved journal reflection becomes a star.</p>
+
+        <div id="constellationSky" class="constellation-sky"></div>
+
+        <div id="starDetails" class="creative-detail"
+             role="status">
+            Select a star to read its reflection.
+        </div>
+    </div>
+</div>
+
+<!-- 6. LET IT FLOAT AWAY -->
+<div id="riverPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="riverTitle">
+    <div class="popup-content creative-popup">
+        <button class="close-popup" data-close="riverPopup"
+                aria-label="Close">×</button>
+
+        <p class="small-heading">A MOMENT TO LET GO</p>
+        <h2 id="riverTitle">🛶 Let It Float Away</h2>
+        <p>Write something you'd like to release.</p>
+
+        <label for="riverThought">What's weighing on your mind?</label>
+        <textarea id="riverThought" maxlength="500"
+                  placeholder="Write freely. This is your space..."></textarea>
+
+        <label class="creative-check">
+            <input id="keepRiverThought" type="checkbox">
+            Save this thought privately in this browser
+        </label>
+
+        <button id="releaseThought" class="primary-button">
+            Let It Float Away 🛶
+        </button>
+
+        <div class="river-scene">
+            <div class="river-water"></div>
+            <div id="floatingBoat" class="floating-boat hidden">⛵</div>
+        </div>
+
+        <p id="riverMessage" class="status-message" role="status"></p>
+
+        <h3>Thoughts You Chose to Keep</h3>
+        <div id="savedRiverThoughts" class="creative-list"></div>
+    </div>
+</div>
+
 </body>
 </html>
