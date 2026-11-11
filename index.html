@@ -2,94 +2,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SERENOVA | Mood & Wellness Journal</title>
-<script>
-try {
-    document.documentElement.dataset.theme =
-        localStorage.getItem("serenovaTheme") || "lavender";
-} catch (error) {
-    document.documentElement.dataset.theme = "lavender";
-}
-</script>
-<link rel="stylesheet" href="2.css">
-<script src="3.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SERENOVA | Mood & Wellness Journal</title>
+
+    <!-- LOAD SAVED THEME -->
+    <script>
+        try {
+            document.documentElement.dataset.theme =
+                localStorage.getItem("serenovaTheme") || "lavender";
+        } catch (error) {
+            document.documentElement.dataset.theme = "lavender";
+        }
+    </script>
+
+    <link rel="stylesheet" href="2.css">
+    <script src="3.js" defer></script>
 </head>
+
 <body>
 
-<!-- NAVIGATION -->
+<!-- =========================================
+     NAVIGATION
+========================================= -->
+
 <nav class="navbar" aria-label="Main navigation">
-    
-<a href="#home" class="logo" aria-label="SERENOVA Home">
-    <svg class="serenova-logo-symbol"
-         viewBox="0 0 100 100"
-         xmlns="http://www.w3.org/2000/svg"
-         aria-hidden="true">
 
-        <defs>
-            <linearGradient id="flowerGradient"
-                            x1="0%" y1="0%"
-                            x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#EBCFE9"/>
-                <stop offset="55%" stop-color="#C9A5DB"/>
-                <stop offset="100%" stop-color="#A77BBE"/>
-            </linearGradient>
-        </defs>
+    <!-- THEME-RESPONSIVE SERENOVA LOTUS LOGO -->
+    <a href="#home" class="logo" aria-label="SERENOVA Home">
 
-        <!-- Central flower bud -->
-        <path d="M50 12 C39 27 41 43 50 58
-                 C59 43 61 27 50 12Z"
-              fill="url(#flowerGradient)"/>
+        <svg class="serenova-logo-symbol"
+             viewBox="0 0 100 100"
+             xmlns="http://www.w3.org/2000/svg"
+             aria-hidden="true">
 
-        <!-- Left inner petal -->
-        <path d="M47 59 C28 48 24 34 20 32
-                 C17 50 29 62 47 65Z"
-              fill="#D8B9E5"/>
+            <defs>
+                <linearGradient id="flowerGradient"
+                                x1="0%" y1="0%"
+                                x2="100%" y2="100%">
 
-        <!-- Right inner petal -->
-        <path d="M53 59 C72 48 76 34 80 32
-                 C83 50 71 62 53 65Z"
-              fill="#D8B9E5"/>
+                    <stop offset="0%"
+                          stop-color="var(--flower-light)"/>
 
-        <!-- Left outer petal -->
-        <path d="M48 65 C29 57 15 59 8 68
-                 C23 81 39 77 50 69Z"
-              fill="#E8D2E9"/>
+                    <stop offset="55%"
+                          stop-color="var(--flower-medium)"/>
 
-        <!-- Right outer petal -->
-        <path d="M52 65 C71 57 85 59 92 68
-                 C77 81 61 77 50 69Z"
-              fill="#E8D2E9"/>
+                    <stop offset="100%"
+                          stop-color="var(--flower-dark)"/>
 
-        <!-- Flower base -->
-        <path d="M36 68 Q50 81 64 68"
-              fill="none"
-              stroke="#A77BBE"
-              stroke-width="2"
-              stroke-linecap="round"/>
+                </linearGradient>
+            </defs>
 
-        <!-- Peaceful flowing ripple -->
-        <path d="M22 85 Q50 76 78 85"
-              fill="none"
-              stroke="#B79ACB"
-              stroke-width="2.5"
-              stroke-linecap="round"/>
+            <!-- CENTRAL FLOWER BUD -->
+            <path d="M50 12 C39 27 41 43 50 58
+                     C59 43 61 27 50 12Z"
+                  fill="url(#flowerGradient)"/>
 
-        <path d="M31 91 Q50 85 69 91"
-              fill="none"
-              stroke="#D8B9E5"
-              stroke-width="1.8"
-              stroke-linecap="round"/>
+            <!-- LEFT INNER PETAL -->
+            <path d="M47 59 C28 48 24 34 20 32
+                     C17 50 29 62 47 65Z"
+                  fill="var(--flower-medium)"/>
 
-        <!-- Delicate flower centre -->
-        <circle cx="50" cy="59" r="3"
-                fill="#B68CC7"/>
-    </svg>
+            <!-- RIGHT INNER PETAL -->
+            <path d="M53 59 C72 48 76 34 80 32
+                     C83 50 71 62 53 65Z"
+                  fill="var(--flower-medium)"/>
 
-    <span class="logo-name">SERENOVA</span>
-</a>
+            <!-- LEFT OUTER PETAL -->
+            <path d="M48 65 C29 57 15 59 8 68
+                     C23 81 39 77 50 69Z"
+                  fill="var(--flower-light)"/>
 
+            <!-- RIGHT OUTER PETAL -->
+            <path d="M52 65 C71 57 85 59 92 68
+                     C77 81 61 77 50 69Z"
+                  fill="var(--flower-light)"/>
+
+            <!-- FLOWER BASE -->
+            <path d="M36 68 Q50 81 64 68"
+                  fill="none"
+                  stroke="var(--flower-dark)"
+                  stroke-width="2"
+                  stroke-linecap="round"/>
+
+            <!-- PEACEFUL WATER RIPPLES -->
+            <path d="M22 85 Q50 76 78 85"
+                  fill="none"
+                  stroke="var(--flower-dark)"
+                  stroke-width="2.5"
+                  stroke-linecap="round"/>
+
+            <path d="M31 91 Q50 85 69 91"
+                  fill="none"
+                  stroke="var(--flower-medium)"
+                  stroke-width="1.8"
+                  stroke-linecap="round"/>
+
+            <!-- FLOWER CENTRE -->
+            <circle cx="50" cy="59" r="3"
+                    fill="var(--flower-dark)"/>
+
+        </svg>
+
+        <span class="logo-name">SERENOVA</span>
+    </a>
+
+    <!-- NAVIGATION LINKS -->
     <div class="nav-links">
         <a href="#home">Home</a>
         <a href="#mood">Mood</a>
@@ -97,705 +115,1094 @@ try {
         <a href="#dashboard">Dashboard</a>
         <a href="#wellness">Wellness</a>
         <a href="#about">About</a>
-        <button id="themeButton" class="theme-nav" type="button">
+
+        <button id="themeButton"
+                class="theme-nav"
+                type="button">
             🎨 Themes
         </button>
     </div>
+
 </nav>
 
-<!-- HOMEPAGE -->
+
+<!-- =========================================
+     HOMEPAGE
+========================================= -->
+
 <section id="home" class="hero">
+
     <div class="hero-decoration decoration-one"></div>
     <div class="hero-decoration decoration-two"></div>
 
     <div class="hero-content">
-        <p class="small-heading">✦ YOUR PERSONAL WELLNESS SPACE</p>
+
+        <p class="small-heading">
+            YOUR PERSONAL WELLNESS SPACE
+        </p>
+
         <h1>Welcome to <span>SERENOVA</span></h1>
+
         <h2>A Little Space for Every Feeling.</h2>
+
         <p class="hero-text">
             A peaceful digital space to reflect, preserve memories,
             understand your emotions and celebrate the little moments
             that make your days special.
         </p>
+
         <a href="#mood" class="primary-button">
             Start Your Journey →
         </a>
+
     </div>
+
 </section>
 
-<!-- INTERACTIVE FEATURE CARDS -->
+
+<!-- =========================================
+     HOMEPAGE FEATURE CARDS
+========================================= -->
+
 <section class="intro-section">
+
     <div class="section-heading">
+
         <p class="small-heading">YOUR PERSONAL SPACE</p>
+
         <h2>Little moments make a beautiful journey.</h2>
-        <p>Explore your memories, reflections and daily routines.</p>
+
+        <p>
+            Explore your memories, reflections and daily routines.
+        </p>
+
     </div>
 
     <div class="feature-grid">
-        <button class="feature-card" type="button"
+
+        <!-- MEMORY LANE -->
+        <button class="feature-card"
+                type="button"
                 data-open="memoryPopup">
+
             <div class="feature-icon">📸</div>
+
             <h3>Memory Lane</h3>
+
             <p>
-                Turn your favourite photographs into beautiful
-                Polaroid memories with captions and dates.
+                Save your favourite photographs as beautiful
+                Polaroid memories.
             </p>
-            <span class="card-link">Open Memories →</span>
+
+            <span class="card-link">
+                Open Memories →
+            </span>
+
         </button>
 
-        <button class="feature-card" type="button"
+        <!-- REFLECTION STREAK -->
+        <button class="feature-card"
+                type="button"
                 data-open="streakPopup">
+
             <div class="feature-icon">🔥</div>
+
             <h3>Reflection Streak</h3>
+
             <p>
-                Discover your daily reflection streak,
-                journaling times and personal routine.
+                Discover your journaling consistency,
+                reflection times and daily habits.
             </p>
-            <span class="card-link">View Your Streak →</span>
+
+            <span class="card-link">
+                View Your Streak →
+            </span>
+
         </button>
 
-        <button class="feature-card" type="button"
+        <!-- GENTLE REMINDERS -->
+        <button class="feature-card"
+                type="button"
                 data-open="reminderPopup">
+
             <div class="feature-icon">🔔</div>
+
             <h3>Gentle Reminders</h3>
+
             <p>
-                Set a comfortable check-in time and receive
-                little messages that brighten your day.
+                Set a comfortable reminder time
+                and receive gentle daily check-in messages.
             </p>
-            <span class="card-link">Set Reminders →</span>
+
+            <span class="card-link">
+                Set Reminders →
+            </span>
+
         </button>
+
     </div>
+
 </section>
 
-<!-- MOOD TRACKER -->
+
+<!-- =========================================
+     MOOD TRACKER
+========================================= -->
+
 <section id="mood" class="page-section soft-section">
+
     <div class="section-heading">
+
         <p class="small-heading">DAILY CHECK-IN</p>
+
         <h2>How are you feeling today?</h2>
-        <p>There is no right or wrong answer. Every feeling matters.</p>
+
+        <p>Every feeling deserves a little space.</p>
+
     </div>
 
     <div class="mood-container">
+
         <div class="mood-options">
-            <button class="mood-button" type="button"
-                    data-mood="Happy" data-emoji="😊">
-                <span>😊</span>Happy
+
+            <button class="mood-button"
+                    type="button"
+                    data-mood="Happy"
+                    data-emoji="😊">
+                <span>😊</span>
+                Happy
             </button>
-            <button class="mood-button" type="button"
-                    data-mood="Calm" data-emoji="😌">
-                <span>😌</span>Calm
+
+            <button class="mood-button"
+                    type="button"
+                    data-mood="Calm"
+                    data-emoji="😌">
+                <span>😌</span>
+                Calm
             </button>
-            <button class="mood-button" type="button"
-                    data-mood="Okay" data-emoji="😐">
-                <span>😐</span>Okay
+
+            <button class="mood-button"
+                    type="button"
+                    data-mood="Okay"
+                    data-emoji="😐">
+                <span>😐</span>
+                Okay
             </button>
-            <button class="mood-button" type="button"
-                    data-mood="Sad" data-emoji="😔">
-                <span>😔</span>Sad
+
+            <button class="mood-button"
+                    type="button"
+                    data-mood="Sad"
+                    data-emoji="😔">
+                <span>😔</span>
+                Sad
             </button>
-            <button class="mood-button" type="button"
-                    data-mood="Stressed" data-emoji="😣">
-                <span>😣</span>Stressed
+
+            <button class="mood-button"
+                    type="button"
+                    data-mood="Stressed"
+                    data-emoji="😣">
+                <span>😣</span>
+                Stressed
             </button>
+
         </div>
 
-        <button id="saveMoodButton" class="primary-button normal-button"
+        <button id="saveMoodButton"
+                class="primary-button normal-button"
                 type="button">
             Save Today's Mood
         </button>
 
-        <p id="moodMessage" class="status-message" role="status"></p>
+        <p id="moodMessage"
+           class="status-message"
+           role="status"></p>
 
-        <div id="moodSuggestion" class="suggestion-box hidden">
+        <div id="moodSuggestion"
+             class="suggestion-box hidden">
+
             <h3>💜 A Gentle Suggestion</h3>
+
             <p id="suggestionText"></p>
+
             <small>
-                These suggestions use predefined rules,
-                not artificial intelligence or medical assessment.
+                These suggestions are general wellbeing ideas,
+                not medical advice.
             </small>
+
         </div>
+
     </div>
 
     <div class="history-card">
+
         <p class="small-heading">HISTORY</p>
+
         <h3>Previous Mood Entries</h3>
+
         <div id="moodHistory"></div>
+
     </div>
+
 </section>
 
-<!-- JOURNAL WITH STICKER COLLECTION -->
+
+<!-- =========================================
+     JOURNAL SECTION
+========================================= -->
+
 <section id="journal" class="page-section">
+
     <div class="section-heading journal-heading">
+
         <p class="small-heading">YOUR JOURNAL</p>
+
         <h2>A Little Space for Your Thoughts ✨</h2>
-        <p>Write without pressure. This space belongs to you.</p>
+
+        <p>
+            Write without pressure. This space belongs to you.
+        </p>
+
     </div>
 
     <div class="journal-box">
+
         <div class="journal-top">
             <span>✍️ New Reflection</span>
             <span id="currentDate"></span>
         </div>
 
-        <!-- JOURNAL STICKER TOOLBAR -->
+        <!-- JOURNAL STICKER BUTTON -->
         <div class="sticker-toolbar">
-            <button id="stickerToggle" class="sticker-toggle"
-                    type="button" aria-expanded="false"
+
+            <button id="stickerToggle"
+                    class="sticker-toggle"
+                    type="button"
+                    aria-expanded="false"
                     aria-controls="stickerCollection">
-                🌸 Add Stickers
-                <span class="sticker-arrow">⌄</span>
+                🌸 Add Stickers ⌄
             </button>
+
             <span class="sticker-hint">
-                Decorate your thoughts with little moments of joy ✨
+                Decorate your thoughts ✨
             </span>
+
         </div>
 
-        <!-- STICKER COLLECTION -->
-        <div id="stickerCollection" class="sticker-collection hidden">
+        <!-- JOURNAL STICKER COLLECTION -->
+        <div id="stickerCollection"
+             class="sticker-collection hidden">
+
             <div class="sticker-header">
-                <div>
-                    <p class="small-heading">LITTLE DECORATIONS</p>
-                    <h3>Journal Sticker Collection 💜</h3>
-                </div>
-                <button id="closeStickers" class="sticker-close"
-                        type="button" aria-label="Close stickers">×</button>
+
+                <h3>Journal Sticker Collection 💜</h3>
+
+                <button id="closeStickers"
+                        class="sticker-close"
+                        type="button"
+                        aria-label="Close stickers">
+                    ×
+                </button>
+
             </div>
 
             <p class="sticker-description">
-                Choose a sticker to add it to your reflection.
-                You can add as many as you like!
+                Select a sticker to insert it into your reflection.
             </p>
 
-            <div class="sticker-tabs" role="group"
-                 aria-label="Sticker categories">
-                <button class="sticker-tab active" type="button"
-                        data-category="all" aria-pressed="true">
-                    ✨ All
-                </button>
-                <button class="sticker-tab" type="button"
-                        data-category="flowers" aria-pressed="false">
-                    🌸 Flowers
-                </button>
-                <button class="sticker-tab" type="button"
-                        data-category="hearts" aria-pressed="false">
-                    💕 Hearts
-                </button>
-                <button class="sticker-tab" type="button"
-                        data-category="stars" aria-pressed="false">
-                    ⭐ Stars
-                </button>
-                <button class="sticker-tab" type="button"
-                        data-category="nature" aria-pressed="false">
-                    🦋 Nature
-                </button>
-                <button class="sticker-tab" type="button"
-                        data-category="cute" aria-pressed="false">
-                    🧸 Cute
-                </button>
+            <div class="sticker-tabs">
+
+                <button class="sticker-tab active"
+                        type="button"
+                        data-category="all">✨ All</button>
+
+                <button class="sticker-tab"
+                        type="button"
+                        data-category="flowers">🌸 Flowers</button>
+
+                <button class="sticker-tab"
+                        type="button"
+                        data-category="hearts">💕 Hearts</button>
+
+                <button class="sticker-tab"
+                        type="button"
+                        data-category="stars">⭐ Stars</button>
+
+                <button class="sticker-tab"
+                        type="button"
+                        data-category="nature">🦋 Nature</button>
+
+                <button class="sticker-tab"
+                        type="button"
+                        data-category="cute">🧸 Cute</button>
+
             </div>
 
-            <div id="stickerGrid" class="sticker-grid"
-                 aria-label="Available journal stickers"></div>
+            <div id="stickerGrid" class="sticker-grid"></div>
 
-            <p id="stickerMessage" class="sticker-message"
-               role="status">
-                Select any sticker to insert it into your journal.
-            </p>
+            <p id="stickerMessage"
+               class="sticker-message"
+               role="status"></p>
+
         </div>
 
-        <!-- JOURNAL TEXT AREA -->
-        <label class="journal-input-label" for="journalInput">
+        <!-- NEED INSPIRATION -->
+        <div class="journal-inspiration">
+
+            <div class="inspiration-heading">
+
+                <div>
+                    <p class="small-heading">
+                        A LITTLE WRITING HELP
+                    </p>
+
+                    <h3>✨ Need Inspiration?</h3>
+                </div>
+
+                <span class="inspiration-icon">🌷</span>
+
+            </div>
+
+            <p class="inspiration-description">
+                Not sure where to begin?
+                Here's a little thought to get you started.
+            </p>
+
+            <div class="prompt-display">
+
+                <span class="prompt-decoration">💭</span>
+
+                <p id="journalPrompt">
+                    What is one little thing that made you smile today?
+                </p>
+
+            </div>
+
+            <div class="prompt-actions">
+
+                <button id="shufflePrompt"
+                        class="shuffle-prompt"
+                        type="button">
+                    🔀 Shuffle Prompt
+                </button>
+
+                <button id="usePrompt"
+                        class="use-prompt"
+                        type="button">
+                    ✍️ Use This Prompt
+                </button>
+
+            </div>
+
+            <p class="prompt-note">
+                Just a suggestion! You're always free
+                to write whatever is on your mind. 💜
+            </p>
+
+        </div>
+
+        <!-- JOURNAL TEXTAREA -->
+        <label class="journal-input-label"
+               for="journalInput">
             Your Thoughts
         </label>
-        
-<!-- JOURNAL WRITING INSPIRATION -->
-<div class="journal-inspiration">
-    <div class="inspiration-heading">
-        <div>
-            <p class="small-heading">A LITTLE WRITING HELP</p>
-            <h3>✨ Need Inspiration?</h3>
-        </div>
-        <span class="inspiration-icon">🌷</span>
-    </div>
 
-    <p class="inspiration-description">
-        Not sure where to begin? Here's a little thought
-        to get you started.
-    </p>
-
-    <div class="prompt-display">
-        <span class="prompt-decoration">💭</span>
-        <p id="journalPrompt">
-            What is one little thing that made you smile today?
-        </p>
-    </div>
-
-    <div class="prompt-actions">
-        <button id="shufflePrompt" class="shuffle-prompt"
-                type="button">
-            🔀 Shuffle Prompt
-        </button>
-
-        <button id="usePrompt" class="use-prompt"
-                type="button">
-            ✍️ Use This Prompt
-        </button>
-    </div>
-
-    <p class="prompt-note">
-        Just a suggestion! You're always free to write
-        whatever is on your mind. 💜
-    </p>
-</div>
-
-
-        <textarea id="journalInput" maxlength="1500"
-            placeholder="How was your day? What made you smile? What felt difficult? Add some cute stickers too! 🌸"></textarea>
+        <textarea id="journalInput"
+                  maxlength="1500"
+                  placeholder="How was your day? What made you smile? Write freely or use a suggested prompt..."></textarea>
 
         <div class="journal-bottom">
-            <span id="characterCount">0 / 1500 characters</span>
-            <button id="saveJournalButton" class="primary-button"
+
+            <span id="characterCount">
+                0 / 1500 characters
+            </span>
+
+            <button id="saveJournalButton"
+                    class="primary-button"
                     type="button">
                 Save Reflection
             </button>
+
         </div>
 
-        <p id="journalMessage" class="status-message"
+        <p id="journalMessage"
+           class="status-message"
            role="status"></p>
+
     </div>
 
+    <!-- SAVED REFLECTIONS -->
     <div class="journal-history">
+
         <p class="small-heading">PAST REFLECTIONS</p>
+
         <h3>Your Journal Entries 📖</h3>
+
         <div id="journalEntries"></div>
+
     </div>
+
 </section>
 
-<!-- DASHBOARD -->
+
+<!-- =========================================
+     DASHBOARD
+========================================= -->
+
 <section id="dashboard" class="page-section soft-section">
+
     <div class="section-heading">
+
         <p class="small-heading">YOUR DASHBOARD</p>
+
         <h2>Your Emotional Snapshot.</h2>
-        <p>A simple overview based on the moods you have recorded.</p>
+
+        <p>
+            An overview of your recorded moods and reflections.
+        </p>
+
     </div>
 
     <div class="stats-grid">
+
         <div class="stat-card">
             <span class="stat-icon">🌷</span>
             <p>Total Check-ins</p>
             <h3 id="totalMoodEntries">0</h3>
         </div>
+
         <div class="stat-card">
             <span class="stat-icon">💜</span>
             <p>Most Frequent Mood</p>
             <h3 id="frequentMood">—</h3>
         </div>
+
         <div class="stat-card">
             <span class="stat-icon">📖</span>
             <p>Journal Entries</p>
             <h3 id="totalJournalEntries">0</h3>
         </div>
+
     </div>
 
     <div class="dashboard-grid">
+
         <div class="dashboard-card">
+
             <p class="small-heading">MOOD OVERVIEW</p>
+
             <h3>Mood Distribution</h3>
 
             <div id="moodChart" class="chart">
+
                 <div class="chart-column">
                     <span class="bar-count" id="happyCount">0</span>
                     <div id="happyBar" class="chart-bar"></div>
-                    <span>😊</span><small>Happy</small>
+                    <span>😊</span>
+                    <small>Happy</small>
                 </div>
+
                 <div class="chart-column">
                     <span class="bar-count" id="calmCount">0</span>
                     <div id="calmBar" class="chart-bar"></div>
-                    <span>😌</span><small>Calm</small>
+                    <span>😌</span>
+                    <small>Calm</small>
                 </div>
+
                 <div class="chart-column">
                     <span class="bar-count" id="okayCount">0</span>
                     <div id="okayBar" class="chart-bar"></div>
-                    <span>😐</span><small>Okay</small>
+                    <span>😐</span>
+                    <small>Okay</small>
                 </div>
+
                 <div class="chart-column">
                     <span class="bar-count" id="sadCount">0</span>
                     <div id="sadBar" class="chart-bar"></div>
-                    <span>😔</span><small>Sad</small>
+                    <span>😔</span>
+                    <small>Sad</small>
                 </div>
+
                 <div class="chart-column">
                     <span class="bar-count" id="stressedCount">0</span>
                     <div id="stressedBar" class="chart-bar"></div>
-                    <span>😣</span><small>Stressed</small>
+                    <span>😣</span>
+                    <small>Stressed</small>
                 </div>
+
             </div>
+
         </div>
 
         <div class="dashboard-card">
+
             <p class="small-heading">PATTERN SUMMARY</p>
+
             <h3>What Your Entries Show</h3>
+
             <div class="pattern-box">
+
                 <span>✨</span>
+
                 <p id="patternSummary">
-                    Start recording your moods and a simple
-                    pattern summary will appear here.
+                    Start recording moods to see your summary.
                 </p>
+
             </div>
+
             <p class="dashboard-note">
-                This summary is based on your selected moods,
-                not a psychological or medical evaluation.
+                Mood patterns are not medical assessments.
             </p>
+
         </div>
+
     </div>
 
     <div class="dashboard-card recent-card">
+
         <p class="small-heading">RECENT CHECK-INS</p>
+
         <h3>Recent Mood History</h3>
+
         <div id="recentMoodHistory"></div>
+
     </div>
+
 </section>
 
-<!-- WELLNESS -->
+
+<!-- =========================================
+     WELLNESS CORNER
+========================================= -->
+
 <section id="wellness" class="page-section">
+
     <div class="section-heading">
+
         <p class="small-heading">WELLNESS CORNER</p>
+
         <h2>Small Things Can Make a Difference.</h2>
-        <p>Simple ideas for everyday student life.</p>
+
+        <p>Gentle ideas for everyday student life.</p>
+
     </div>
 
     <div class="wellness-grid">
+
         <div class="wellness-card">
             <span>🌿</span>
             <h3>Take a Pause</h3>
             <p>
-                Step away from your screen for a few minutes
-                and give yourself time to reset.
+                Step away from your screen and give yourself
+                a moment to reset.
             </p>
         </div>
+
         <div class="wellness-card">
             <span>💧</span>
             <h3>Care for Your Body</h3>
             <p>
-                Drink water, stretch gently and notice
-                whether your body needs rest.
+                Drink water, stretch gently and make time for rest.
             </p>
         </div>
+
         <div class="wellness-card">
             <span>🫶</span>
             <h3>Stay Connected</h3>
             <p>
-                A conversation with someone you trust
-                can make a difficult day feel less isolating.
+                Reach out to a friend or someone you trust.
             </p>
         </div>
+
         <div class="wellness-card">
             <span>📝</span>
             <h3>Break It Down</h3>
             <p>
-                When work feels overwhelming,
-                focus on one manageable task.
+                Focus on one manageable task at a time.
             </p>
         </div>
+
     </div>
 
     <div class="safety-note">
+
         <span>💜</span>
+
         <div>
             <h3>A Note About Wellbeing</h3>
+
             <p>
-                SERENOVA is an educational wellness journal.
-                It does not diagnose mental health conditions
-                or replace professional support.
+                SERENOVA is an educational wellness journal,
+                not a substitute for professional mental-health support.
             </p>
         </div>
+
     </div>
+
 </section>
 
-<!-- ABOUT -->
+
+<!-- =========================================
+     ABOUT SERENOVA
+========================================= -->
+
 <section id="about" class="page-section about-section">
+
     <div class="section-heading light-heading">
+
         <p class="small-heading">ABOUT THE PROJECT</p>
+
         <h2>About SERENOVA</h2>
-        <p>Prototype 2 — AI Literacy & Integrity Project</p>
+
+        <p>AI Literacy & Integrity Educational Project</p>
+
     </div>
 
     <div class="about-grid">
+
         <div class="about-card">
-            <h3>🌸 Project Introduction</h3>
+            <h3>🌸 Introduction</h3>
             <p>
-                SERENOVA is a student-focused digital mood
-                and wellness journal for reflection and memories.
+                A student-focused mood and wellness journal.
             </p>
         </div>
+
         <div class="about-card">
             <h3>🎯 Problem Statement</h3>
             <p>
-                Students experience changing academic and
-                personal pressures but may not regularly reflect.
+                Students may not regularly reflect on their emotions.
             </p>
         </div>
+
         <div class="about-card">
             <h3>✨ Objectives</h3>
             <p>
-                Encourage reflection, emotional awareness,
-                personal expression and responsible technology use.
+                Encourage reflection, emotional awareness
+                and personal expression.
             </p>
         </div>
+
         <div class="about-card">
             <h3>🎓 Target Audience</h3>
-            <p>College and university students.</p>
-        </div>
-        <div class="about-card">
-            <h3>💻 Prototype Features</h3>
             <p>
-                Mood tracking, journal entries, stickers, dashboards,
-                Polaroid memories, streaks, reminders and themes.
+                College and university students.
             </p>
         </div>
+
         <div class="about-card">
-            <h3>🤖 AI & Integrity</h3>
+            <h3>💻 Features</h3>
             <p>
-                This prototype uses predefined JavaScript rules,
-                not an integrated AI model. AI-assisted development
-                should be independently verified.
+                Mood tracking, journaling, stickers,
+                memories, streaks and pastel themes.
             </p>
         </div>
+
+        <div class="about-card">
+            <h3>🤖 AI Integrity</h3>
+            <p>
+                AI-assisted development with independent
+                human review and verification.
+            </p>
+        </div>
+
     </div>
 
     <div class="privacy-box">
-        <h3>🔒 Privacy & Prototype Limitations</h3>
+
+        <h3>🔒 Privacy & Limitations</h3>
+
         <p>
-            Mood and journal entries use localStorage.
-            Photographs use IndexedDB. Browser storage
-            is not encrypted secure storage and may be accessible
-            to others using the same browser profile.
+            Mood and journal entries are stored in browser storage.
+            Photographs may be stored using IndexedDB.
+            Information does not automatically synchronize across devices.
         </p>
+
         <p>
-            Avoid storing highly sensitive information.
-            Reminders work while this website is open.
-            They are not guaranteed after closing the browser.
+            Avoid entering sensitive personal information.
+            This website is an educational prototype.
         </p>
+
     </div>
+
 </section>
 
-<!-- THEME POPUP -->
-<div id="themePopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true"
-     aria-labelledby="themeTitle">
-    <div class="popup-content theme-popup">
-        <button class="close-popup" type="button"
-                data-close="themePopup"
-                aria-label="Close theme settings">×</button>
 
-        <p class="small-heading">PERSONALIZE YOUR SPACE</p>
-        <h2 id="themeTitle">🎨 Make SERENOVA Yours</h2>
-        <p>
-            Choose a soft pastel palette that feels comfortable to you.
-            Every theme includes matching text, buttons and accents.
+<!-- =========================================
+     THEMES POPUP
+========================================= -->
+
+<div id="themePopup"
+     class="popup-overlay hidden"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="themeTitle">
+
+    <div class="popup-content theme-popup">
+
+        <button class="close-popup"
+                type="button"
+                data-close="themePopup"
+                aria-label="Close themes">
+            ×
+        </button>
+
+        <p class="small-heading">
+            PERSONALIZE YOUR SPACE
         </p>
 
+        <h2 id="themeTitle">🎨 Make SERENOVA Yours</h2>
+
+        <p>Choose your favourite pastel colour palette.</p>
+
         <div class="theme-grid">
-            <button class="theme-choice" data-theme="lavender"
-                    type="button" aria-pressed="true">
+
+            <button class="theme-choice"
+                    type="button"
+                    data-theme="lavender">
                 <span class="theme-swatch lavender-swatch">💜</span>
                 <strong>Lavender</strong>
                 <small>Original Serenity</small>
             </button>
-            <button class="theme-choice" data-theme="blue"
-                    type="button" aria-pressed="false">
+
+            <button class="theme-choice"
+                    type="button"
+                    data-theme="blue">
                 <span class="theme-swatch blue-swatch">🩵</span>
                 <strong>Baby Blue</strong>
                 <small>Ocean Calm</small>
             </button>
-            <button class="theme-choice" data-theme="green"
-                    type="button" aria-pressed="false">
+
+            <button class="theme-choice"
+                    type="button"
+                    data-theme="green">
                 <span class="theme-swatch green-swatch">🌿</span>
                 <strong>Sage Green</strong>
                 <small>Nature's Peace</small>
             </button>
-            <button class="theme-choice" data-theme="yellow"
-                    type="button" aria-pressed="false">
+
+            <button class="theme-choice"
+                    type="button"
+                    data-theme="yellow">
                 <span class="theme-swatch yellow-swatch">🌼</span>
                 <strong>Butter Yellow</strong>
                 <small>Gentle Sunshine</small>
             </button>
-            <button class="theme-choice" data-theme="pink"
-                    type="button" aria-pressed="false">
+
+            <button class="theme-choice"
+                    type="button"
+                    data-theme="pink">
                 <span class="theme-swatch pink-swatch">🌸</span>
                 <strong>Blush Pink</strong>
                 <small>Soft Bloom</small>
             </button>
-            <button class="theme-choice" data-theme="peach"
-                    type="button" aria-pressed="false">
+
+            <button class="theme-choice"
+                    type="button"
+                    data-theme="peach">
                 <span class="theme-swatch peach-swatch">🍑</span>
                 <strong>Pastel Peach</strong>
                 <small>Warm Comfort</small>
             </button>
+
         </div>
 
         <div class="theme-preview">
-            <p class="small-heading">LIVE PREVIEW</p>
+
             <h3>A Little Space for Every Feeling ✨</h3>
+
             <p>
-                Your background, text and buttons will
-                adjust together for a harmonious appearance.
+                Text, buttons and backgrounds change
+                together with your selected theme.
             </p>
-            <span class="preview-button">Save Today's Mood</span>
+
+            <span class="preview-button">
+                Save Today's Mood
+            </span>
+
         </div>
 
-        <button id="resetThemeButton" class="secondary-button"
+        <button id="resetThemeButton"
+                class="secondary-button"
                 type="button">
-            ↺ Restore Original Lavender
+            ↺ Restore Lavender
         </button>
-        <p id="themeMessage" class="status-message" role="status"></p>
+
+        <p id="themeMessage"
+           class="status-message"
+           role="status"></p>
+
     </div>
+
 </div>
 
-<!-- MEMORY LANE POPUP -->
-<div id="memoryPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true"
+
+<!-- =========================================
+     MEMORY LANE POPUP
+========================================= -->
+
+<div id="memoryPopup"
+     class="popup-overlay hidden"
+     role="dialog"
+     aria-modal="true"
      aria-labelledby="memoryTitle">
+
     <div class="popup-content">
-        <button class="close-popup" type="button"
+
+        <button class="close-popup"
+                type="button"
                 data-close="memoryPopup"
-                aria-label="Close Memory Lane">×</button>
+                aria-label="Close memories">
+            ×
+        </button>
 
         <p class="small-heading">YOUR LITTLE MOMENTS</p>
+
         <h2 id="memoryTitle">📸 Memory Lane</h2>
+
         <p>Some moments deserve to stay a little longer.</p>
 
         <div class="memory-form">
-            <label for="memoryPhoto">Choose a Photograph</label>
-            <input type="file" id="memoryPhoto" accept="image/*">
 
-            <div id="photoPreview" class="photo-preview hidden">
-                <img id="previewImage" alt="Selected memory preview">
+            <label for="memoryPhoto">
+                Choose a Photograph
+            </label>
+
+            <input type="file"
+                   id="memoryPhoto"
+                   accept="image/*">
+
+            <div id="photoPreview"
+                 class="photo-preview hidden">
+
+                <img id="previewImage"
+                     alt="Selected memory preview">
+
             </div>
 
-            <label for="memoryCaption">Memory Caption</label>
-            <input id="memoryCaption" type="text" maxlength="100"
+            <label for="memoryCaption">
+                Memory Caption
+            </label>
+
+            <input id="memoryCaption"
+                   type="text"
+                   maxlength="100"
                    placeholder="A moment worth remembering...">
 
-            <button id="saveMemoryButton" class="primary-button"
+            <button id="saveMemoryButton"
+                    class="primary-button"
                     type="button">
                 Save My Memory 💜
             </button>
-            <p id="memoryMessage" class="status-message" role="status"></p>
+
+            <p id="memoryMessage"
+               class="status-message"
+               role="status"></p>
+
         </div>
 
         <h3>Your Polaroid Collection</h3>
+
         <div id="memoryGallery" class="memory-gallery"></div>
+
     </div>
+
 </div>
 
-<!-- REFLECTION STREAK POPUP -->
-<div id="streakPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true"
-     aria-labelledby="streakTitle">
-    <div class="popup-content">
-        <button class="close-popup" type="button"
-                data-close="streakPopup"
-                aria-label="Close Reflection Streak">×</button>
 
-        <p class="small-heading">YOUR REFLECTION JOURNEY</p>
+<!-- =========================================
+     REFLECTION STREAK POPUP
+========================================= -->
+
+<div id="streakPopup"
+     class="popup-overlay hidden"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="streakTitle">
+
+    <div class="popup-content">
+
+        <button class="close-popup"
+                type="button"
+                data-close="streakPopup"
+                aria-label="Close streak">
+            ×
+        </button>
+
+        <p class="small-heading">
+            YOUR REFLECTION JOURNEY
+        </p>
+
         <h2 id="streakTitle">🔥 Reflection Streak</h2>
-        <p>Every little reflection is worth appreciating.</p>
+
+        <p>
+            Every little reflection is worth appreciating.
+        </p>
 
         <div class="streak-stats">
+
             <div class="streak-stat">
                 <span>🔥</span>
                 <h3 id="currentStreak">0</h3>
                 <p>Current Streak</p>
             </div>
+
             <div class="streak-stat">
                 <span>🌟</span>
                 <h3 id="longestStreak">0</h3>
                 <p>Longest Streak</p>
             </div>
+
             <div class="streak-stat">
                 <span>🕘</span>
                 <h3 id="usualTime">—</h3>
                 <p>Usual Reflection Time</p>
             </div>
+
         </div>
 
         <h3>🕰️ Your Reflection Timeline</h3>
+
         <div id="reflectionTimeline"></div>
 
         <div class="sleep-suggestion">
+
             <h3>🌙 A Gentle Rest Reminder</h3>
+
             <p id="sleepMessage">
                 Your rest matters as much as your reflections.
             </p>
+
         </div>
 
         <p class="dashboard-note">
             Reflection times do not establish actual sleep habits.
         </p>
+
     </div>
+
 </div>
 
-<!-- REMINDER POPUP -->
-<div id="reminderPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true"
+
+<!-- =========================================
+     GENTLE REMINDERS POPUP
+========================================= -->
+
+<div id="reminderPopup"
+     class="popup-overlay hidden"
+     role="dialog"
+     aria-modal="true"
      aria-labelledby="reminderTitle">
+
     <div class="popup-content">
-        <button class="close-popup" type="button"
+
+        <button class="close-popup"
+                type="button"
                 data-close="reminderPopup"
-                aria-label="Close reminders">×</button>
+                aria-label="Close reminders">
+            ×
+        </button>
 
         <p class="small-heading">A LITTLE CHECK-IN</p>
+
         <h2 id="reminderTitle">🔔 Gentle Reminders</h2>
-        <p>Choose a comfortable time for your daily reflection.</p>
+
+        <p>
+            Choose a comfortable time for your daily reflection.
+        </p>
 
         <div class="reminder-form">
-            <label for="reminderTime">Preferred Reminder Time</label>
-            <input type="time" id="reminderTime" value="21:30">
 
-            <label class="check-label">
-                <input type="checkbox" id="remindersEnabled" checked>
-                Enable gentle reminders
+            <label for="reminderTime">
+                Preferred Reminder Time
             </label>
 
-            <button id="saveReminderButton" class="primary-button"
+            <input type="time"
+                   id="reminderTime"
+                   value="21:30">
+
+            <label class="check-label">
+
+                <input type="checkbox"
+                       id="remindersEnabled"
+                       checked>
+
+                Enable gentle reminders
+
+            </label>
+
+            <button id="saveReminderButton"
+                    class="primary-button"
                     type="button">
                 Save Reminder Settings
             </button>
-            <p id="reminderMessage" class="status-message"
+
+            <p id="reminderMessage"
+               class="status-message"
                role="status"></p>
+
         </div>
 
         <div class="sleep-suggestion">
+
             <h3>💜 Your Time, Your Pace</h3>
+
             <p>
-                Reflection is optional. You can change your
-                reminder time or disable reminders anytime.
+                Reflection is optional.
+                You can disable reminders anytime.
             </p>
+
         </div>
+
     </div>
+
 </div>
 
-<!-- WELCOME NOTIFICATION -->
-<div id="welcomeNotification" class="welcome-notification hidden"
+
+<!-- =========================================
+     TOP-RIGHT WELCOME NOTIFICATION
+========================================= -->
+
+<div id="welcomeNotification"
+     class="welcome-notification hidden"
      role="status">
-    <button id="closeNotification" class="notification-close"
-            type="button" aria-label="Dismiss notification">×</button>
+
+    <button id="closeNotification"
+            class="notification-close"
+            type="button"
+            aria-label="Dismiss notification">
+        ×
+    </button>
+
     <span class="notification-icon">💜</span>
-    <h3 id="notificationTitle">Hello from SERENOVA!</h3>
+
+    <h3 id="notificationTitle">
+        Hello from SERENOVA!
+    </h3>
+
     <p id="notificationText"></p>
-    <button id="notificationAction" class="notification-action"
+
+    <button id="notificationAction"
+            class="notification-action"
             type="button">
         Check In →
     </button>
+
 </div>
 
-<!-- FOOTER -->
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
 <footer>
-    <div class="footer-logo">✦ SERENOVA</div>
+
+    <div class="footer-logo">SERENOVA</div>
+
     <p>A Little Space for Every Feeling.</p>
+
     <p class="footer-small">
-        Prototype 2 • AI Literacy & Integrity Educational Project
+        AI Literacy & Integrity Educational Project
     </p>
+
 </footer>
 
 </body>
