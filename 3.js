@@ -1820,61 +1820,108 @@ function renderRiverThoughts() {
     }
 }
 
-/* ==========================================
-   WELLNESS - TAKE A PAUSE
-   ========================================== */
+
+/* ======================================
+   SERENOVA - GUIDED 60 SECOND PAUSE
+   ====================================== */
+
+/* Stop and reset the activity */
 
 function stopBreathing(message = "Take your time. 💜") {
     clearInterval(breathingTimer);
     breathingTimer = null;
     breathingSeconds = 60;
 
-    if ($("breathingCircle")) {
-        $("breathingCircle").classList.remove(
-            "breathe-in","breathe-out"
-        );
-    }
+    let circle = document.getElementById("breathingCircle");
 
-    setText("breathingInstruction","Ready?");
-    setText("breathingCount","60");
-    setText("breathingStatus",message);
+    circle.classList.remove("breathe-in", "breathe-out");
+
+    document.getElementById("breathingInstruction").textContent =
+        "Ready to pause?";
+
+    document.getElementById("breathingCount").textContent = "60";
+
+    document.getElementById("breathingStatus").textContent = message;
+
+    document.getElementById("startBreathing").disabled = false;
 }
+
+/* Update the calming instructions */
 
 function updateBreathing() {
-    const elapsed = 60-breathingSeconds;
-    const inhale = elapsed%8 < 4;
+    let elapsed = 60 - breathingSeconds;
 
-    $("breathingCircle").classList.toggle("breathe-in",inhale);
-    $("breathingCircle").classList.toggle("breathe-out",!inhale);
+    let inhale = elapsed % 8 < 4;
 
-    setText("breathingInstruction",
-        inhale ? "Breathe In" : "Breathe Out");
-    setText("breathingCount",breathingSeconds);
+    let circle = document.getElementById("breathingCircle");
+
+    circle.classList.toggle("breathe-in", inhale);
+    circle.classList.toggle("breathe-out", !inhale);
+
+    document.getElementById("breathingInstruction").textContent =
+        inhale ? "Breathe in gently" : "Breathe out slowly";
+
+    document.getElementById("breathingCount").textContent =
+        breathingSeconds;
 }
 
-function initializeBreathing() {
-    if (!$("startBreathing")) return;
+/* Start, stop and restart buttons */
 
-    $("startBreathing").addEventListener("click",function() {
-        if (breathingTimer) return;
+function initializeBreathing() {
+    let startButton = document.getElementById("startBreathing");
+    let stopButton = document.getElementById("stopBreathing");
+    let restartButton = document.getElementById("restartBreathing");
+
+    if (!startButton || !stopButton || !restartButton) return;
+
+    function startPause() {
+        clearInterval(breathingTimer);
 
         breathingSeconds = 60;
+
+        startButton.disabled = true;
+
+        document.getElementById("breathingStatus").textContent =
+            "Your peaceful minute has started. 🌿";
+
         updateBreathing();
 
         breathingTimer = setInterval(function() {
             breathingSeconds--;
 
             if (breathingSeconds <= 0) {
-                stopBreathing("Your gentle minute is complete. 🌷");
-            } else {
-                updateBreathing();
+                clearInterval(breathingTimer);
+                breathingTimer = null;
+
+                document.getElementById("breathingCount").textContent =
+                    "0";
+
+                document.getElementById("breathingInstruction").textContent =
+                    "Well done! 🌸";
+
+                document.getElementById("breathingCircle")
+                    .classList.remove("breathe-in", "breathe-out");
+
+                document.getElementById("breathingStatus").textContent =
+                    "Your 60-second pause is complete. " +
+                    "Thank you for taking a moment for yourself! 💜";
+
+                startButton.disabled = false;
+                return;
             }
-        },1000);
+
+            updateBreathing();
+
+        }, 1000);
+    }
+
+    startButton.addEventListener("click", startPause);
+
+    stopButton.addEventListener("click", function() {
+        stopBreathing("Activity stopped. Rest whenever you need.");
     });
 
-    $("stopBreathing").addEventListener("click",function() {
-        stopBreathing("Exercise stopped.");
-    });
+    restartButton.addEventListener("click", startPause);
 }
 
 /* ==========================================
