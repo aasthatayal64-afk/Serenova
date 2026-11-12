@@ -1953,3 +1953,127 @@ if (document.readyState === "loading") {
 } else {
     initializeSerenova();
 }
+
+/* ==========================================
+   SERENOVA - EDIT REFLECTION FUNCTIONALITY
+   ========================================== */
+
+let editingReflectionIndex = -1;
+
+/* OPEN EDITOR */
+
+function openReflectionEditor(index) {
+    let entries = readData("serenovaJournal");
+
+    if (!entries[index]) return;
+
+    editingReflectionIndex = index;
+
+    document.getElementById("editJournalTitle").value =
+        entries[index].title || "";
+
+    document.getElementById("editJournalText").value =
+        entries[index].text || "";
+
+    document.getElementById("editReflectionMessage").textContent = "";
+
+    updateEditCharacterCount();
+
+    openPopup("editReflectionPopup");
+}
+
+/* UPDATE CHARACTER COUNTER */
+
+function updateEditCharacterCount() {
+    let text = document.getElementById("editJournalText").value;
+
+    document.getElementById("editCharacterCount").textContent =
+        text.length + " / 1500 characters";
+}
+
+/* CANCEL EDITING */
+
+function cancelReflectionEditing() {
+    editingReflectionIndex = -1;
+
+    document.getElementById("editJournalTitle").value = "";
+    document.getElementById("editJournalText").value = "";
+
+    closePopup("editReflectionPopup");
+}
+
+/* SAVE CHANGES */
+
+function saveReflectionChanges() {
+    if (editingReflectionIndex < 0) return;
+
+    let title = document.getElementById("editJournalTitle")
+        .value.trim();
+
+    let text = document.getElementById("editJournalText")
+        .value.trim();
+
+    if (!text) {
+        document.getElementById("editReflectionMessage").textContent =
+            "Your reflection cannot be empty.";
+        return;
+    }
+
+    let entries = readData("serenovaJournal");
+
+    if (!entries[editingReflectionIndex]) {
+        document.getElementById("editReflectionMessage").textContent =
+            "This reflection is no longer available.";
+        return;
+    }
+
+    /* Update the existing record instead of adding a new one */
+    entries[editingReflectionIndex].title = title;
+    entries[editingReflectionIndex].text = text;
+
+    /* Preserve original date, time and timestamp */
+
+    if (saveData("serenovaJournal", entries)) {
+        editingReflectionIndex = -1;
+
+        closePopup("editReflectionPopup");
+
+        displayJournalEntries();
+        updateDashboard();
+        updateReflectionStreak();
+        updateNotificationState();
+
+        setText(
+            "journalMessage",
+            "💜 Your reflection has been updated successfully!"
+        );
+    }
+}
+
+/* INITIALIZE EDIT BUTTONS */
+
+function initializeReflectionEditing() {
+    let title = document.getElementById("editJournalTitle");
+    let text = document.getElementById("editJournalText");
+    let save = document.getElementById("saveReflectionChanges");
+    let cancel = document.getElementById("cancelReflectionEdit");
+
+    if (!title || !text || !save || !cancel) return;
+
+    text.addEventListener("input", updateEditCharacterCount);
+
+    save.addEventListener("click", saveReflectionChanges);
+
+    cancel.addEventListener("click", cancelReflectionEditing);
+}
+
+/* Initialize when HTML is ready */
+
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeReflectionEditing
+    );
+} else {
+    initializeReflectionEditing();
+}
