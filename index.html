@@ -799,39 +799,80 @@ try {
 
 <!-- INTERACTIVE WELLNESS POPUPS -->
 
-<!-- TAKE A PAUSE -->
-<div id="pausePopup" class="popup-overlay hidden" role="dialog"
-     aria-modal="true" aria-labelledby="pauseTitle">
+
+<!-- TAKE A PAUSE - 60 SECOND ACTIVITY -->
+<div id="pausePopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true"
+     aria-labelledby="pauseTitle">
+
     <div class="popup-content wellness-popup">
+
         <button class="close-popup" type="button"
-                data-close="pausePopup" aria-label="Close pause">×</button>
+                data-close="pausePopup"
+                aria-label="Close pause activity">×</button>
+
         <p class="small-heading">A MOMENT FOR YOURSELF</p>
         <h2 id="pauseTitle">🌿 Take a Pause</h2>
+
         <p>
-            Been studying for a while? Take a quiet screen break
-            or try this optional one-minute breathing activity.
+            Take one gentle minute away from your busy day.
+            You can stop whenever you want.
         </p>
+
         <div class="breathing-area">
             <div id="breathingCircle" class="breathing-circle">
-                <span id="breathingInstruction">Ready?</span>
-                <strong id="breathingCount">60</strong>
+
+                <span id="breathingInstruction">
+                    Ready to pause?
+                </span>
+
+                <strong id="breathingCount"
+                        role="timer"
+                        aria-label="Seconds remaining">
+                    60
+                </strong>
+
             </div>
         </div>
-        <p id="breathingStatus" class="wellness-status" role="status">
-            One gentle minute, whenever you're ready.
+
+        <p id="breathingStatus"
+           class="wellness-status"
+           role="status"
+           aria-live="polite">
+            Press Start whenever you're ready.
         </p>
+
         <div class="wellness-actions">
-            <button id="startBreathing" class="primary-button"
-                    type="button">Start Exercise</button>
-            <button id="stopBreathing" class="secondary-button"
-                    type="button">Stop</button>
+
+            <button id="startBreathing"
+                    class="primary-button"
+                    type="button">
+                ▶ Start 60-Second Pause
+            </button>
+
+            <button id="stopBreathing"
+                    class="secondary-button"
+                    type="button">
+                Stop
+            </button>
+
+            <button id="restartBreathing"
+                    class="secondary-button"
+                    type="button">
+                ↻ Restart
+            </button>
+
         </div>
+
         <p class="wellness-disclaimer">
-            Breathe naturally. Do not force deep breaths or hold
-            your breath. Stop if you feel uncomfortable.
+            Breathe naturally and comfortably.
+            Stop if you feel uncomfortable.
+            This is a general wellness activity.
         </p>
+
     </div>
 </div>
+
 
 <!-- CARE FOR YOUR BODY -->
 <div id="bodyPopup" class="popup-overlay hidden" role="dialog"
