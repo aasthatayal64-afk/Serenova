@@ -2209,3 +2209,379 @@ if (document.readyState === "loading") {
 } else {
     initializeSerenova();
 }
+
+/* ==========================================
+   SERENOVA - INTERACTIVE WELLNESS CORNER
+   ========================================== */
+
+(function() {
+    "use strict";
+
+    const byId = id => document.getElementById(id);
+
+    function readWellness(key, fallback) {
+        try {
+            let value = JSON.parse(localStorage.getItem(key));
+            return value === null ? fallback : value;
+        } catch(error) {
+            return fallback;
+        }
+    }
+
+    function saveWellness(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch(error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    function createNode(tag, text, className) {
+        let node = document.createElement(tag);
+        if (text !== undefined) node.textContent = text;
+        if (className) node.className = className;
+        return node;
+    }
+
+    /* ---------- POPUP COMPATIBILITY ---------- */
+
+    // Your existing 3.js should already handle [data-open].
+    // If it doesn't, this delegated handler provides a fallback.
+    // Do not add a second handler if the existing one works.
+
+    /* ---------- GUIDED BREATHING ---------- */
+
+    let breathingTimer = null;
+    let breathingSeconds = 60;
+
+    function stopBreathing(message = "Take your time. 💜") {
+        clearInterval(breathingTimer);
+        breathingTimer = null;
+
+        byId("breathingCircle").classList.remove(
+            "breathe-in", "breathe-out"
+        );
+
+        byId("breathingInstruction").textContent = "Ready?";
+        byId("breathingCount").textContent = "60";
+        byId("breathingStatus").textContent = message;
+    }
+
+    function updateBreathing() {
+        let elapsed = 60 - breathingSeconds;
+        let inhale = elapsed % 8 < 4;
+
+        byId("breathingCircle").classList.toggle(
+            "breathe-in", inhale
+        );
+
+        byId("breathingCircle").classList.toggle(
+            "breathe-out", !inhale
+        );
+
+        byId("breathingInstruction").textContent =
+            inhale ? "Breathe In" : "Breathe Out";
+
+        byId("breathingCount").textContent = breathingSeconds;
+    }
+
+    byId("startBreathing").addEventListener("click", function() {
+        if (breathingTimer) return;
+
+        breathingSeconds = 60;
+        updateBreathing();
+
+        byId("breathingStatus").textContent =
+            "Follow a comfortable rhythm. You can stop anytime.";
+
+        breathingTimer = setInterval(function() {
+            breathingSeconds--;
+
+            if (breathingSeconds <= 0) {
+                stopBreathing("Your gentle minute is complete. 🌷");
+                return;
+            }
+
+            updateBreathing();
+        }, 1000);
+    });
+
+    byId("stopBreathing").addEventListener("click", function() {
+        stopBreathing("Exercise stopped. Rest whenever you need.");
+    });
+
+    // Stop breathing when the popup closes.
+    const pausePopup = byId("pausePopup");
+
+    pausePopup.querySelectorAll("[data-close]").forEach(button => {
+        button.addEventListener("click", function() {
+            stopBreathing();
+        });
+    });
+
+    pausePopup.addEventListener("click", function(event) {
+        if (event.target === pausePopup) stopBreathing();
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" &&
+            pausePopup.classList.contains("hidden")) {
+            stopBreathing();
+        }
+    });
+
+    /* ---------- DAILY SELF-CARE CHECKLIST ---------- */
+
+    const careKey = "serenovaSelfcare";
+
+    function todayKey() {
+        let date = new Date();
+        return date.getFullYear() + "-" +
+            String(date.getMonth() + 1).padStart(2, "0") + "-" +
+            String(date.getDate()).padStart(2, "0");
+    }
+
+    function loadSelfcare() {
+        let record = readWellness(careKey, {});
+        let checked = record.date === todayKey()
+            ? record.items || [] : [];
+
+        document.querySelectorAll(".selfcare-check").forEach(input => {
+            input.checked = checked.includes(input.dataset.care);
+        });
+
+        updateSelfcareProgress();
+    }
+
+    function updateSelfcareProgress() {
+        let inputs = Array.from(
+            document.querySelectorAll(".selfcare-check")
+        );
+
+        let selected = inputs.filter(input => input.checked)
+            .map(input => input.dataset.care);
+
+        byId("selfcareProgressFill").style.width =
+            (selected.length / inputs.length * 100) + "%";
+
+        byId("selfcareProgressText").textContent =
+            selected.length + " of " + inputs.length +
+            " little acts checked today.";
+
+        saveWellness(careKey, {
+            date: todayKey(),
+            items: selected
+        });
+    }
+
+    document.querySelectorAll(".selfcare-check").forEach(input => {
+        input.addEventListener("change", updateSelfcareProgress);
+    });
+
+    byId("resetSelfcare").addEventListener("click", function() {
+        document.querySelectorAll(".selfcare-check").forEach(input => {
+            input.checked = false;
+        });
+
+        updateSelfcareProgress();
+    });
+
+    loadSelfcare();
+
+    /* ---------- STAY CONNECTED ---------- */
+
+    const connectionPrompts = [
+        "Send a simple hello to someone you appreciate.",
+        "Think of someone who made your day better.",
+        "Share a kind message with a friend.",
+        "Remember a conversation that made you smile.",
+        "Consider asking someone how their day has been.",
+        "Write a note of appreciation to yourself.",
+        "Spend a little time with someone you trust.",
+        "You can also choose quiet time for yourself today."
+    ];
+
+    let connectionIndex = 0;
+
+    byId("shuffleConnection").addEventListener("click", function() {
+        connectionIndex =
+            (connectionIndex + 1) % connectionPrompts.length;
+
+        byId("connectionPrompt").textContent =
+            connectionPrompts[connectionIndex];
+    });
+
+    const kindnessKey = "serenovaKindnessNotes";
+
+    function renderKindnessNotes() {
+        let entries = readWellness(kindnessKey, []);
+        let container = byId("kindnessNotes");
+        container.replaceChildren();
+
+        if (!entries.length) {
+            container.appendChild(
+                createNode("p", "Your notes will appear here.")
+            );
+            return;
+        }
+
+        entries.slice().reverse().forEach(entry => {
+            let card = createNode("div", undefined, "wellness-record");
+            card.appendChild(createNode("p", entry.text));
+            card.appendChild(createNode("small", entry.date));
+
+            let del = createNode("button", "Delete");
+            del.type = "button";
+
+            del.addEventListener("click", function() {
+                let updated = readWellness(kindnessKey, [])
+                    .filter(item => item.id !== entry.id);
+
+                if (saveWellness(kindnessKey, updated)) {
+                    renderKindnessNotes();
+                }
+            });
+
+            card.appendChild(del);
+            container.appendChild(card);
+        });
+    }
+
+    byId("saveKindnessNote").addEventListener("click", function() {
+        let input = byId("kindnessNote");
+        let text = input.value.trim();
+
+        if (!text) {
+            byId("kindnessMessage").textContent =
+                "Write a little note first.";
+            return;
+        }
+
+        let entries = readWellness(kindnessKey, []);
+
+        entries.push({
+            id: Date.now() + Math.random(),
+            text: text,
+            date: new Date().toLocaleDateString("en-IN")
+        });
+
+        if (saveWellness(kindnessKey, entries)) {
+            input.value = "";
+            byId("kindnessMessage").textContent = "Note saved 💜";
+            renderKindnessNotes();
+        }
+    });
+
+    renderKindnessNotes();
+
+    /* ---------- BREAK IT DOWN ---------- */
+
+    const taskKey = "serenovaWellnessTasks";
+
+    function readTasks() {
+        return readWellness(taskKey, {
+            title: "",
+            steps: []
+        });
+    }
+
+    byId("saveMainTask").addEventListener("click", function() {
+        let title = byId("mainTask").value.trim();
+        if (!title) return;
+
+        let data = readTasks();
+        data.title = title;
+
+        if (saveWellness(taskKey, data)) {
+            byId("taskMessage").textContent = "Goal saved!";
+            renderTasks();
+        }
+    });
+
+    byId("addSmallTask").addEventListener("click", function() {
+        let text = byId("smallTask").value.trim();
+
+        if (!text) return;
+
+        let data = readTasks();
+
+        data.steps.push({
+            id: Date.now() + Math.random(),
+            text: text,
+            done: false
+        });
+
+        if (saveWellness(taskKey, data)) {
+            byId("smallTask").value = "";
+            renderTasks();
+        }
+    });
+
+    function renderTasks() {
+        let data = readTasks();
+        let list = byId("smallTaskList");
+
+        byId("currentMainTask").textContent =
+            data.title || "Your current goal";
+
+        byId("mainTask").value = data.title || "";
+        list.replaceChildren();
+
+        let completed = data.steps.filter(step => step.done).length;
+
+        byId("taskProgressFill").style.width =
+            (data.steps.length ?
+                completed / data.steps.length * 100 : 0) + "%";
+
+        byId("taskProgressText").textContent =
+            data.steps.length ?
+            completed + " of " + data.steps.length + " steps completed." :
+            "No steps added yet.";
+
+        data.steps.forEach(step => {
+            let row = createNode(
+                "div", undefined, "wellness-record wellness-task-row"
+            );
+
+            if (step.done) row.classList.add("completed");
+
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = step.done;
+            checkbox.setAttribute("aria-label", "Complete " + step.text);
+
+            checkbox.addEventListener("change", function() {
+                let updated = readTasks();
+                let item = updated.steps.find(x => x.id === step.id);
+
+                if (item) item.done = this.checked;
+
+                if (saveWellness(taskKey, updated)) renderTasks();
+            });
+
+            row.appendChild(checkbox);
+            row.appendChild(createNode("span", step.text));
+
+            let del = createNode("button", "×");
+            del.type = "button";
+            del.setAttribute("aria-label", "Delete " + step.text);
+
+            del.addEventListener("click", function() {
+                let updated = readTasks();
+                updated.steps = updated.steps.filter(
+                    x => x.id !== step.id
+                );
+
+                if (saveWellness(taskKey, updated)) renderTasks();
+            });
+
+            row.appendChild(del);
+            list.appendChild(row);
+        });
+    }
+
+    renderTasks();
+
+})();
