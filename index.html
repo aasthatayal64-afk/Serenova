@@ -959,5 +959,70 @@ try {
     <p class="footer-small">AI Literacy & Integrity Educational Project</p>
 </footer>
 
+<!-- EDIT REFLECTION POPUP -->
+<div id="editReflectionPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true"
+     aria-labelledby="editReflectionTitle">
+
+    <div class="popup-content edit-reflection-popup">
+
+        <button class="close-popup" type="button"
+                data-close="editReflectionPopup"
+                aria-label="Close Edit Reflection">
+            ×
+        </button>
+
+        <p class="small-heading">YOUR JOURNAL</p>
+        <h2 id="editReflectionTitle">✏️ Edit Reflection</h2>
+
+        <p>
+            Your thoughts can change, and that's okay.
+            Make this reflection your own.
+        </p>
+
+        <label for="editJournalTitle">
+            Reflection Title
+        </label>
+
+        <input type="text" id="editJournalTitle"
+               maxlength="100"
+               placeholder="Give your reflection a title...">
+
+        <label for="editJournalText">
+            Your Thoughts
+        </label>
+
+        <textarea id="editJournalText"
+                  maxlength="1500"
+                  rows="8"
+                  placeholder="Edit your thoughts here..."></textarea>
+
+        <p id="editCharacterCount" class="edit-character-count">
+            0 / 1500 characters
+        </p>
+
+        <div class="edit-reflection-actions">
+
+            <button id="cancelReflectionEdit"
+                    class="secondary-button"
+                    type="button">
+                Cancel
+            </button>
+
+            <button id="saveReflectionChanges"
+                    class="primary-button"
+                    type="button">
+                Save Changes 💜
+            </button>
+
+        </div>
+
+        <p id="editReflectionMessage"
+           class="status-message"
+           role="status"></p>
+
+    </div>
+</div>
+
 </body>
 </html>
