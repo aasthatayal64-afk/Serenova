@@ -1,11 +1,7 @@
 
-/* ==========================================
-   SERENOVA - COMPLETE JAVASCRIPT
-   Mood, Journal, Dashboard, Memories,
-   Streaks, Reminders and Creative Features
-   ========================================== */
+/* SERENOVA - COMPLETE JAVASCRIPT */
 
-/* ---------- BASIC VARIABLES ---------- */
+/* BASIC VARIABLES */
 
 let selectedMood = "";
 let selectedEmoji = "";
@@ -13,17 +9,18 @@ let memoryDatabase = null;
 let previewUrl = null;
 let lastFocusedElement = null;
 let lastReminderDate = "";
+let breathingTimer = null;
+let breathingSeconds = 60;
 
 const $ = id => document.getElementById(id);
 
-/* ---------- STORAGE HELPERS ---------- */
+/* STORAGE HELPERS */
 
 function readData(key) {
     try {
         let data = JSON.parse(localStorage.getItem(key));
         return Array.isArray(data) ? data : [];
     } catch(error) {
-        console.error("Storage read error:", error);
         return [];
     }
 }
@@ -33,9 +30,19 @@ function saveData(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
         return true;
     } catch(error) {
-        console.error("Storage save error:", error);
+        console.error(error);
         alert("Unable to save. Browser storage may be full.");
         return false;
+    }
+}
+
+function readObject(key, fallback) {
+    try {
+        let data = JSON.parse(localStorage.getItem(key));
+        return data && typeof data === "object" &&
+               !Array.isArray(data) ? data : fallback;
+    } catch(error) {
+        return fallback;
     }
 }
 
@@ -48,25 +55,20 @@ function getCurrentDate() {
 }
 
 function getLocalDateKey(date = new Date()) {
-    let year = date.getFullYear();
-    let month = String(date.getMonth() + 1).padStart(2, "0");
-    let day = String(date.getDate()).padStart(2, "0");
-    return year + "-" + month + "-" + day;
+    return date.getFullYear() + "-" +
+        String(date.getMonth() + 1).padStart(2, "0") + "-" +
+        String(date.getDate()).padStart(2, "0");
 }
 
 function getEntryDate(entry) {
     if (entry.timestamp) {
         let date = new Date(entry.timestamp);
-        if (!isNaN(date.getTime())) {
-            return getLocalDateKey(date);
-        }
+        if (!isNaN(date.getTime())) return getLocalDateKey(date);
     }
 
     if (entry.date) {
         let date = new Date(entry.date);
-        if (!isNaN(date.getTime())) {
-            return getLocalDateKey(date);
-        }
+        if (!isNaN(date.getTime())) return getLocalDateKey(date);
 
         let parts = entry.date.split(" ");
         let months = [
@@ -98,6 +100,10 @@ function makeElement(tag, className = "", text) {
     return element;
 }
 
+function setText(id, value) {
+    if ($(id)) $(id).textContent = value;
+}
+
 function showEmpty(container, message) {
     if (!container) return;
     container.replaceChildren(
@@ -105,20 +111,11 @@ function showEmpty(container, message) {
     );
 }
 
-function setText(id, value) {
-    if ($(id)) $(id).textContent = value;
-}
-
-/* ==========================================
-   POPUP SYSTEM
-   ========================================== */
+/* POPUP SYSTEM */
 
 function openPopup(id) {
     let popup = $(id);
-    if (!popup) {
-        console.warn("Popup not found:", id);
-        return;
-    }
+    if (!popup) return;
 
     lastFocusedElement = document.activeElement;
     popup.classList.remove("hidden");
@@ -136,19 +133,23 @@ function openPopup(id) {
     if (id === "starsPopup") renderConstellation();
     if (id === "riverPopup") renderRiverThoughts();
     if (id === "themePopup") updateThemeButtons();
+    if (id === "bodyPopup") loadSelfcare();
+    if (id === "connectPopup") renderKindnessNotes();
+    if (id === "tasksPopup") renderWellnessTasks();
 }
 
 function closePopup(id) {
-    let popup = $(id);
-    if (!popup) return;
+    if (!$(id)) return;
 
-    popup.classList.add("hidden");
+    $(id).classList.add("hidden");
+
+    if (id === "pausePopup") stopBreathing();
 
     if (!document.querySelector(".popup-overlay:not(.hidden)")) {
         document.body.style.overflow = "";
     }
 
-    if (lastFocusedElement) {
+    if (lastFocusedElement && lastFocusedElement.isConnected) {
         lastFocusedElement.focus();
     }
 }
@@ -168,9 +169,7 @@ function initializePopups() {
 
     document.querySelectorAll(".popup-overlay").forEach(popup => {
         popup.addEventListener("click", function(event) {
-            if (event.target === popup) {
-                closePopup(popup.id);
-            }
+            if (event.target === popup) closePopup(popup.id);
         });
     });
 
@@ -186,6 +185,7 @@ function initializePopups() {
                 ".popup-overlay:not(.hidden)"
             );
             if (popup) closePopup(popup.id);
+            return;
         }
 
         if (event.key !== "Tab") return;
@@ -193,13 +193,12 @@ function initializePopups() {
         let popup = document.querySelector(
             ".popup-overlay:not(.hidden)"
         );
-
         if (!popup) return;
 
         let controls = Array.from(popup.querySelectorAll(
-            "button:not([disabled]), input:not([disabled]), " +
-            "textarea:not([disabled]), select:not([disabled]), a[href]"
-        )).filter(element => element.getClientRects().length > 0);
+            "button:not([disabled]),input:not([disabled])," +
+            "textarea:not([disabled]),select:not([disabled]),a[href]"
+        )).filter(el => el.getClientRects().length > 0);
 
         if (!controls.length) return;
 
@@ -213,39 +212,35 @@ function initializePopups() {
                    document.activeElement === last) {
             event.preventDefault();
             first.focus();
+        } else if (!popup.contains(document.activeElement)) {
+            event.preventDefault();
+            first.focus();
         }
     });
 }
 
-/* ==========================================
-   PASTEL THEMES
-   ========================================== */
+/* PASTEL THEMES */
 
 const allowedThemes = [
-    "lavender", "blue", "green",
-    "yellow", "pink", "peach"
+    "lavender", "blue", "green", "yellow", "pink", "peach"
 ];
 
 function applyTheme(theme) {
-    if (!allowedThemes.includes(theme)) {
-        theme = "lavender";
-    }
+    if (!allowedThemes.includes(theme)) theme = "lavender";
 
     document.documentElement.dataset.theme = theme;
 
     try {
         localStorage.setItem("serenovaTheme", theme);
     } catch(error) {
-        console.warn("Theme could not be saved.");
+        console.warn("Theme preference not saved.");
     }
 
     updateThemeButtons();
 
-    setText(
-        "themeMessage",
+    setText("themeMessage",
         "✓ " + theme.charAt(0).toUpperCase() +
-        theme.slice(1) + " theme selected!"
-    );
+        theme.slice(1) + " theme selected!");
 }
 
 function updateThemeButtons() {
@@ -274,16 +269,14 @@ function initializeThemes() {
     updateThemeButtons();
 }
 
-/* ==========================================
-   MOOD TRACKER
-   ========================================== */
+/* MOOD TRACKER */
 
 const moodSuggestions = {
-    Happy: "Celebrate a positive moment. Write down something that made you smile.",
-    Calm: "Take a moment to appreciate what helped you feel balanced.",
-    Okay: "An ordinary day is valid too. Enjoy a favourite activity.",
-    Sad: "Be gentle with yourself. Rest or connect with someone you trust.",
-    Stressed: "Consider a short break or focus on one manageable task."
+    Happy: "Celebrate something that made you smile today.",
+    Calm: "Appreciate a moment that helped you feel balanced.",
+    Okay: "An ordinary day is valid too. Take your time.",
+    Sad: "Be gentle with yourself. Rest or speak with someone you trust.",
+    Stressed: "Consider a short break or one manageable task."
 };
 
 function initializeMoodTracker() {
@@ -297,25 +290,16 @@ function initializeMoodTracker() {
             selectedMood = this.dataset.mood;
             selectedEmoji = this.dataset.emoji;
 
-            setText(
-                "moodMessage",
-                selectedEmoji + " You selected " + selectedMood + "."
-            );
+            setText("moodMessage",
+                selectedEmoji + " You selected " + selectedMood + ".");
+            setText("suggestionText",
+                moodSuggestions[selectedMood] || "");
 
-            setText(
-                "suggestionText",
-                moodSuggestions[selectedMood] || ""
-            );
-
-            if ($("moodSuggestion")) {
-                $("moodSuggestion").classList.remove("hidden");
-            }
+            $("moodSuggestion").classList.remove("hidden");
         });
     });
 
-    if ($("saveMoodButton")) {
-        $("saveMoodButton").addEventListener("click", saveMood);
-    }
+    $("saveMoodButton").addEventListener("click", saveMood);
 }
 
 function saveMood() {
@@ -332,8 +316,7 @@ function saveMood() {
         emoji: selectedEmoji,
         date: getCurrentDate(),
         time: now.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
+            hour: "2-digit", minute: "2-digit"
         }),
         timestamp: now.toISOString()
     };
@@ -342,26 +325,20 @@ function saveMood() {
         getEntryDate(item) === getLocalDateKey(now)
     );
 
-    if (index >= 0) {
-        entries[index] = entry;
-    } else {
-        entries.push(entry);
-    }
+    if (index >= 0) entries[index] = entry;
+    else entries.push(entry);
 
     if (!saveData("serenovaMoods", entries)) return;
 
     setText("moodMessage", "✓ Your mood has been saved!");
-
     displayMoodHistory();
     updateDashboard();
     updateNotificationState();
 }
 
 function displayMoodHistory() {
-    let entries = readData("serenovaMoods");
     let container = $("moodHistory");
-    if (!container) return;
-
+    let entries = readData("serenovaMoods");
     container.replaceChildren();
 
     if (!entries.length) {
@@ -373,108 +350,68 @@ function displayMoodHistory() {
         let row = makeElement("div", "history-entry");
         let mood = makeElement("div", "history-mood");
 
-        mood.appendChild(
-            makeElement("span", "history-emoji", entry.emoji || "💜")
-        );
-
-        mood.appendChild(
-            makeElement("strong", "", entry.mood || "Mood")
-        );
+        mood.appendChild(makeElement(
+            "span", "history-emoji", entry.emoji || "💜"));
+        mood.appendChild(makeElement(
+            "strong", "", entry.mood || "Mood"));
 
         row.appendChild(mood);
-        row.appendChild(
-            makeElement("span", "", (entry.date || "") +
-                " • " + (entry.time || ""))
-        );
+        row.appendChild(makeElement(
+            "span", "", (entry.date || "") +
+            " • " + (entry.time || "")));
 
         container.appendChild(row);
     });
 }
 
-/* ==========================================
-   JOURNAL AND STICKERS
-   ========================================== */
+/* JOURNAL AND STICKERS */
 
 let cursorStart = 0;
 let cursorEnd = 0;
 
 const stickerCategories = {
-    flowers: [
-        "🌸", "🌷", "🌹", "🌺", "🌻", "🌼",
-        "💐", "🪷", "🏵️", "🥀", "🌿", "🍀"
-    ],
-    hearts: [
-        "💜", "💕", "💗", "💖", "💝", "💞",
-        "💓", "💘", "🩷", "🤍", "❤️", "💟"
-    ],
-    stars: [
-        "⭐", "🌟", "✨", "💫", "🌙", "🌛",
-        "🌠", "☀️", "🌈", "☁️", "🌤️", "🪐"
-    ],
-    nature: [
-        "🦋", "🐝", "🐞", "🐛", "🍃", "🌱",
-        "🌳", "🍄", "🐚", "🌊", "🪻", "🪺"
-    ],
-    cute: [
-        "🧸", "🎀", "🫧", "🕯️", "🪄", "🧁",
-        "🍓", "🍒", "🍰", "🎨", "🩰", "🎁"
-    ]
+    flowers: ["🌸","🌷","🌹","🌺","🌻","🌼","💐","🪷","🏵️","🥀"],
+    hearts: ["💜","💕","💗","💖","💝","💞","💓","🩷","🤍","❤️"],
+    stars: ["⭐","🌟","✨","💫","🌙","🌠","☀️","🌈","🪐"],
+    nature: ["🦋","🐝","🐞","🍃","🌱","🌳","🍄","🐚","🪻"],
+    cute: ["🧸","🎀","🫧","🕯️","🪄","🧁","🍓","🍰","🎁"]
 };
 
 function updateCharacterCount() {
-    if (!$("journalInput")) return;
-
-    setText(
-        "characterCount",
-        $("journalInput").value.length + " / 1500 characters"
-    );
+    setText("characterCount",
+        $("journalInput").value.length + " / 1500 characters");
 }
 
 function displayStickers(category = "all") {
     let grid = $("stickerGrid");
-    if (!grid) return;
-
     grid.replaceChildren();
 
-    let stickers = [];
-
-    if (category === "all") {
-        Object.values(stickerCategories).forEach(group => {
-            stickers = stickers.concat(group);
-        });
-    } else {
-        stickers = stickerCategories[category] || [];
-    }
+    let stickers = category === "all"
+        ? Object.values(stickerCategories).flat()
+        : stickerCategories[category] || [];
 
     stickers.forEach(sticker => {
         let button = makeElement("button", "sticker-item", sticker);
         button.type = "button";
         button.setAttribute("aria-label", "Insert " + sticker);
-
-        button.addEventListener("click", function() {
-            insertSticker(sticker);
-        });
-
+        button.addEventListener("click", () => insertSticker(sticker));
         grid.appendChild(button);
     });
 
     document.querySelectorAll(".sticker-tab").forEach(button => {
-        let active = button.dataset.category === category;
-        button.classList.toggle("active", active);
-        button.setAttribute("aria-pressed", String(active));
+        button.classList.toggle("active",
+            button.dataset.category === category);
     });
 }
 
 function insertSticker(sticker) {
     let input = $("journalInput");
-    if (!input) return;
-
     let text = input.value;
     let start = Math.min(cursorStart, text.length);
     let end = Math.min(cursorEnd, text.length);
 
-    let updated = text.substring(0, start) +
-        sticker + text.substring(end);
+    let updated = text.slice(0, start) +
+        sticker + text.slice(end);
 
     if (updated.length > 1500) {
         setText("stickerMessage", "Character limit reached.");
@@ -482,53 +419,40 @@ function insertSticker(sticker) {
     }
 
     input.value = updated;
-
-    let position = start + sticker.length;
-    cursorStart = position;
-    cursorEnd = position;
+    cursorStart = start + sticker.length;
+    cursorEnd = cursorStart;
 
     input.focus();
-    input.setSelectionRange(position, position);
-
+    input.setSelectionRange(cursorStart, cursorEnd);
     updateCharacterCount();
     setText("stickerMessage", sticker + " Sticker added!");
 }
 
 function initializeJournal() {
     let input = $("journalInput");
-    if (!input) return;
-
     setText("currentDate", getCurrentDate());
 
     input.addEventListener("input", updateCharacterCount);
 
-    ["click", "keyup", "select", "input"].forEach(eventName => {
+    ["click","keyup","select","input"].forEach(eventName => {
         input.addEventListener(eventName, function() {
             cursorStart = input.selectionStart;
             cursorEnd = input.selectionEnd;
         });
     });
 
-    if ($("stickerToggle")) {
-        $("stickerToggle").addEventListener("click", function() {
-            let collection = $("stickerCollection");
-            if (!collection) return;
+    $("stickerToggle").addEventListener("click", function() {
+        let collection = $("stickerCollection");
+        let opening = collection.classList.contains("hidden");
+        collection.classList.toggle("hidden", !opening);
+        this.setAttribute("aria-expanded", String(opening));
+        if (opening) displayStickers("all");
+    });
 
-            let opening = collection.classList.contains("hidden");
-
-            collection.classList.toggle("hidden", !opening);
-            this.setAttribute("aria-expanded", String(opening));
-
-            if (opening) displayStickers("all");
-        });
-    }
-
-    if ($("closeStickers")) {
-        $("closeStickers").addEventListener("click", function() {
-            $("stickerCollection").classList.add("hidden");
-            $("stickerToggle").setAttribute("aria-expanded", "false");
-        });
-    }
+    $("closeStickers").addEventListener("click", function() {
+        $("stickerCollection").classList.add("hidden");
+        $("stickerToggle").setAttribute("aria-expanded", "false");
+    });
 
     document.querySelectorAll(".sticker-tab").forEach(button => {
         button.addEventListener("click", function() {
@@ -536,10 +460,7 @@ function initializeJournal() {
         });
     });
 
-    if ($("saveJournalButton")) {
-        $("saveJournalButton").addEventListener("click", saveJournal);
-    }
-
+    $("saveJournalButton").addEventListener("click", saveJournal);
     displayStickers("all");
     updateCharacterCount();
 }
@@ -560,8 +481,7 @@ function saveJournal() {
         text: text,
         date: getCurrentDate(),
         time: now.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
+            hour: "2-digit", minute: "2-digit"
         }),
         timestamp: now.toISOString()
     });
@@ -571,13 +491,10 @@ function saveJournal() {
     input.value = "";
     cursorStart = 0;
     cursorEnd = 0;
-
     updateCharacterCount();
 
-    setText(
-        "journalMessage",
-        "✓ Your reflection and stickers have been saved! 💜"
-    );
+    setText("journalMessage",
+        "✓ Your reflection and stickers have been saved! 💜");
 
     displayJournalEntries();
     updateDashboard();
@@ -588,8 +505,6 @@ function saveJournal() {
 function displayJournalEntries() {
     let entries = readData("serenovaJournal");
     let container = $("journalEntries");
-    if (!container) return;
-
     container.replaceChildren();
 
     if (!entries.length) {
@@ -601,27 +516,17 @@ function displayJournalEntries() {
         let entry = entries[i];
         let card = makeElement("div", "journal-entry");
 
-        card.appendChild(
-            makeElement(
-                "p",
-                "journal-entry-date",
-                (entry.date || "") + " • " + (entry.time || "")
-            )
-        );
+        card.appendChild(makeElement(
+            "p", "journal-entry-date",
+            (entry.date || "") + " • " + (entry.time || "")));
+        card.appendChild(makeElement(
+            "p", "journal-entry-text", entry.text || ""));
 
-        card.appendChild(
-            makeElement("p", "journal-entry-text", entry.text || "")
-        );
+        let del = makeElement("button", "delete-button", "Delete Entry");
+        del.type = "button";
 
-        let deleteButton = makeElement(
-            "button", "delete-button", "Delete Entry"
-        );
-
-        deleteButton.type = "button";
-
-        deleteButton.addEventListener("click", function() {
+        del.addEventListener("click", function() {
             if (!confirm("Delete this reflection?")) return;
-
             let latest = readData("serenovaJournal");
             latest.splice(i, 1);
 
@@ -633,34 +538,27 @@ function displayJournalEntries() {
             }
         });
 
-        card.appendChild(deleteButton);
+        card.appendChild(del);
         container.appendChild(card);
     }
 }
 
-/* ==========================================
-   NEED INSPIRATION - WRITING PROMPTS
-   ========================================== */
+/* NEED INSPIRATION */
 
 const writingPrompts = [
     "What is one little thing that made you smile today?",
     "How would you describe your day in three words?",
     "What is something you feel grateful for today?",
     "What was the most peaceful moment of your day?",
-    "Did anything unexpected happen today?",
     "What made you feel proud of yourself recently?",
     "What is something that has been on your mind?",
-    "What is one small achievement you want to celebrate?",
     "Who made your day a little better, and why?",
     "What is something you learned about yourself today?",
     "If today had a colour, what colour would it be?",
     "What is one thing you would like to let go of?",
-    "What made you feel comfortable today?",
-    "What is one thing you're looking forward to?",
     "How did you take care of yourself today?",
     "What would you like to do differently tomorrow?",
     "What is a memory you would love to revisit?",
-    "What is something beautiful you noticed today?",
     "What was the most challenging part of your day?",
     "When did you feel most like yourself today?"
 ];
@@ -668,31 +566,20 @@ const writingPrompts = [
 let currentPromptIndex = 0;
 
 function initializeWritingPrompts() {
-    if (!$("journalPrompt") || !$("shufflePrompt") ||
-        !$("usePrompt")) return;
-
-    $("journalPrompt").textContent =
-        writingPrompts[currentPromptIndex];
+    $("journalPrompt").textContent = writingPrompts[0];
 
     $("shufflePrompt").addEventListener("click", function() {
-        let nextIndex;
-
+        let next;
         do {
-            nextIndex = Math.floor(
-                Math.random() * writingPrompts.length
-            );
-        } while (nextIndex === currentPromptIndex);
+            next = Math.floor(Math.random() * writingPrompts.length);
+        } while (next === currentPromptIndex);
 
-        currentPromptIndex = nextIndex;
-
-        $("journalPrompt").textContent =
-            writingPrompts[currentPromptIndex];
+        currentPromptIndex = next;
+        $("journalPrompt").textContent = writingPrompts[next];
     });
 
     $("usePrompt").addEventListener("click", function() {
         let input = $("journalInput");
-        if (!input) return;
-
         let prompt = writingPrompts[currentPromptIndex];
 
         let updated = input.value.trim()
@@ -705,35 +592,17 @@ function initializeWritingPrompts() {
         }
 
         input.value = updated;
-        input.dispatchEvent(new Event("input", {
-            bubbles: true
-        }));
-
+        input.dispatchEvent(new Event("input", {bubbles:true}));
         input.focus();
-        input.setSelectionRange(
-            input.value.length,
-            input.value.length
-        );
     });
 }
 
-/* ==========================================
-   DASHBOARD STATISTICS
-   ========================================== */
+/* DASHBOARD STATISTICS */
 
-const moodNames = [
-    "Happy", "Calm", "Okay", "Sad", "Stressed"
-];
-
-const barIds = [
-    "happyBar", "calmBar", "okayBar",
-    "sadBar", "stressedBar"
-];
-
-const countIds = [
-    "happyCount", "calmCount", "okayCount",
-    "sadCount", "stressedCount"
-];
+const moodNames = ["Happy","Calm","Okay","Sad","Stressed"];
+const barIds = ["happyBar","calmBar","okayBar","sadBar","stressedBar"];
+const countIds = ["happyCount","calmCount","okayCount",
+                  "sadCount","stressedCount"];
 
 function updateDashboard() {
     let moods = readData("serenovaMoods");
@@ -742,42 +611,23 @@ function updateDashboard() {
     setText("totalMoodEntries", moods.length);
     setText("totalJournalEntries", journals.length);
 
-    let counts = {
-        Happy: 0,
-        Calm: 0,
-        Okay: 0,
-        Sad: 0,
-        Stressed: 0
-    };
+    let counts = {Happy:0, Calm:0, Okay:0, Sad:0, Stressed:0};
 
     moods.forEach(entry => {
-        if (counts[entry.mood] !== undefined) {
-            counts[entry.mood]++;
-        }
+        if (counts[entry.mood] !== undefined) counts[entry.mood]++;
     });
 
     let max = Math.max(0, ...Object.values(counts));
+    let winners = moodNames.filter(mood => counts[mood] === max);
 
-    let winners = moodNames.filter(mood =>
-        counts[mood] === max
-    );
-
-    setText(
-        "frequentMood",
-        !max ? "—" :
-        winners.length > 1 ?
-        "Tie: " + winners.join(", ") : winners[0]
-    );
+    setText("frequentMood",
+        !max ? "—" : winners.length > 1
+        ? "Tie: " + winners.join(", ") : winners[0]);
 
     moodNames.forEach((mood, i) => {
         let count = counts[mood];
-        let bar = $(barIds[i]);
-
-        if (bar) {
-            bar.style.height =
-                Math.max(5, count / Math.max(1, max) * 160) + "px";
-        }
-
+        $(barIds[i]).style.height =
+            Math.max(5, count / Math.max(1, max) * 160) + "px";
         setText(countIds[i], count);
     });
 
@@ -785,31 +635,19 @@ function updateDashboard() {
     let difficult = counts.Sad + counts.Stressed;
 
     if (!moods.length) {
-        setText(
-            "patternSummary",
-            "Start recording moods to see your summary."
-        );
+        setText("patternSummary", "Start recording moods to see patterns.");
     } else if (positive > difficult) {
-        setText(
-            "patternSummary",
-            "Your entries contain more Happy and Calm selections."
-        );
+        setText("patternSummary",
+            "Your entries contain more Happy and Calm selections.");
     } else if (difficult > positive) {
-        setText(
-            "patternSummary",
+        setText("patternSummary",
             "Your entries contain more Sad and Stressed selections. " +
-            "This is not a diagnosis."
-        );
+            "This is not a diagnosis.");
     } else {
-        setText(
-            "patternSummary",
-            "Your recorded moods show a mixed pattern."
-        );
+        setText("patternSummary", "Your recorded moods show a mixed pattern.");
     }
 
     let recent = $("recentMoodHistory");
-    if (!recent) return;
-
     recent.replaceChildren();
 
     if (!moods.length) {
@@ -819,23 +657,14 @@ function updateDashboard() {
 
     moods.slice(-5).reverse().forEach(entry => {
         let row = makeElement("div", "recent-entry");
-
-        row.appendChild(
-            makeElement("span", "",
-                (entry.emoji || "💜") + " " + entry.mood)
-        );
-
-        row.appendChild(
-            makeElement("span", "", entry.date || "")
-        );
-
+        row.appendChild(makeElement("span", "",
+            (entry.emoji || "💜") + " " + entry.mood));
+        row.appendChild(makeElement("span", "", entry.date || ""));
         recent.appendChild(row);
     });
 }
 
-/* ==========================================
-   MEMORY LANE - INDEXEDDB
-   ========================================== */
+/* MEMORY LANE - INDEXEDDB */
 
 function openMemoryDatabase() {
     return new Promise(function(resolve, reject) {
@@ -848,11 +677,9 @@ function openMemoryDatabase() {
 
         request.onupgradeneeded = function() {
             let db = request.result;
-
             if (!db.objectStoreNames.contains("photos")) {
                 db.createObjectStore("photos", {
-                    keyPath: "id",
-                    autoIncrement: true
+                    keyPath:"id", autoIncrement:true
                 });
             }
         };
@@ -876,46 +703,28 @@ function memoryStore(mode) {
 function addMemory(photo) {
     return new Promise(function(resolve, reject) {
         let request = memoryStore("readwrite").add(photo);
-
-        request.onsuccess = function() {
-            resolve();
-        };
-
-        request.onerror = function() {
-            reject(request.error);
-        };
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
     });
 }
 
 function getAllMemories() {
     return new Promise(function(resolve, reject) {
         let request = memoryStore("readonly").getAll();
-
-        request.onsuccess = function() {
-            resolve(request.result);
-        };
-
-        request.onerror = function() {
-            reject(request.error);
-        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
     });
 }
 
 function removeMemory(id) {
     return new Promise(function(resolve, reject) {
         let request = memoryStore("readwrite").delete(id);
-
-        request.onsuccess = function() {
-            resolve();
-        };
-
-        request.onerror = function() {
-            reject(request.error);
-        };
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
     });
 }
 
-/* ---------- IMAGE COMPRESSION ---------- */
+/* IMAGE COMPRESSION */
 
 function compressMemoryImage(file) {
     return new Promise(function(resolve, reject) {
@@ -939,23 +748,15 @@ function compressMemoryImage(file) {
             }
 
             let maxSize = 1600;
-
-            if (width > maxSize || height > maxSize) {
-                let ratio = Math.min(
-                    maxSize / width,
-                    maxSize / height
-                );
-
-                width = Math.round(width * ratio);
-                height = Math.round(height * ratio);
-            }
+            let ratio = Math.min(1, maxSize / width, maxSize / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
 
             let canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
 
             let context = canvas.getContext("2d");
-
             if (!context) {
                 reject(new Error("Image processing unavailable."));
                 return;
@@ -980,84 +781,62 @@ function compressMemoryImage(file) {
     });
 }
 
-/* ---------- PHOTO PREVIEW ---------- */
-
 function initializeMemoryLane() {
-    let photoInput = $("memoryPhoto");
+    $("memoryPhoto").addEventListener("change", function() {
+        let file = this.files[0];
 
-    if (photoInput) {
-        photoInput.addEventListener("change", function() {
-            let file = this.files[0];
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+        }
 
-            if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
-                previewUrl = null;
-            }
+        if (!file) {
+            $("photoPreview").classList.add("hidden");
+            return;
+        }
 
-            if (!file) {
-                $("photoPreview").classList.add("hidden");
-                return;
-            }
+        if (!file.type.startsWith("image/")) {
+            alert("Please select an image.");
+            this.value = "";
+            return;
+        }
 
-            if (!file.type.startsWith("image/")) {
-                alert("Please select an image.");
-                this.value = "";
-                return;
-            }
+        previewUrl = URL.createObjectURL(file);
+        $("previewImage").src = previewUrl;
+        $("photoPreview").classList.remove("hidden");
+    });
 
-            previewUrl = URL.createObjectURL(file);
-
-            $("previewImage").src = previewUrl;
-            $("photoPreview").classList.remove("hidden");
-        });
-    }
-
-    if ($("saveMemoryButton")) {
-        $("saveMemoryButton").addEventListener(
-            "click", saveMemory
-        );
-    }
+    $("saveMemoryButton").addEventListener("click", saveMemory);
 }
 
-/* ---------- SAVE POLAROID ---------- */
-
 async function saveMemory() {
-    let photoInput = $("memoryPhoto");
-    let file = photoInput.files[0];
-
+    let file = $("memoryPhoto").files[0];
     let caption = $("memoryCaption").value.trim();
-    let message = $("memoryMessage");
 
     if (!file) {
-        message.textContent = "Please select a photograph.";
-        return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-        message.textContent = "Only image files are allowed.";
+        setText("memoryMessage", "Please select a photograph.");
         return;
     }
 
     if (!memoryDatabase) {
-        message.textContent = "Photo storage is unavailable.";
+        setText("memoryMessage", "Photo storage is unavailable.");
         return;
     }
 
     this.disabled = true;
-    message.textContent = "Optimizing your photograph...";
+    setText("memoryMessage", "Optimizing your photograph...");
 
     try {
-        let optimizedImage = await compressMemoryImage(file);
+        let optimized = await compressMemoryImage(file);
 
         await addMemory({
-            image: optimizedImage,
-            caption: caption ||
-                "A little moment worth remembering",
+            image: optimized,
+            caption: caption || "A little moment worth remembering",
             date: getCurrentDate(),
             timestamp: new Date().toISOString()
         });
 
-        photoInput.value = "";
+        $("memoryPhoto").value = "";
         $("memoryCaption").value = "";
 
         if (previewUrl) {
@@ -1066,27 +845,18 @@ async function saveMemory() {
         }
 
         $("photoPreview").classList.add("hidden");
-
-        message.textContent =
-            "💜 Your photograph has been optimized and saved!";
-
+        setText("memoryMessage", "💜 Your Polaroid has been saved!");
         displayMemories();
-
     } catch(error) {
-        console.error("Memory Lane error:", error);
-        message.textContent =
-            "Unable to save this photograph. Please try another image.";
+        console.error(error);
+        setText("memoryMessage", "Unable to save photograph.");
     } finally {
         this.disabled = false;
     }
 }
 
-/* ---------- DISPLAY POLAROIDS ---------- */
-
 async function displayMemories() {
     let gallery = $("memoryGallery");
-    if (!gallery) return;
-
     gallery.replaceChildren();
 
     if (!memoryDatabase) {
@@ -1102,64 +872,40 @@ async function displayMemories() {
             return;
         }
 
-        memories.reverse();
-
-        memories.forEach(memory => {
+        memories.reverse().forEach(memory => {
             let card = makeElement("div", "polaroid");
             let image = document.createElement("img");
+            let url = URL.createObjectURL(memory.image);
 
-            let imageUrl = URL.createObjectURL(memory.image);
-
-            image.src = imageUrl;
+            image.src = url;
             image.alt = memory.caption || "Saved memory";
-
-            image.onload = function() {
-                URL.revokeObjectURL(imageUrl);
-            };
+            image.onload = () => URL.revokeObjectURL(url);
 
             card.appendChild(image);
-            card.appendChild(
-                makeElement("p", "", memory.caption || "")
-            );
-            card.appendChild(
-                makeElement("small", "", memory.date || "")
-            );
+            card.appendChild(makeElement("p", "", memory.caption || ""));
+            card.appendChild(makeElement("small", "", memory.date || ""));
 
-            let deleteButton = makeElement(
-                "button", "delete-button", "Delete Memory"
-            );
-
-            deleteButton.addEventListener("click", async function() {
+            let del = makeElement("button", "delete-button", "Delete Memory");
+            del.addEventListener("click", async function() {
                 if (!confirm("Delete this memory?")) return;
-
-                try {
-                    await removeMemory(memory.id);
-                    displayMemories();
-                } catch(error) {
-                    alert("Unable to delete memory.");
-                }
+                await removeMemory(memory.id);
+                displayMemories();
             });
 
-            card.appendChild(deleteButton);
+            card.appendChild(del);
             gallery.appendChild(card);
         });
-
     } catch(error) {
         console.error(error);
         showEmpty(gallery, "Unable to load memories.");
     }
 }
 
-/* ==========================================
-   REFLECTION STREAK
-   ========================================== */
+/* REFLECTION STREAK */
 
 function updateReflectionStreak() {
     let entries = readData("serenovaJournal");
-
-    let dates = [
-        ...new Set(entries.map(getEntryDate).filter(Boolean))
-    ].sort();
+    let dates = [...new Set(entries.map(getEntryDate).filter(Boolean))].sort();
 
     let longest = 0;
     let running = 0;
@@ -1167,10 +913,8 @@ function updateReflectionStreak() {
 
     dates.forEach(key => {
         let date = new Date(key + "T12:00:00");
-
         let difference = previous
-            ? Math.round((date - previous) / 86400000)
-            : 0;
+            ? Math.round((date - previous) / 86400000) : 0;
 
         running = difference === 1 ? running + 1 : 1;
         longest = Math.max(longest, running);
@@ -1178,8 +922,7 @@ function updateReflectionStreak() {
     });
 
     let today = new Date();
-    today.setHours(12, 0, 0, 0);
-
+    today.setHours(12,0,0,0);
     let yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
@@ -1187,7 +930,6 @@ function updateReflectionStreak() {
 
     if (dates.includes(getLocalDateKey(today)) ||
         dates.includes(getLocalDateKey(yesterday))) {
-
         let cursor = dates.includes(getLocalDateKey(today))
             ? today : yesterday;
 
@@ -1199,57 +941,18 @@ function updateReflectionStreak() {
 
     setText("currentStreak", current);
     setText("longestStreak", longest);
-
     updateReflectionTimes(entries);
-}
-
-function timeToMinutes(time) {
-    if (!time) return null;
-
-    let match = time.match(
-        /(\d{1,2}):(\d{2})\s*(AM|PM)?/i
-    );
-
-    if (!match) return null;
-
-    let hours = Number(match[1]);
-    let minutes = Number(match[2]);
-    let period = match[3];
-
-    if (period) {
-        if (hours === 12) hours = 0;
-        if (period.toUpperCase() === "PM") hours += 12;
-    }
-
-    return hours * 60 + minutes;
-}
-
-function formatMinutes(minutes) {
-    let hours = Math.floor(minutes / 60) % 24;
-    let mins = minutes % 60;
-    let period = hours >= 12 ? "PM" : "AM";
-    let displayHour = hours % 12 || 12;
-
-    return displayHour + ":" +
-        String(mins).padStart(2, "0") + " " + period;
 }
 
 function updateReflectionTimes(entries) {
     let timeline = $("reflectionTimeline");
-    if (!timeline) return;
-
     timeline.replaceChildren();
 
     if (!entries.length) {
         setText("usualTime", "—");
-        setText(
-            "sleepMessage",
-            "Your rest matters as much as your reflections."
-        );
-        showEmpty(
-            timeline,
-            "Start journaling to see your timeline."
-        );
+        setText("sleepMessage",
+            "Your rest matters as much as your reflections.");
+        showEmpty(timeline, "Start journaling to see your timeline.");
         return;
     }
 
@@ -1257,20 +960,10 @@ function updateReflectionTimes(entries) {
     let lateCount = 0;
 
     entries.forEach(entry => {
-        let minutes = null;
+        let date = entry.timestamp ? new Date(entry.timestamp) : null;
 
-        if (entry.timestamp) {
-            let date = new Date(entry.timestamp);
-
-            if (!isNaN(date.getTime())) {
-                minutes = date.getHours() * 60 +
-                    date.getMinutes();
-            }
-        } else {
-            minutes = timeToMinutes(entry.time);
-        }
-
-        if (minutes !== null) {
+        if (date && !isNaN(date.getTime())) {
+            let minutes = date.getHours() * 60 + date.getMinutes();
             times.push(minutes);
             if (minutes >= 1320) lateCount++;
         }
@@ -1289,158 +982,90 @@ function updateReflectionTimes(entries) {
         let angle = Math.atan2(sinTotal, cosTotal);
         if (angle < 0) angle += 2 * Math.PI;
 
-        let average = Math.round(
-            angle / (2 * Math.PI) * 1440
-        ) % 1440;
+        let average = Math.round(angle / (2 * Math.PI) * 1440) % 1440;
+        let hour = Math.floor(average / 60);
+        let minute = average % 60;
+        let period = hour >= 12 ? "PM" : "AM";
 
-        setText("usualTime", formatMinutes(average));
+        setText("usualTime",
+            (hour % 12 || 12) + ":" +
+            String(minute).padStart(2,"0") + " " + period);
     } else {
         setText("usualTime", "—");
     }
 
     entries.slice(-10).reverse().forEach(entry => {
         let row = makeElement("div", "timeline-entry");
-
-        row.appendChild(
-            makeElement("span", "", "📖 " + (entry.date || ""))
-        );
-
-        row.appendChild(
-            makeElement("strong", "",
-                entry.time || "Time unavailable")
-        );
-
+        row.appendChild(makeElement("span", "",
+            "📖 " + (entry.date || "")));
+        row.appendChild(makeElement("strong", "",
+            entry.time || "Time unavailable"));
         timeline.appendChild(row);
     });
 
-    if (times.length >= 3 &&
-        lateCount / times.length >= 0.5) {
-        setText(
-            "sleepMessage",
-            "Many reflections were saved after 10 PM. " +
-            "If this is close to your bedtime, consider " +
-            "making time to unwind and rest."
-        );
-    } else {
-        setText(
-            "sleepMessage",
-            "Remember to make space for rest alongside " +
-            "your reflections. 💜"
-        );
-    }
+    setText("sleepMessage",
+        times.length >= 3 && lateCount / times.length >= 0.5
+        ? "Several reflections were saved late at night. " +
+          "If this is close to bedtime, consider making time to unwind."
+        : "Remember to make space for rest alongside reflections. 💜");
 }
 
-/* ==========================================
-   GENTLE REMINDERS
-   ========================================== */
+/* GENTLE REMINDERS */
 
 const welcomeMessages = [
     "Hello! How are you feeling today? 💜",
     "Your thoughts deserve a peaceful space. 🌷",
     "How was your day? Happy, sad or somewhere in between?",
-    "Your journal is waiting whenever you're ready. 📖",
     "Remember to be gentle with yourself today. 🌸",
-    "Every feeling matters, even the difficult ones. 💕",
-    "Would you like to capture a little memory today? 📸",
-    "A fresh day, a fresh opportunity to reflect. 🌿",
-    "Welcome back! Take your time, there's no pressure. 💜",
-    "You don't have to journal every day to make progress."
+    "Every feeling matters, even the difficult ones.",
+    "You don't have to journal every day to make progress.",
+    "Welcome back! There's no pressure to complete anything."
 ];
 
 let notificationTarget = "mood";
 
-function loadReminderSettings() {
-    try {
-        if ($("reminderTime")) {
-            $("reminderTime").value =
-                localStorage.getItem("serenovaReminderTime") ||
-                "21:30";
-        }
-
-        if ($("remindersEnabled")) {
-            $("remindersEnabled").checked =
-                localStorage.getItem(
-                    "serenovaRemindersEnabled"
-                ) !== "false";
-        }
-    } catch(error) {
-        console.warn("Reminder settings unavailable.");
-    }
-}
-
 function initializeReminders() {
-    loadReminderSettings();
+    try {
+        $("reminderTime").value =
+            localStorage.getItem("serenovaReminderTime") || "21:30";
+        $("remindersEnabled").checked =
+            localStorage.getItem("serenovaRemindersEnabled") !== "false";
+    } catch(error) {}
 
-    if ($("saveReminderButton")) {
-        $("saveReminderButton").addEventListener("click", function() {
-            try {
-                localStorage.setItem(
-                    "serenovaReminderTime",
-                    $("reminderTime").value
-                );
+    $("saveReminderButton").addEventListener("click", function() {
+        try {
+            localStorage.setItem("serenovaReminderTime",
+                $("reminderTime").value);
+            localStorage.setItem("serenovaRemindersEnabled",
+                String($("remindersEnabled").checked));
 
-                localStorage.setItem(
-                    "serenovaRemindersEnabled",
-                    String($("remindersEnabled").checked)
-                );
+            setText("reminderMessage", "✓ Reminder settings saved.");
 
-                setText(
-                    "reminderMessage",
-                    "✓ Reminder settings saved."
-                );
-
-                if (!$("remindersEnabled").checked) {
-                    $("welcomeNotification").classList.add("hidden");
-                }
-
-            } catch(error) {
-                setText(
-                    "reminderMessage",
-                    "Unable to save reminder settings."
-                );
+            if (!$("remindersEnabled").checked) {
+                $("welcomeNotification").classList.add("hidden");
             }
-        });
-    }
+        } catch(error) {
+            setText("reminderMessage", "Unable to save settings.");
+        }
+    });
 
-    if ($("closeNotification")) {
-        $("closeNotification").addEventListener("click", function() {
-            $("welcomeNotification").classList.add("hidden");
-        });
-    }
+    $("closeNotification").addEventListener("click", function() {
+        $("welcomeNotification").classList.add("hidden");
+    });
 
-    if ($("notificationAction")) {
-        $("notificationAction").addEventListener("click", function() {
-            $("welcomeNotification").classList.add("hidden");
-
-            let section = $(notificationTarget);
-
-            if (section) {
-                section.scrollIntoView({
-                    behavior: "smooth"
-                });
-            }
-        });
-    }
+    $("notificationAction").addEventListener("click", function() {
+        $("welcomeNotification").classList.add("hidden");
+        $(notificationTarget).scrollIntoView({behavior:"smooth"});
+    });
 }
 
 function hasTodayEntry(key) {
-    let today = getLocalDateKey();
-
     return readData(key).some(entry =>
-        getEntryDate(entry) === today
-    );
-}
-
-function getRandomWelcomeMessage() {
-    return welcomeMessages[
-        Math.floor(Math.random() * welcomeMessages.length)
-    ];
+        getEntryDate(entry) === getLocalDateKey());
 }
 
 function showWelcomeNotification() {
-    if (!$("welcomeNotification")) return;
-    if ($("remindersEnabled") &&
-        !$("remindersEnabled").checked) return;
+    if (!$("remindersEnabled").checked) return;
 
     let moodDone = hasTodayEntry("serenovaMoods");
     let journalDone = hasTodayEntry("serenovaJournal");
@@ -1448,32 +1073,21 @@ function showWelcomeNotification() {
     setText("notificationTitle", "Hello from SERENOVA 💜");
 
     if (!moodDone) {
-        setText(
-            "notificationText",
-            getRandomWelcomeMessage() +
-            " You haven't recorded today's mood yet."
-        );
-
+        let message = welcomeMessages[
+            Math.floor(Math.random() * welcomeMessages.length)
+        ];
+        setText("notificationText",
+            message + " You can record your mood whenever you're ready.");
         notificationTarget = "mood";
         setText("notificationAction", "Record My Mood →");
-
     } else if (!journalDone) {
-        setText(
-            "notificationText",
-            "You've recorded your mood. Would you like " +
-            "to write a little reflection too?"
-        );
-
+        setText("notificationText",
+            "Would you like to write a little reflection? It's optional.");
         notificationTarget = "journal";
         setText("notificationAction", "Open Journal →");
-
     } else {
-        setText(
-            "notificationText",
-            "You've checked in today! Thank you for " +
-            "taking a moment for yourself. 🌷"
-        );
-
+        setText("notificationText",
+            "You've checked in today. Thank you for taking time for yourself.");
         notificationTarget = "dashboard";
         setText("notificationAction", "View Dashboard →");
     }
@@ -1482,60 +1096,39 @@ function showWelcomeNotification() {
 }
 
 function updateNotificationState() {
-    if ($("welcomeNotification") &&
-        !$("welcomeNotification").classList.contains("hidden")) {
+    if (!$("welcomeNotification").classList.contains("hidden")) {
         showWelcomeNotification();
     }
 }
 
 function checkDailyReminder() {
-    if (!$("remindersEnabled") ||
-        !$("remindersEnabled").checked) return;
+    if (!$("remindersEnabled").checked) return;
 
     let now = new Date();
-    let currentMinutes = now.getHours() * 60 +
-        now.getMinutes();
-
+    let currentMinutes = now.getHours() * 60 + now.getMinutes();
     let parts = $("reminderTime").value.split(":");
+
     if (parts.length !== 2) return;
 
-    let targetMinutes =
-        Number(parts[0]) * 60 + Number(parts[1]);
+    let target = Number(parts[0]) * 60 + Number(parts[1]);
+    let today = getLocalDateKey();
 
-    let today = getLocalDateKey(now);
-
-    if (currentMinutes >= targetMinutes &&
-        lastReminderDate !== today) {
-
-        let moodDone = hasTodayEntry("serenovaMoods");
-        let journalDone = hasTodayEntry("serenovaJournal");
-
-        if (!moodDone || !journalDone) {
-            setText(
-                "notificationTitle",
-                "A Gentle Reminder 🌙"
-            );
-
-            setText(
-                "notificationText",
-                "Your daily check-in is waiting. " +
-                "Take a moment whenever you're comfortable."
-            );
-
-            notificationTarget = !moodDone
+    if (currentMinutes >= target && lastReminderDate !== today) {
+        if (!hasTodayEntry("serenovaMoods") ||
+            !hasTodayEntry("serenovaJournal")) {
+            setText("notificationTitle", "A Gentle Reminder 🌙");
+            setText("notificationText",
+                "Your space is here whenever you feel like reflecting.");
+            notificationTarget = !hasTodayEntry("serenovaMoods")
                 ? "mood" : "journal";
-
             setText("notificationAction", "Check In →");
-
             $("welcomeNotification").classList.remove("hidden");
             lastReminderDate = today;
         }
     }
 }
 
-/* ==========================================
-   CREATIVE DASHBOARD HELPERS
-   ========================================== */
+/* CREATIVE DASHBOARD HELPERS */
 
 function creativeRead(key) {
     return readData(key);
@@ -1553,27 +1146,19 @@ function creativeEmpty(container, message) {
     showEmpty(container, message);
 }
 
-function creativeDate(date = new Date()) {
-    return date.toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    });
+function creativeDate() {
+    return getCurrentDate();
 }
 
-function creativeKey(date = new Date()) {
-    return getLocalDateKey(date);
+function creativeKey() {
+    return getLocalDateKey();
 }
 
-/* ==========================================
-   1. JAR OF EMOTIONS
-   ========================================== */
+/* JAR OF EMOTIONS */
 
 const emotionStorage = "serenovaEmotionStars";
 
 function initializeEmotionJar() {
-    if (!$("addEmotionStar")) return;
-
     $("addEmotionStar").addEventListener("click", function() {
         let text = $("emotionText").value.trim();
         let color = $("emotionColor").value;
@@ -1584,11 +1169,9 @@ function initializeEmotionJar() {
         }
 
         let entries = creativeRead(emotionStorage);
-
         entries.push({
             id: Date.now() + Math.random(),
-            text: text,
-            color: color,
+            text, color,
             date: creativeDate(),
             timestamp: new Date().toISOString()
         });
@@ -1596,406 +1179,254 @@ function initializeEmotionJar() {
         if (!creativeSave(emotionStorage, entries)) return;
 
         $("emotionText").value = "";
-
-        setText(
-            "jarMessage",
-            "⭐ Your feeling has become a little star!"
-        );
-
+        setText("jarMessage", "⭐ Your feeling became a little star!");
         renderEmotionJar();
     });
 }
 
 function renderEmotionJar() {
+    let entries = creativeRead(emotionStorage);
     let jar = $("jarStars");
     let list = $("emotionList");
-    if (!jar || !list) return;
-
-    let entries = creativeRead(emotionStorage);
-
     jar.replaceChildren();
     list.replaceChildren();
 
     entries.slice(-35).forEach(entry => {
-        let star = creativeElement(
-            "button", "★", "jar-star " + entry.color
-        );
-
+        let star = creativeElement("button", "★",
+            "jar-star " + entry.color);
         star.type = "button";
         star.title = "Open this feeling";
-
-        star.addEventListener("click", function() {
-            alert(entry.text + "\n\n" + entry.date);
-        });
-
+        star.onclick = () => alert(entry.text + "\n\n" + entry.date);
         jar.appendChild(star);
     });
 
     if (!entries.length) {
-        creativeEmpty(
-            list,
-            "Your little stars will appear here."
-        );
+        creativeEmpty(list, "Your stars will appear here.");
         return;
     }
 
     entries.slice().reverse().forEach(entry => {
-        let card = creativeElement(
-            "div", undefined, "creative-record"
-        );
+        let card = creativeElement("div", undefined, "creative-record");
+        card.appendChild(creativeElement("strong", "⭐ " + entry.date));
+        card.appendChild(creativeElement("p", entry.text));
 
-        card.appendChild(
-            creativeElement("strong", "⭐ " + entry.date)
-        );
-
-        card.appendChild(
-            creativeElement("p", entry.text)
-        );
-
-        let del = creativeElement(
-            "button", "Delete", "creative-delete"
-        );
-
-        del.addEventListener("click", function() {
+        let del = creativeElement("button", "Delete", "creative-delete");
+        del.onclick = function() {
             if (!confirm("Delete this star?")) return;
-
             let updated = creativeRead(emotionStorage)
-                .filter(item => item.id !== entry.id);
-
-            if (creativeSave(emotionStorage, updated)) {
-                renderEmotionJar();
-            }
-        });
+                .filter(x => x.id !== entry.id);
+            if (creativeSave(emotionStorage, updated)) renderEmotionJar();
+        };
 
         card.appendChild(del);
         list.appendChild(card);
     });
 }
 
-/* ==========================================
-   2. WEEKLY RESOLUTIONS
-   ========================================== */
+/* WEEKLY RESOLUTIONS */
 
 const goalsStorage = "serenovaWeeklyGoals";
 
 function weekKey() {
     let now = new Date();
     let monday = new Date(now);
-    let day = (now.getDay() + 6) % 7;
-
-    monday.setDate(now.getDate() - day);
-    return creativeKey(monday);
+    monday.setDate(now.getDate() - (now.getDay() + 6) % 7);
+    return getLocalDateKey(monday);
 }
 
 function initializeWeeklyGoals() {
-    if (!$("addGoal")) return;
-
     $("addGoal").addEventListener("click", function() {
         let input = $("newGoal");
         let text = input.value.trim();
-
         if (!text) return;
 
         let goals = creativeRead(goalsStorage);
-
         goals.push({
             id: Date.now() + Math.random(),
-            text: text,
-            done: false,
-            week: weekKey()
+            text, done:false, week:weekKey()
         });
 
         if (!creativeSave(goalsStorage, goals)) return;
-
         input.value = "";
         renderWeeklyGoals();
     });
 }
 
 function renderWeeklyGoals() {
-    if (!$("goalList")) return;
-
-    let all = creativeRead(goalsStorage);
-    let goals = all.filter(item => item.week === weekKey());
-
-    let completed = goals.filter(item => item.done).length;
-    let remaining = goals.length - completed;
+    let goals = creativeRead(goalsStorage)
+        .filter(x => x.week === weekKey());
+    let completed = goals.filter(x => x.done).length;
 
     setText("completedGoals", completed);
-    setText("remainingGoals", remaining);
-
-    if ($("goalProgressFill")) {
-        $("goalProgressFill").style.width =
-            (goals.length ? completed / goals.length * 100 : 0) + "%";
-    }
+    setText("remainingGoals", goals.length - completed);
+    $("goalProgressFill").style.width =
+        (goals.length ? completed / goals.length * 100 : 0) + "%";
 
     let list = $("goalList");
     list.replaceChildren();
 
     if (!goals.length) {
-        creativeEmpty(
-            list,
-            "Add a little goal for this week."
-        );
+        creativeEmpty(list, "Add a little goal for this week.");
         return;
     }
 
     goals.forEach(goal => {
-        let row = creativeElement(
-            "div", undefined, "creative-record goal-row"
-        );
-
+        let row = creativeElement("div", undefined,
+            "creative-record goal-row");
         if (goal.done) row.classList.add("done");
 
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = goal.done;
+        checkbox.setAttribute("aria-label", "Complete " + goal.text);
 
-        checkbox.setAttribute(
-            "aria-label",
-            "Mark " + goal.text + " completed"
-        );
-
-        checkbox.addEventListener("change", function() {
+        checkbox.onchange = function() {
             let updated = creativeRead(goalsStorage);
             let item = updated.find(x => x.id === goal.id);
-
             if (item) item.done = this.checked;
-
-            if (creativeSave(goalsStorage, updated)) {
-                renderWeeklyGoals();
-            }
-        });
+            if (creativeSave(goalsStorage, updated)) renderWeeklyGoals();
+        };
 
         row.appendChild(checkbox);
-        row.appendChild(
-            creativeElement("span", goal.text)
-        );
+        row.appendChild(creativeElement("span", goal.text));
 
-        let del = creativeElement(
-            "button", "×", "creative-delete"
-        );
-
-        del.addEventListener("click", function() {
+        let del = creativeElement("button", "×", "creative-delete");
+        del.onclick = function() {
             let updated = creativeRead(goalsStorage)
-                .filter(item => item.id !== goal.id);
-
-            if (creativeSave(goalsStorage, updated)) {
-                renderWeeklyGoals();
-            }
-        });
+                .filter(x => x.id !== goal.id);
+            if (creativeSave(goalsStorage, updated)) renderWeeklyGoals();
+        };
 
         row.appendChild(del);
         list.appendChild(row);
     });
 }
 
-/* ==========================================
-   3. YOUR INNER GARDEN
-   ========================================== */
+/* INNER GARDEN */
 
 const moodFlowers = {
-    Happy: "🌻",
-    Calm: "🪷",
-    Okay: "🌼",
-    Sad: "🪻",
-    Stressed: "🌵"
+    Happy:"🌻", Calm:"🪷", Okay:"🌼", Sad:"🪻", Stressed:"🌵"
 };
 
 function renderInnerGarden() {
-    let garden = $("innerGarden");
-    if (!garden) return;
-
-    let moods = creativeRead("serenovaMoods");
-    let journals = creativeRead("serenovaJournal");
-
     let flowers = [];
 
-    moods.forEach(entry => {
+    creativeRead("serenovaMoods").forEach(entry => {
         flowers.push({
-            symbol: moodFlowers[entry.mood] || "🌷",
-            title: "Mood: " + entry.mood,
-            date: entry.date || "Date unavailable",
-            timestamp: entry.timestamp || ""
+            symbol:moodFlowers[entry.mood] || "🌷",
+            title:"Mood: " + entry.mood,
+            date:entry.date || "",
+            timestamp:entry.timestamp || ""
         });
     });
 
-    journals.forEach(entry => {
+    creativeRead("serenovaJournal").forEach(entry => {
         flowers.push({
-            symbol: "🌸",
-            title: "Journal Reflection",
-            date: entry.date || "Date unavailable",
-            timestamp: entry.timestamp || ""
+            symbol:"🌸",
+            title:"Journal Reflection",
+            date:entry.date || "",
+            timestamp:entry.timestamp || ""
         });
     });
 
-    flowers.sort((a, b) =>
-        a.timestamp.localeCompare(b.timestamp)
-    );
+    flowers.sort((a,b) => a.timestamp.localeCompare(b.timestamp));
 
+    let garden = $("innerGarden");
     garden.replaceChildren();
-
-    setText(
-        "gardenMessage",
-        flowers.length +
-        " little flowers have grown in your garden."
-    );
+    setText("gardenMessage",
+        flowers.length + " little flowers have grown in your garden.");
 
     if (!flowers.length) {
-        creativeEmpty(
-            garden,
-            "Save a mood or journal entry to grow your first flower."
-        );
+        creativeEmpty(garden, "Save a mood or reflection to grow a flower.");
         return;
     }
 
     flowers.slice(-45).forEach(flower => {
-        let button = creativeElement(
-            "button", flower.symbol, "garden-flower"
-        );
-
+        let button = creativeElement("button", flower.symbol, "garden-flower");
         button.type = "button";
-        button.setAttribute("aria-label", flower.title);
-
-        button.addEventListener("click", function() {
-            setText(
-                "gardenDetails",
-                flower.symbol + " " + flower.title +
-                "\n" + flower.date
-            );
-        });
-
+        button.onclick = function() {
+            setText("gardenDetails",
+                flower.symbol + " " + flower.title + "\n" + flower.date);
+        };
         garden.appendChild(button);
     });
 }
 
-/* ==========================================
-   4. LETTERS TO MY FUTURE SELF
-   ========================================== */
+/* FUTURE LETTERS */
 
 const lettersStorage = "serenovaFutureLetters";
 
 function initializeFutureLetters() {
-    if (!$("saveFutureLetter")) return;
-
     $("saveFutureLetter").addEventListener("click", function() {
         let text = $("letterText").value.trim();
         let date = $("letterDate").value;
 
         if (!text || !date) {
-            setText(
-                "letterMessage",
-                "Write your letter and choose an opening date."
-            );
+            setText("letterMessage", "Write a letter and choose a date.");
             return;
         }
 
         if (date <= creativeKey()) {
-            setText(
-                "letterMessage",
-                "Choose a future date."
-            );
+            setText("letterMessage", "Choose a future date.");
             return;
         }
 
         let letters = creativeRead(lettersStorage);
-
         letters.push({
-            id: Date.now() + Math.random(),
-            text: text,
-            openDate: date,
-            created: creativeDate()
+            id:Date.now() + Math.random(),
+            text, openDate:date, created:creativeDate()
         });
 
         if (!creativeSave(lettersStorage, letters)) return;
 
         $("letterText").value = "";
         $("letterDate").value = "";
-
-        setText(
-            "letterMessage",
-            "💌 Your letter has been sealed."
-        );
-
+        setText("letterMessage", "💌 Your letter has been sealed.");
         renderFutureLetters();
     });
 }
 
 function renderFutureLetters() {
-    let list = $("futureLetters");
-    if (!list) return;
-
     let letters = creativeRead(lettersStorage);
+    let list = $("futureLetters");
     list.replaceChildren();
 
     if (!letters.length) {
-        creativeEmpty(
-            list,
-            "Your future letters will appear here."
-        );
+        creativeEmpty(list, "Your future letters will appear here.");
         return;
     }
 
     letters.slice().reverse().forEach(letter => {
         let ready = creativeKey() >= letter.openDate;
+        let card = creativeElement("div", undefined,
+            "creative-record letter-envelope");
 
-        let card = creativeElement(
-            "div", undefined, "creative-record letter-envelope"
-        );
+        card.appendChild(creativeElement("span",
+            ready ? "💌" : "✉️", "letter-envelope-icon"));
 
-        card.appendChild(
-            creativeElement(
-                "span",
-                ready ? "💌" : "✉️",
-                "letter-envelope-icon"
-            )
-        );
-
-        let content = creativeElement(
-            "div", undefined, "letter-envelope-content"
-        );
-
-        content.appendChild(
-            creativeElement(
-                "strong",
-                ready ? "Your letter is ready!" :
-                "Sealed until " + letter.openDate
-            )
-        );
-
-        content.appendChild(
-            creativeElement(
-                "small",
-                "Written: " + letter.created
-            )
-        );
+        let content = creativeElement("div", undefined,
+            "letter-envelope-content");
+        content.appendChild(creativeElement("strong",
+            ready ? "Your letter is ready!" :
+            "Sealed until " + letter.openDate));
+        content.appendChild(creativeElement("small",
+            "Written: " + letter.created));
 
         if (ready) {
-            let open = creativeElement(
-                "button", "Open Letter", "creative-delete"
-            );
-
-            open.addEventListener("click", function() {
-                alert(letter.text);
-            });
-
+            let open = creativeElement("button",
+                "Open Letter", "creative-delete");
+            open.onclick = () => alert(letter.text);
             content.appendChild(open);
         }
 
-        let del = creativeElement(
-            "button", "Delete Letter", "creative-delete"
-        );
-
-        del.addEventListener("click", function() {
+        let del = creativeElement("button",
+            "Delete Letter", "creative-delete");
+        del.onclick = function() {
             if (!confirm("Delete this letter?")) return;
-
             let updated = creativeRead(lettersStorage)
-                .filter(item => item.id !== letter.id);
-
-            if (creativeSave(lettersStorage, updated)) {
-                renderFutureLetters();
-            }
-        });
+                .filter(x => x.id !== letter.id);
+            if (creativeSave(lettersStorage, updated)) renderFutureLetters();
+        };
 
         content.appendChild(del);
         card.appendChild(content);
@@ -2003,122 +1434,83 @@ function renderFutureLetters() {
     });
 }
 
-/* ==========================================
-   5. CONSTELLATION OF FEELINGS
-   ========================================== */
+/* CONSTELLATION */
 
 function renderConstellation() {
+    let journals = creativeRead("serenovaJournal");
     let sky = $("constellationSky");
     let details = $("starDetails");
-
-    if (!sky || !details) return;
-
-    let journals = creativeRead("serenovaJournal");
     sky.replaceChildren();
 
-    details.textContent =
-        "Select a star to read its reflection.";
+    details.textContent = "Select a star to read its reflection.";
 
     if (!journals.length) {
-        details.textContent =
-            "Save a journal entry to create your first star.";
+        details.textContent = "Save a journal entry to create your first star.";
         return;
     }
 
-    journals.slice(-45).forEach((entry, index) => {
-        let star = creativeElement(
-            "button", "✦", "constellation-star"
-        );
-
+    journals.slice(-45).forEach((entry,index) => {
+        let star = creativeElement("button", "✦", "constellation-star");
         star.type = "button";
+        star.style.left = (8 + (index * 37 + 17) % 84) + "%";
+        star.style.top = (12 + (index * 29 + 31) % 76) + "%";
 
-        let x = 8 + ((index * 37 + 17) % 84);
-        let y = 12 + ((index * 29 + 31) % 76);
-
-        star.style.left = x + "%";
-        star.style.top = y + "%";
-
-        star.setAttribute(
-            "aria-label",
-            "Reflection from " + (entry.date || "unknown date")
-        );
-
-        star.addEventListener("click", function() {
+        star.onclick = function() {
             details.textContent =
                 "⭐ " + (entry.date || "Reflection") +
                 "\n\n" + (entry.text || "");
-        });
+        };
 
         sky.appendChild(star);
     });
 }
 
-/* ==========================================
-   6. LET IT FLOAT AWAY
-   ========================================== */
+/* LET IT FLOAT AWAY */
 
 const riverStorage = "serenovaRiverThoughts";
 
 function initializeRiver() {
-    if (!$("releaseThought")) return;
-
     $("releaseThought").addEventListener("click", function() {
         let input = $("riverThought");
         let text = input.value.trim();
         let keep = $("keepRiverThought").checked;
 
         if (!text) {
-            setText(
-                "riverMessage",
-                "Write a thought first."
-            );
+            setText("riverMessage", "Write a thought first.");
             return;
         }
 
         if (keep) {
             let entries = creativeRead(riverStorage);
-
             entries.push({
-                id: Date.now() + Math.random(),
-                text: text,
-                date: creativeDate()
+                id:Date.now() + Math.random(),
+                text, date:creativeDate()
             });
-
             if (!creativeSave(riverStorage, entries)) return;
         }
 
         let boat = $("floatingBoat");
-
-        if (boat) {
-            boat.classList.remove("hidden", "sailing");
-
-            void boat.offsetWidth;
-            boat.classList.add("sailing");
-
-            setTimeout(function() {
-                boat.classList.add("hidden");
-                boat.classList.remove("sailing");
-            }, 4000);
-        }
+        boat.classList.remove("hidden", "sailing");
+        void boat.offsetWidth;
+        boat.classList.add("sailing");
 
         input.value = "";
-
-        setText(
-            "riverMessage",
-            keep
-                ? "Your thought floated away and was saved."
-                : "Your thought floated away without being saved."
-        );
+        setText("riverMessage",
+            keep ? "Your thought was released and saved." :
+            "Your thought was released without being saved.");
 
         renderRiverThoughts();
+
+        setTimeout(function() {
+            boat.classList.add("hidden");
+            boat.classList.remove("sailing");
+        }, 4000);
     });
 }
 
 function renderRiverThoughts() {
-    let list = $("savedRiverThoughts");
-    if (!list) return;
-
     let entries = creativeRead(riverStorage);
+    let list = $("savedRiverThoughts");
     list.replaceChildren();
 
     if (!entries.length) {
@@ -2127,39 +1519,309 @@ function renderRiverThoughts() {
     }
 
     entries.slice().reverse().forEach(entry => {
-        let card = creativeElement(
-            "div", undefined, "creative-record"
-        );
+        let card = creativeElement("div", undefined, "creative-record");
+        card.appendChild(creativeElement("small", entry.date));
+        card.appendChild(creativeElement("p", entry.text));
 
-        card.appendChild(
-            creativeElement("small", entry.date)
-        );
-
-        card.appendChild(
-            creativeElement("p", entry.text)
-        );
-
-        let del = creativeElement(
-            "button", "Delete", "creative-delete"
-        );
-
-        del.addEventListener("click", function() {
+        let del = creativeElement("button", "Delete", "creative-delete");
+        del.onclick = function() {
             let updated = creativeRead(riverStorage)
-                .filter(item => item.id !== entry.id);
-
-            if (creativeSave(riverStorage, updated)) {
-                renderRiverThoughts();
-            }
-        });
+                .filter(x => x.id !== entry.id);
+            if (creativeSave(riverStorage, updated)) renderRiverThoughts();
+        };
 
         card.appendChild(del);
         list.appendChild(card);
     });
 }
 
-/* ==========================================
-   INITIALIZE COMPLETE WEBSITE
-   ========================================== */
+/* INTERACTIVE WELLNESS CORNER */
+
+/* TAKE A PAUSE */
+
+function stopBreathing(message = "Take your time. 💜") {
+    clearInterval(breathingTimer);
+    breathingTimer = null;
+    breathingSeconds = 60;
+
+    $("breathingCircle").classList.remove("breathe-in","breathe-out");
+    setText("breathingInstruction", "Ready?");
+    setText("breathingCount", "60");
+    setText("breathingStatus", message);
+}
+
+function updateBreathing() {
+    let elapsed = 60 - breathingSeconds;
+    let inhale = elapsed % 8 < 4;
+
+    $("breathingCircle").classList.toggle("breathe-in", inhale);
+    $("breathingCircle").classList.toggle("breathe-out", !inhale);
+
+    setText("breathingInstruction",
+        inhale ? "Breathe In" : "Breathe Out");
+    setText("breathingCount", breathingSeconds);
+}
+
+function initializeBreathing() {
+    $("startBreathing").addEventListener("click", function() {
+        if (breathingTimer) return;
+
+        breathingSeconds = 60;
+        updateBreathing();
+        setText("breathingStatus",
+            "Follow a comfortable rhythm. Stop anytime.");
+
+        breathingTimer = setInterval(function() {
+            breathingSeconds--;
+
+            if (breathingSeconds <= 0) {
+                stopBreathing("Your gentle minute is complete. 🌷");
+                return;
+            }
+            updateBreathing();
+        }, 1000);
+    });
+
+    $("stopBreathing").addEventListener("click", function() {
+        stopBreathing("Exercise stopped. Rest whenever you need.");
+    });
+}
+
+/* CARE FOR YOUR BODY */
+
+const careKey = "serenovaSelfcare";
+
+function loadSelfcare() {
+    let record = readObject(careKey, {});
+    let selected = record.date === getLocalDateKey()
+        ? record.items || [] : [];
+
+    document.querySelectorAll(".selfcare-check").forEach(input => {
+        input.checked = selected.includes(input.dataset.care);
+    });
+
+    updateSelfcareProgress(false);
+}
+
+function updateSelfcareProgress(save = true) {
+    let inputs = Array.from(
+        document.querySelectorAll(".selfcare-check"));
+    let selected = inputs.filter(x => x.checked)
+        .map(x => x.dataset.care);
+
+    $("selfcareProgressFill").style.width =
+        (selected.length / inputs.length * 100) + "%";
+
+    setText("selfcareProgressText",
+        selected.length + " of " + inputs.length +
+        " little acts checked today.");
+
+    if (save) {
+        saveDataObject(careKey, {
+            date:getLocalDateKey(),
+            items:selected
+        });
+    }
+}
+
+function saveDataObject(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch(error) {
+        console.error(error);
+        return false;
+    }
+}
+
+function initializeSelfcare() {
+    document.querySelectorAll(".selfcare-check").forEach(input => {
+        input.addEventListener("change", function() {
+            updateSelfcareProgress(true);
+        });
+    });
+
+    $("resetSelfcare").addEventListener("click", function() {
+        document.querySelectorAll(".selfcare-check").forEach(input => {
+            input.checked = false;
+        });
+        updateSelfcareProgress(true);
+    });
+
+    loadSelfcare();
+}
+
+/* STAY CONNECTED - INCLUSIVE PROMPTS */
+
+const connectionPrompts = [
+    "Send a simple hello to someone you appreciate.",
+    "Thank a classmate who helped you recently.",
+    "Ask a friend how their day has been.",
+    "Think about a conversation that made you smile.",
+    "Write something kind about yourself.",
+    "Remember someone who supported you during an assignment.",
+    "Share a positive memory with someone you trust.",
+    "Consider spending time with a family member.",
+    "Write a note of appreciation without needing to send it.",
+    "You can choose quiet time for yourself today.",
+    "Think of someone who inspires you and why.",
+    "If comfortable, ask a classmate to study together."
+];
+
+let connectionIndex = 0;
+const kindnessKey = "serenovaKindnessNotes";
+
+function initializeConnection() {
+    $("shuffleConnection").addEventListener("click", function() {
+        connectionIndex = (connectionIndex + 1) % connectionPrompts.length;
+        setText("connectionPrompt", connectionPrompts[connectionIndex]);
+    });
+
+    $("saveKindnessNote").addEventListener("click", function() {
+        let input = $("kindnessNote");
+        let text = input.value.trim();
+
+        if (!text) {
+            setText("kindnessMessage", "Write a little note first.");
+            return;
+        }
+
+        let entries = readData(kindnessKey);
+        entries.push({
+            id:Date.now() + Math.random(),
+            text,
+            date:getCurrentDate()
+        });
+
+        if (!saveData(kindnessKey, entries)) return;
+
+        input.value = "";
+        setText("kindnessMessage", "Note saved 💜");
+        renderKindnessNotes();
+    });
+}
+
+function renderKindnessNotes() {
+    let entries = readData(kindnessKey);
+    let container = $("kindnessNotes");
+    container.replaceChildren();
+
+    if (!entries.length) {
+        showEmpty(container, "Your notes will appear here.");
+        return;
+    }
+
+    entries.slice().reverse().forEach(entry => {
+        let card = makeElement("div", "wellness-record");
+        card.appendChild(makeElement("p", "", entry.text));
+        card.appendChild(makeElement("small", "", entry.date));
+
+        let del = makeElement("button", "", "Delete");
+        del.type = "button";
+        del.onclick = function() {
+            let updated = readData(kindnessKey)
+                .filter(x => x.id !== entry.id);
+            if (saveData(kindnessKey, updated)) renderKindnessNotes();
+        };
+
+        card.appendChild(del);
+        container.appendChild(card);
+    });
+}
+
+/* BREAK IT DOWN */
+
+const taskKey = "serenovaWellnessTasks";
+
+function readTasks() {
+    let data = readObject(taskKey, {title:"", steps:[]});
+    if (!Array.isArray(data.steps)) data.steps = [];
+    return data;
+}
+
+function initializeWellnessTasks() {
+    $("saveMainTask").addEventListener("click", function() {
+        let title = $("mainTask").value.trim();
+        if (!title) return;
+
+        let data = readTasks();
+        data.title = title;
+
+        if (saveDataObject(taskKey, data)) {
+            setText("taskMessage", "Goal saved!");
+            renderWellnessTasks();
+        }
+    });
+
+    $("addSmallTask").addEventListener("click", function() {
+        let text = $("smallTask").value.trim();
+        if (!text) return;
+
+        let data = readTasks();
+        data.steps.push({
+            id:Date.now() + Math.random(),
+            text, done:false
+        });
+
+        if (saveDataObject(taskKey, data)) {
+            $("smallTask").value = "";
+            renderWellnessTasks();
+        }
+    });
+}
+
+function renderWellnessTasks() {
+    let data = readTasks();
+    let list = $("smallTaskList");
+
+    setText("currentMainTask", data.title || "Your current goal");
+    $("mainTask").value = data.title || "";
+    list.replaceChildren();
+
+    let completed = data.steps.filter(x => x.done).length;
+    $("taskProgressFill").style.width =
+        (data.steps.length ? completed / data.steps.length * 100 : 0) + "%";
+
+    setText("taskProgressText",
+        data.steps.length
+        ? completed + " of " + data.steps.length + " steps completed."
+        : "No steps added yet.");
+
+    data.steps.forEach(step => {
+        let row = makeElement("div", "wellness-record wellness-task-row");
+        if (step.done) row.classList.add("completed");
+
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = step.done;
+        checkbox.setAttribute("aria-label", "Complete " + step.text);
+
+        checkbox.onchange = function() {
+            let updated = readTasks();
+            let item = updated.steps.find(x => x.id === step.id);
+            if (item) item.done = this.checked;
+            if (saveDataObject(taskKey, updated)) renderWellnessTasks();
+        };
+
+        row.appendChild(checkbox);
+        row.appendChild(makeElement("span", "", step.text));
+
+        let del = makeElement("button", "", "×");
+        del.type = "button";
+        del.setAttribute("aria-label", "Delete " + step.text);
+
+        del.onclick = function() {
+            let updated = readTasks();
+            updated.steps = updated.steps.filter(x => x.id !== step.id);
+            if (saveDataObject(taskKey, updated)) renderWellnessTasks();
+        };
+
+        row.appendChild(del);
+        list.appendChild(row);
+    });
+}
+
+/* INITIALIZE WEBSITE */
 
 function initializeSerenova() {
     initializePopups();
@@ -2175,6 +1837,11 @@ function initializeSerenova() {
     initializeFutureLetters();
     initializeRiver();
 
+    initializeBreathing();
+    initializeSelfcare();
+    initializeConnection();
+    initializeWellnessTasks();
+
     displayMoodHistory();
     displayJournalEntries();
     updateDashboard();
@@ -2186,402 +1853,20 @@ function initializeSerenova() {
     renderFutureLetters();
     renderConstellation();
     renderRiverThoughts();
+    renderKindnessNotes();
+    renderWellnessTasks();
 
     openMemoryDatabase()
-        .then(function() {
-            displayMemories();
-        })
-        .catch(function(error) {
-            console.error("IndexedDB unavailable:", error);
-        });
+        .then(displayMemories)
+        .catch(error => console.error("Memory database:", error));
 
     showWelcomeNotification();
     checkDailyReminder();
-
     setInterval(checkDailyReminder, 60000);
 }
 
 if (document.readyState === "loading") {
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeSerenova
-    );
+    document.addEventListener("DOMContentLoaded", initializeSerenova);
 } else {
     initializeSerenova();
 }
-
-/* ==========================================
-   SERENOVA - INTERACTIVE WELLNESS CORNER
-   ========================================== */
-
-(function() {
-    "use strict";
-
-    const byId = id => document.getElementById(id);
-
-    function readWellness(key, fallback) {
-        try {
-            let value = JSON.parse(localStorage.getItem(key));
-            return value === null ? fallback : value;
-        } catch(error) {
-            return fallback;
-        }
-    }
-
-    function saveWellness(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-            return true;
-        } catch(error) {
-            console.error(error);
-            return false;
-        }
-    }
-
-    function createNode(tag, text, className) {
-        let node = document.createElement(tag);
-        if (text !== undefined) node.textContent = text;
-        if (className) node.className = className;
-        return node;
-    }
-
-    /* ---------- POPUP COMPATIBILITY ---------- */
-
-    // Your existing 3.js should already handle [data-open].
-    // If it doesn't, this delegated handler provides a fallback.
-    // Do not add a second handler if the existing one works.
-
-    /* ---------- GUIDED BREATHING ---------- */
-
-    let breathingTimer = null;
-    let breathingSeconds = 60;
-
-    function stopBreathing(message = "Take your time. 💜") {
-        clearInterval(breathingTimer);
-        breathingTimer = null;
-
-        byId("breathingCircle").classList.remove(
-            "breathe-in", "breathe-out"
-        );
-
-        byId("breathingInstruction").textContent = "Ready?";
-        byId("breathingCount").textContent = "60";
-        byId("breathingStatus").textContent = message;
-    }
-
-    function updateBreathing() {
-        let elapsed = 60 - breathingSeconds;
-        let inhale = elapsed % 8 < 4;
-
-        byId("breathingCircle").classList.toggle(
-            "breathe-in", inhale
-        );
-
-        byId("breathingCircle").classList.toggle(
-            "breathe-out", !inhale
-        );
-
-        byId("breathingInstruction").textContent =
-            inhale ? "Breathe In" : "Breathe Out";
-
-        byId("breathingCount").textContent = breathingSeconds;
-    }
-
-    byId("startBreathing").addEventListener("click", function() {
-        if (breathingTimer) return;
-
-        breathingSeconds = 60;
-        updateBreathing();
-
-        byId("breathingStatus").textContent =
-            "Follow a comfortable rhythm. You can stop anytime.";
-
-        breathingTimer = setInterval(function() {
-            breathingSeconds--;
-
-            if (breathingSeconds <= 0) {
-                stopBreathing("Your gentle minute is complete. 🌷");
-                return;
-            }
-
-            updateBreathing();
-        }, 1000);
-    });
-
-    byId("stopBreathing").addEventListener("click", function() {
-        stopBreathing("Exercise stopped. Rest whenever you need.");
-    });
-
-    // Stop breathing when the popup closes.
-    const pausePopup = byId("pausePopup");
-
-    pausePopup.querySelectorAll("[data-close]").forEach(button => {
-        button.addEventListener("click", function() {
-            stopBreathing();
-        });
-    });
-
-    pausePopup.addEventListener("click", function(event) {
-        if (event.target === pausePopup) stopBreathing();
-    });
-
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "Escape" &&
-            pausePopup.classList.contains("hidden")) {
-            stopBreathing();
-        }
-    });
-
-    /* ---------- DAILY SELF-CARE CHECKLIST ---------- */
-
-    const careKey = "serenovaSelfcare";
-
-    function todayKey() {
-        let date = new Date();
-        return date.getFullYear() + "-" +
-            String(date.getMonth() + 1).padStart(2, "0") + "-" +
-            String(date.getDate()).padStart(2, "0");
-    }
-
-    function loadSelfcare() {
-        let record = readWellness(careKey, {});
-        let checked = record.date === todayKey()
-            ? record.items || [] : [];
-
-        document.querySelectorAll(".selfcare-check").forEach(input => {
-            input.checked = checked.includes(input.dataset.care);
-        });
-
-        updateSelfcareProgress();
-    }
-
-    function updateSelfcareProgress() {
-        let inputs = Array.from(
-            document.querySelectorAll(".selfcare-check")
-        );
-
-        let selected = inputs.filter(input => input.checked)
-            .map(input => input.dataset.care);
-
-        byId("selfcareProgressFill").style.width =
-            (selected.length / inputs.length * 100) + "%";
-
-        byId("selfcareProgressText").textContent =
-            selected.length + " of " + inputs.length +
-            " little acts checked today.";
-
-        saveWellness(careKey, {
-            date: todayKey(),
-            items: selected
-        });
-    }
-
-    document.querySelectorAll(".selfcare-check").forEach(input => {
-        input.addEventListener("change", updateSelfcareProgress);
-    });
-
-    byId("resetSelfcare").addEventListener("click", function() {
-        document.querySelectorAll(".selfcare-check").forEach(input => {
-            input.checked = false;
-        });
-
-        updateSelfcareProgress();
-    });
-
-    loadSelfcare();
-
-    /* ---------- STAY CONNECTED ---------- */
-
-    const connectionPrompts = [
-        "Send a simple hello to someone you appreciate.",
-        "Think of someone who made your day better.",
-        "Share a kind message with a friend.",
-        "Remember a conversation that made you smile.",
-        "Consider asking someone how their day has been.",
-        "Write a note of appreciation to yourself.",
-        "Spend a little time with someone you trust.",
-        "You can also choose quiet time for yourself today."
-    ];
-
-    let connectionIndex = 0;
-
-    byId("shuffleConnection").addEventListener("click", function() {
-        connectionIndex =
-            (connectionIndex + 1) % connectionPrompts.length;
-
-        byId("connectionPrompt").textContent =
-            connectionPrompts[connectionIndex];
-    });
-
-    const kindnessKey = "serenovaKindnessNotes";
-
-    function renderKindnessNotes() {
-        let entries = readWellness(kindnessKey, []);
-        let container = byId("kindnessNotes");
-        container.replaceChildren();
-
-        if (!entries.length) {
-            container.appendChild(
-                createNode("p", "Your notes will appear here.")
-            );
-            return;
-        }
-
-        entries.slice().reverse().forEach(entry => {
-            let card = createNode("div", undefined, "wellness-record");
-            card.appendChild(createNode("p", entry.text));
-            card.appendChild(createNode("small", entry.date));
-
-            let del = createNode("button", "Delete");
-            del.type = "button";
-
-            del.addEventListener("click", function() {
-                let updated = readWellness(kindnessKey, [])
-                    .filter(item => item.id !== entry.id);
-
-                if (saveWellness(kindnessKey, updated)) {
-                    renderKindnessNotes();
-                }
-            });
-
-            card.appendChild(del);
-            container.appendChild(card);
-        });
-    }
-
-    byId("saveKindnessNote").addEventListener("click", function() {
-        let input = byId("kindnessNote");
-        let text = input.value.trim();
-
-        if (!text) {
-            byId("kindnessMessage").textContent =
-                "Write a little note first.";
-            return;
-        }
-
-        let entries = readWellness(kindnessKey, []);
-
-        entries.push({
-            id: Date.now() + Math.random(),
-            text: text,
-            date: new Date().toLocaleDateString("en-IN")
-        });
-
-        if (saveWellness(kindnessKey, entries)) {
-            input.value = "";
-            byId("kindnessMessage").textContent = "Note saved 💜";
-            renderKindnessNotes();
-        }
-    });
-
-    renderKindnessNotes();
-
-    /* ---------- BREAK IT DOWN ---------- */
-
-    const taskKey = "serenovaWellnessTasks";
-
-    function readTasks() {
-        return readWellness(taskKey, {
-            title: "",
-            steps: []
-        });
-    }
-
-    byId("saveMainTask").addEventListener("click", function() {
-        let title = byId("mainTask").value.trim();
-        if (!title) return;
-
-        let data = readTasks();
-        data.title = title;
-
-        if (saveWellness(taskKey, data)) {
-            byId("taskMessage").textContent = "Goal saved!";
-            renderTasks();
-        }
-    });
-
-    byId("addSmallTask").addEventListener("click", function() {
-        let text = byId("smallTask").value.trim();
-
-        if (!text) return;
-
-        let data = readTasks();
-
-        data.steps.push({
-            id: Date.now() + Math.random(),
-            text: text,
-            done: false
-        });
-
-        if (saveWellness(taskKey, data)) {
-            byId("smallTask").value = "";
-            renderTasks();
-        }
-    });
-
-    function renderTasks() {
-        let data = readTasks();
-        let list = byId("smallTaskList");
-
-        byId("currentMainTask").textContent =
-            data.title || "Your current goal";
-
-        byId("mainTask").value = data.title || "";
-        list.replaceChildren();
-
-        let completed = data.steps.filter(step => step.done).length;
-
-        byId("taskProgressFill").style.width =
-            (data.steps.length ?
-                completed / data.steps.length * 100 : 0) + "%";
-
-        byId("taskProgressText").textContent =
-            data.steps.length ?
-            completed + " of " + data.steps.length + " steps completed." :
-            "No steps added yet.";
-
-        data.steps.forEach(step => {
-            let row = createNode(
-                "div", undefined, "wellness-record wellness-task-row"
-            );
-
-            if (step.done) row.classList.add("completed");
-
-            let checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = step.done;
-            checkbox.setAttribute("aria-label", "Complete " + step.text);
-
-            checkbox.addEventListener("change", function() {
-                let updated = readTasks();
-                let item = updated.steps.find(x => x.id === step.id);
-
-                if (item) item.done = this.checked;
-
-                if (saveWellness(taskKey, updated)) renderTasks();
-            });
-
-            row.appendChild(checkbox);
-            row.appendChild(createNode("span", step.text));
-
-            let del = createNode("button", "×");
-            del.type = "button";
-            del.setAttribute("aria-label", "Delete " + step.text);
-
-            del.addEventListener("click", function() {
-                let updated = readTasks();
-                updated.steps = updated.steps.filter(
-                    x => x.id !== step.id
-                );
-
-                if (saveWellness(taskKey, updated)) renderTasks();
-            });
-
-            row.appendChild(del);
-            list.appendChild(row);
-        });
-    }
-
-    renderTasks();
-
-})();
