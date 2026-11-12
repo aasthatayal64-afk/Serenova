@@ -1420,5 +1420,162 @@
     </div>
 </div>
 
+<!-- TAKE A PAUSE -->
+<div id="pausePopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+    <div class="popup-content wellness-popup">
+        <button class="close-popup" type="button"
+                data-close="pausePopup" aria-label="Close">×</button>
+
+        <p class="small-heading">A MOMENT FOR YOURSELF</p>
+        <h2 id="pauseTitle">🌿 Take a Pause</h2>
+        <p>Follow the circle at a comfortable pace. You may stop anytime.</p>
+
+        <div class="breathing-area">
+            <div id="breathingCircle" class="breathing-circle">
+                <span id="breathingInstruction">Ready?</span>
+                <strong id="breathingCount">60</strong>
+            </div>
+        </div>
+
+        <p id="breathingStatus" class="wellness-status" role="status">
+            One gentle minute, whenever you're ready.
+        </p>
+
+        <div class="wellness-actions">
+            <button id="startBreathing" class="primary-button" type="button">
+                Start Exercise
+            </button>
+            <button id="stopBreathing" class="secondary-button" type="button">
+                Stop
+            </button>
+        </div>
+
+        <p class="wellness-disclaimer">
+            Breathe naturally. Do not force deep breaths or hold your breath.
+            Stop if you feel dizzy or uncomfortable.
+        </p>
+    </div>
+</div>
+
+<!-- CARE FOR YOUR BODY -->
+<div id="bodyPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="bodyTitle">
+    <div class="popup-content wellness-popup">
+        <button class="close-popup" type="button"
+                data-close="bodyPopup" aria-label="Close">×</button>
+
+        <p class="small-heading">LITTLE ACTS OF CARE</p>
+        <h2 id="bodyTitle">💧 Care for Your Body</h2>
+        <p>A gentle checklist, not a compulsory daily target.</p>
+
+        <div class="selfcare-list">
+            <label><input type="checkbox" class="selfcare-check" data-care="water">
+                I took a water break 💧</label>
+            <label><input type="checkbox" class="selfcare-check" data-care="stretch">
+                I moved or stretched comfortably 🌿</label>
+            <label><input type="checkbox" class="selfcare-check" data-care="rest">
+                I made time for rest 🌙</label>
+            <label><input type="checkbox" class="selfcare-check" data-care="screen">
+                I took a break from my screen 👀</label>
+        </div>
+
+        <div class="selfcare-progress">
+            <div id="selfcareProgressFill"></div>
+        </div>
+        <p id="selfcareProgressText" class="wellness-status" role="status">
+            0 of 4 little acts checked today.
+        </p>
+
+        <button id="resetSelfcare" class="secondary-button" type="button">
+            Reset Today's Checklist
+        </button>
+    </div>
+</div>
+
+<!-- STAY CONNECTED -->
+<div id="connectPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="connectTitle">
+    <div class="popup-content wellness-popup">
+        <button class="close-popup" type="button"
+                data-close="connectPopup" aria-label="Close">×</button>
+
+        <p class="small-heading">MEANINGFUL CONNECTIONS</p>
+        <h2 id="connectTitle">🫶 Stay Connected</h2>
+        <p>Choose a connection idea that feels comfortable.</p>
+
+        <div class="connection-prompt">
+            <span>💌</span>
+            <p id="connectionPrompt">
+                Send a simple hello to someone you appreciate.
+            </p>
+        </div>
+
+        <button id="shuffleConnection" class="secondary-button" type="button">
+            🔀 Another Idea
+        </button>
+
+        <label for="kindnessNote" class="wellness-label">
+            A little note to yourself (optional)
+        </label>
+        <textarea id="kindnessNote" maxlength="500"
+                  placeholder="Something kind I want to remember..."></textarea>
+
+        <button id="saveKindnessNote" class="primary-button" type="button">
+            Save My Note
+        </button>
+        <p id="kindnessMessage" class="wellness-status" role="status"></p>
+
+        <h3>Your Saved Notes</h3>
+        <div id="kindnessNotes" class="wellness-records"></div>
+
+        <p class="wellness-disclaimer">
+            You don't have to contact anyone. Choose connections that feel safe.
+        </p>
+    </div>
+</div>
+
+<!-- BREAK IT DOWN -->
+<div id="tasksPopup" class="popup-overlay hidden"
+     role="dialog" aria-modal="true" aria-labelledby="tasksTitle">
+    <div class="popup-content wellness-popup">
+        <button class="close-popup" type="button"
+                data-close="tasksPopup" aria-label="Close">×</button>
+
+        <p class="small-heading">ONE STEP AT A TIME</p>
+        <h2 id="tasksTitle">📝 Break It Down</h2>
+        <p>Turn your assignment or goal into smaller steps.</p>
+
+        <label for="mainTask" class="wellness-label">What are you working on?</label>
+        <input id="mainTask" maxlength="120"
+               placeholder="Example: Complete physics assignment">
+
+        <button id="saveMainTask" class="secondary-button" type="button">
+            Set My Goal
+        </button>
+
+        <h3 id="currentMainTask">Your current goal</h3>
+
+        <label for="smallTask" class="wellness-label">Add a small step</label>
+        <div class="wellness-input-row">
+            <input id="smallTask" maxlength="120"
+                   placeholder="Example: Solve the first two questions">
+            <button id="addSmallTask" class="primary-button" type="button">
+                Add Step
+            </button>
+        </div>
+
+        <div class="selfcare-progress">
+            <div id="taskProgressFill"></div>
+        </div>
+        <p id="taskProgressText" class="wellness-status" role="status">
+            No steps added yet.
+        </p>
+
+        <div id="smallTaskList" class="wellness-records"></div>
+        <p id="taskMessage" class="wellness-status" role="status"></p>
+    </div>
+</div>
+
 </body>
 </html>
