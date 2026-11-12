@@ -2520,3 +2520,72 @@ footer {
     }
 }
 
+/* SERENOVA - WELLNESS CORNER REFINEMENTS */
+
+.wellness-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    min-height: 240px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 28px;
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.wellness-action:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px var(--shadow);
+}
+
+.wellness-action:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+.wellness-action span {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.wellness-action h3 {
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.wellness-action p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.wellness-action strong {
+    margin-top: auto;
+    padding-top: 20px;
+    color: var(--primary);
+    font-size: 13px;
+}
+
+.wellness-disclaimer {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+    .wellness-action {
+        min-height: auto;
+        padding: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wellness-action {
+        transition: none;
+    }
+}
+
