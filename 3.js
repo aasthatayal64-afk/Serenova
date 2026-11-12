@@ -502,15 +502,98 @@ function saveJournal() {
     updateNotificationState();
 }
 
+
+/* DISPLAY SAVED JOURNAL ENTRIES */
+
 function displayJournalEntries() {
     let entries = readData("serenovaJournal");
-    let container = $("journalEntries");
+    let container = document.getElementById("journalEntries");
+
+    if (!container) return;
+
     container.replaceChildren();
 
-    if (!entries.length) {
+    if (entries.length === 0) {
         showEmpty(container, "Your reflections will appear here.");
         return;
     }
+
+    for (let i = entries.length - 1; i >= 0; i--) {
+        let entry = entries[i];
+
+        let card = makeElement("div", "journal-entry");
+
+        card.appendChild(makeElement(
+            "p",
+            "journal-entry-date",
+            (entry.date || "") + " • " + (entry.time || "")
+        ));
+
+        /* Display title only when available */
+        if (entry.title) {
+            card.appendChild(makeElement(
+                "h3",
+                "journal-entry-title",
+                entry.title
+            ));
+        }
+
+        card.appendChild(makeElement(
+            "p",
+            "journal-entry-text",
+            entry.text || ""
+        ));
+
+        let actions = makeElement(
+            "div",
+            "journal-entry-actions"
+        );
+
+        /* EDIT BUTTON */
+        let editButton = makeElement(
+            "button",
+            "edit-entry-button",
+            "✏️ Edit Reflection"
+        );
+
+        editButton.type = "button";
+
+        editButton.addEventListener("click", function() {
+            openReflectionEditor(i);
+        });
+
+        actions.appendChild(editButton);
+
+        /* DELETE BUTTON */
+        let deleteButton = makeElement(
+            "button",
+            "delete-button",
+            "Delete Entry"
+        );
+
+        deleteButton.type = "button";
+
+        deleteButton.addEventListener("click", function() {
+            if (!confirm("Delete this reflection?")) return;
+
+            let latest = readData("serenovaJournal");
+
+            latest.splice(i, 1);
+
+            if (saveData("serenovaJournal", latest)) {
+                displayJournalEntries();
+                updateDashboard();
+                updateReflectionStreak();
+                updateNotificationState();
+            }
+        });
+
+        actions.appendChild(deleteButton);
+        card.appendChild(actions);
+        container.appendChild(card);
+    }
+}
+
 
     for (let i = entries.length - 1; i >= 0; i--) {
         let entry = entries[i];
