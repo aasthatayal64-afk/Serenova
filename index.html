@@ -2,112 +2,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERENOVA | Mood & Wellness Journal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERENOVA | Mood & Wellness Journal</title>
 
-    <!-- LOAD SAVED THEME -->
-    <script>
-        try {
-            document.documentElement.dataset.theme =
-                localStorage.getItem("serenovaTheme") || "lavender";
-        } catch (error) {
-            document.documentElement.dataset.theme = "lavender";
-        }
-    </script>
+<script>
+try {
+    document.documentElement.dataset.theme =
+        localStorage.getItem("serenovaTheme") || "lavender";
+} catch(error) {
+    document.documentElement.dataset.theme = "lavender";
+}
+</script>
 
-    <link rel="stylesheet" href="2.css">
-    <script src="3.js" defer></script>
+<link rel="stylesheet" href="2.css">
+<script src="3.js" defer></script>
 </head>
-
 <body>
 
-<!-- =========================================
-     NAVIGATION
-========================================= -->
-
+<!-- NAVIGATION -->
 <nav class="navbar" aria-label="Main navigation">
-
-    <!-- THEME-RESPONSIVE SERENOVA LOTUS LOGO -->
     <a href="#home" class="logo" aria-label="SERENOVA Home">
-
-        <svg class="serenova-logo-symbol"
-             viewBox="0 0 100 100"
-             xmlns="http://www.w3.org/2000/svg"
-             aria-hidden="true">
-
+        <svg class="serenova-logo-symbol" viewBox="0 0 100 100"
+             xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
-                <linearGradient id="flowerGradient"
-                                x1="0%" y1="0%"
+                <linearGradient id="flowerGradient" x1="0%" y1="0%"
                                 x2="100%" y2="100%">
-
-                    <stop offset="0%"
-                          stop-color="var(--flower-light)"/>
-
-                    <stop offset="55%"
-                          stop-color="var(--flower-medium)"/>
-
-                    <stop offset="100%"
-                          stop-color="var(--flower-dark)"/>
-
+                    <stop offset="0%" stop-color="var(--flower-light)"/>
+                    <stop offset="55%" stop-color="var(--flower-medium)"/>
+                    <stop offset="100%" stop-color="var(--flower-dark)"/>
                 </linearGradient>
             </defs>
-
-            <!-- CENTRAL FLOWER BUD -->
-            <path d="M50 12 C39 27 41 43 50 58
-                     C59 43 61 27 50 12Z"
+            <path d="M50 12 C39 27 41 43 50 58 C59 43 61 27 50 12Z"
                   fill="url(#flowerGradient)"/>
-
-            <!-- LEFT INNER PETAL -->
-            <path d="M47 59 C28 48 24 34 20 32
-                     C17 50 29 62 47 65Z"
+            <path d="M47 59 C28 48 24 34 20 32 C17 50 29 62 47 65Z"
                   fill="var(--flower-medium)"/>
-
-            <!-- RIGHT INNER PETAL -->
-            <path d="M53 59 C72 48 76 34 80 32
-                     C83 50 71 62 53 65Z"
+            <path d="M53 59 C72 48 76 34 80 32 C83 50 71 62 53 65Z"
                   fill="var(--flower-medium)"/>
-
-            <!-- LEFT OUTER PETAL -->
-            <path d="M48 65 C29 57 15 59 8 68
-                     C23 81 39 77 50 69Z"
+            <path d="M48 65 C29 57 15 59 8 68 C23 81 39 77 50 69Z"
                   fill="var(--flower-light)"/>
-
-            <!-- RIGHT OUTER PETAL -->
-            <path d="M52 65 C71 57 85 59 92 68
-                     C77 81 61 77 50 69Z"
+            <path d="M52 65 C71 57 85 59 92 68 C77 81 61 77 50 69Z"
                   fill="var(--flower-light)"/>
-
-            <!-- FLOWER BASE -->
-            <path d="M36 68 Q50 81 64 68"
-                  fill="none"
-                  stroke="var(--flower-dark)"
-                  stroke-width="2"
-                  stroke-linecap="round"/>
-
-            <!-- PEACEFUL WATER RIPPLES -->
-            <path d="M22 85 Q50 76 78 85"
-                  fill="none"
-                  stroke="var(--flower-dark)"
-                  stroke-width="2.5"
-                  stroke-linecap="round"/>
-
+            <path d="M36 68 Q50 81 64 68 M22 85 Q50 76 78 85"
+                  fill="none" stroke="var(--flower-dark)"
+                  stroke-width="2.5" stroke-linecap="round"/>
             <path d="M31 91 Q50 85 69 91"
-                  fill="none"
-                  stroke="var(--flower-medium)"
-                  stroke-width="1.8"
-                  stroke-linecap="round"/>
-
-            <!-- FLOWER CENTRE -->
-            <circle cx="50" cy="59" r="3"
-                    fill="var(--flower-dark)"/>
-
+                  fill="none" stroke="var(--flower-medium)"
+                  stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="50" cy="59" r="3" fill="var(--flower-dark)"/>
         </svg>
-
         <span class="logo-name">SERENOVA</span>
     </a>
 
-    <!-- NAVIGATION LINKS -->
     <div class="nav-links">
         <a href="#home">Home</a>
         <a href="#mood">Mood</a>
@@ -115,621 +61,349 @@
         <a href="#dashboard">Dashboard</a>
         <a href="#wellness">Wellness</a>
         <a href="#about">About</a>
-
-        <button id="themeButton"
-                class="theme-nav"
-                type="button">
+        <button id="themeButton" class="theme-nav" type="button">
             🎨 Themes
         </button>
     </div>
-
 </nav>
 
-
-<!-- =========================================
-     HOMEPAGE
-========================================= -->
-
+<!-- HOME -->
 <section id="home" class="hero">
-
     <div class="hero-decoration decoration-one"></div>
     <div class="hero-decoration decoration-two"></div>
-
     <div class="hero-content">
-
-        <p class="small-heading">
-            YOUR PERSONAL WELLNESS SPACE
-        </p>
-
+        <p class="small-heading">YOUR PERSONAL WELLNESS SPACE</p>
         <h1>Welcome to <span>SERENOVA</span></h1>
-
         <h2>A Little Space for Every Feeling.</h2>
-
         <p class="hero-text">
             A peaceful digital space to reflect, preserve memories,
-            understand your emotions and celebrate the little moments
-            that make your days special.
+            understand your emotions and celebrate little moments.
         </p>
-
-        <a href="#mood" class="primary-button">
-            Start Your Journey →
-        </a>
-
+        <a href="#mood" class="primary-button">Start Your Journey →</a>
     </div>
-
 </section>
 
-
-<!-- =========================================
-     HOMEPAGE FEATURE CARDS
-========================================= -->
-
+<!-- HOME FEATURE CARDS -->
 <section class="intro-section">
-
     <div class="section-heading">
-
         <p class="small-heading">YOUR PERSONAL SPACE</p>
-
         <h2>Little moments make a beautiful journey.</h2>
-
-        <p>
-            Explore your memories, reflections and daily routines.
-        </p>
-
+        <p>Explore your memories, reflections and daily routines.</p>
     </div>
 
     <div class="feature-grid">
-
-        <!-- MEMORY LANE -->
-        <button class="feature-card"
-                type="button"
-                data-open="memoryPopup">
-
+        <button class="feature-card" type="button" data-open="memoryPopup">
             <div class="feature-icon">📸</div>
-
             <h3>Memory Lane</h3>
-
-            <p>
-                Save your favourite photographs as beautiful
-                Polaroid memories.
-            </p>
-
-            <span class="card-link">
-                Open Memories →
-            </span>
-
+            <p>Preserve meaningful photographs as Polaroid memories.</p>
+            <span class="card-link">Open Memories →</span>
         </button>
 
-        <!-- REFLECTION STREAK -->
-        <button class="feature-card"
-                type="button"
-                data-open="streakPopup">
-
+        <button class="feature-card" type="button" data-open="streakPopup">
             <div class="feature-icon">🔥</div>
-
             <h3>Reflection Streak</h3>
-
-            <p>
-                Discover your journaling consistency,
-                reflection times and daily habits.
-            </p>
-
-            <span class="card-link">
-                View Your Streak →
-            </span>
-
+            <p>Explore your journaling consistency and reflection times.</p>
+            <span class="card-link">View Your Streak →</span>
         </button>
 
-        <!-- GENTLE REMINDERS -->
-        <button class="feature-card"
-                type="button"
-                data-open="reminderPopup">
-
+        <button class="feature-card" type="button" data-open="reminderPopup">
             <div class="feature-icon">🔔</div>
-
             <h3>Gentle Reminders</h3>
-
-            <p>
-                Set a comfortable reminder time
-                and receive gentle daily check-in messages.
-            </p>
-
-            <span class="card-link">
-                Set Reminders →
-            </span>
-
+            <p>Choose a comfortable time for optional daily check-ins.</p>
+            <span class="card-link">Set Reminders →</span>
         </button>
-
     </div>
-
 </section>
 
-
-<!-- =========================================
-     MOOD TRACKER
-========================================= -->
-
+<!-- MOOD TRACKER -->
 <section id="mood" class="page-section soft-section">
-
     <div class="section-heading">
-
         <p class="small-heading">DAILY CHECK-IN</p>
-
         <h2>How are you feeling today?</h2>
-
         <p>Every feeling deserves a little space.</p>
-
     </div>
 
     <div class="mood-container">
-
         <div class="mood-options">
-
-            <button class="mood-button"
-                    type="button"
-                    data-mood="Happy"
-                    data-emoji="😊">
-                <span>😊</span>
-                Happy
+            <button class="mood-button" type="button"
+                    data-mood="Happy" data-emoji="😊">
+                <span>😊</span>Happy
             </button>
-
-            <button class="mood-button"
-                    type="button"
-                    data-mood="Calm"
-                    data-emoji="😌">
-                <span>😌</span>
-                Calm
+            <button class="mood-button" type="button"
+                    data-mood="Calm" data-emoji="😌">
+                <span>😌</span>Calm
             </button>
-
-            <button class="mood-button"
-                    type="button"
-                    data-mood="Okay"
-                    data-emoji="😐">
-                <span>😐</span>
-                Okay
+            <button class="mood-button" type="button"
+                    data-mood="Okay" data-emoji="😐">
+                <span>😐</span>Okay
             </button>
-
-            <button class="mood-button"
-                    type="button"
-                    data-mood="Sad"
-                    data-emoji="😔">
-                <span>😔</span>
-                Sad
+            <button class="mood-button" type="button"
+                    data-mood="Sad" data-emoji="😔">
+                <span>😔</span>Sad
             </button>
-
-            <button class="mood-button"
-                    type="button"
-                    data-mood="Stressed"
-                    data-emoji="😣">
-                <span>😣</span>
-                Stressed
+            <button class="mood-button" type="button"
+                    data-mood="Stressed" data-emoji="😣">
+                <span>😣</span>Stressed
             </button>
-
         </div>
 
-        <button id="saveMoodButton"
-                class="primary-button normal-button"
-                type="button">
-            Save Today's Mood
-        </button>
+        <button id="saveMoodButton" class="primary-button normal-button"
+                type="button">Save Today's Mood</button>
+        <p id="moodMessage" class="status-message" role="status"></p>
 
-        <p id="moodMessage"
-           class="status-message"
-           role="status"></p>
-
-        <div id="moodSuggestion"
-             class="suggestion-box hidden">
-
+        <div id="moodSuggestion" class="suggestion-box hidden">
             <h3>💜 A Gentle Suggestion</h3>
-
             <p id="suggestionText"></p>
-
-            <small>
-                These suggestions are general wellbeing ideas,
-                not medical advice.
-            </small>
-
+            <small>General wellness guidance, not medical advice.</small>
         </div>
-
     </div>
 
     <div class="history-card">
-
         <p class="small-heading">HISTORY</p>
-
         <h3>Previous Mood Entries</h3>
-
         <div id="moodHistory"></div>
-
     </div>
-
 </section>
 
-
-<!-- =========================================
-     JOURNAL SECTION
-========================================= -->
-
+<!-- JOURNAL -->
 <section id="journal" class="page-section">
-
     <div class="section-heading journal-heading">
-
         <p class="small-heading">YOUR JOURNAL</p>
-
         <h2>A Little Space for Your Thoughts ✨</h2>
-
-        <p>
-            Write without pressure. This space belongs to you.
-        </p>
-
+        <p>Write without pressure. This space belongs to you.</p>
     </div>
 
     <div class="journal-box">
-
         <div class="journal-top">
             <span>✍️ New Reflection</span>
             <span id="currentDate"></span>
         </div>
 
-        <!-- JOURNAL STICKER BUTTON -->
         <div class="sticker-toolbar">
-
-            <button id="stickerToggle"
-                    class="sticker-toggle"
-                    type="button"
-                    aria-expanded="false"
-                    aria-controls="stickerCollection">
+            <button id="stickerToggle" class="sticker-toggle" type="button"
+                    aria-expanded="false" aria-controls="stickerCollection">
                 🌸 Add Stickers ⌄
             </button>
-
-            <span class="sticker-hint">
-                Decorate your thoughts ✨
-            </span>
-
+            <span class="sticker-hint">Decorate your thoughts ✨</span>
         </div>
 
-        <!-- JOURNAL STICKER COLLECTION -->
-        <div id="stickerCollection"
-             class="sticker-collection hidden">
-
+        <div id="stickerCollection" class="sticker-collection hidden">
             <div class="sticker-header">
-
                 <h3>Journal Sticker Collection 💜</h3>
-
-                <button id="closeStickers"
-                        class="sticker-close"
-                        type="button"
-                        aria-label="Close stickers">
-                    ×
-                </button>
-
+                <button id="closeStickers" class="sticker-close"
+                        type="button" aria-label="Close stickers">×</button>
             </div>
-
             <p class="sticker-description">
-                Select a sticker to insert it into your reflection.
+                Select a sticker to add it to your reflection.
             </p>
-
             <div class="sticker-tabs">
-
-                <button class="sticker-tab active"
-                        type="button"
+                <button class="sticker-tab active" type="button"
                         data-category="all">✨ All</button>
-
-                <button class="sticker-tab"
-                        type="button"
+                <button class="sticker-tab" type="button"
                         data-category="flowers">🌸 Flowers</button>
-
-                <button class="sticker-tab"
-                        type="button"
+                <button class="sticker-tab" type="button"
                         data-category="hearts">💕 Hearts</button>
-
-                <button class="sticker-tab"
-                        type="button"
+                <button class="sticker-tab" type="button"
                         data-category="stars">⭐ Stars</button>
-
-                <button class="sticker-tab"
-                        type="button"
+                <button class="sticker-tab" type="button"
                         data-category="nature">🦋 Nature</button>
-
-                <button class="sticker-tab"
-                        type="button"
+                <button class="sticker-tab" type="button"
                         data-category="cute">🧸 Cute</button>
-
             </div>
-
             <div id="stickerGrid" class="sticker-grid"></div>
-
-            <p id="stickerMessage"
-               class="sticker-message"
-               role="status"></p>
-
+            <p id="stickerMessage" class="sticker-message" role="status"></p>
         </div>
 
-        <!-- NEED INSPIRATION -->
         <div class="journal-inspiration">
-
             <div class="inspiration-heading">
-
                 <div>
-                    <p class="small-heading">
-                        A LITTLE WRITING HELP
-                    </p>
-
+                    <p class="small-heading">A LITTLE WRITING HELP</p>
                     <h3>✨ Need Inspiration?</h3>
                 </div>
-
                 <span class="inspiration-icon">🌷</span>
-
             </div>
-
             <p class="inspiration-description">
-                Not sure where to begin?
-                Here's a little thought to get you started.
+                Not sure where to begin? Here's a little thought.
             </p>
-
             <div class="prompt-display">
-
                 <span class="prompt-decoration">💭</span>
-
                 <p id="journalPrompt">
                     What is one little thing that made you smile today?
                 </p>
-
             </div>
-
             <div class="prompt-actions">
-
-                <button id="shufflePrompt"
-                        class="shuffle-prompt"
-                        type="button">
-                    🔀 Shuffle Prompt
-                </button>
-
-                <button id="usePrompt"
-                        class="use-prompt"
-                        type="button">
-                    ✍️ Use This Prompt
-                </button>
-
+                <button id="shufflePrompt" class="shuffle-prompt"
+                        type="button">🔀 Shuffle Prompt</button>
+                <button id="usePrompt" class="use-prompt"
+                        type="button">✍️ Use This Prompt</button>
             </div>
-
             <p class="prompt-note">
-                Just a suggestion! You're always free
-                to write whatever is on your mind. 💜
+                You can ignore these prompts and write freely. 💜
             </p>
-
         </div>
 
-        <!-- JOURNAL TEXTAREA -->
-        <label class="journal-input-label"
-               for="journalInput">
+        <label class="journal-input-label" for="journalInput">
             Your Thoughts
         </label>
-
-        <textarea id="journalInput"
-                  maxlength="1500"
-                  placeholder="How was your day? What made you smile? Write freely or use a suggested prompt..."></textarea>
+        <textarea id="journalInput" maxlength="1500"
+                  placeholder="How was your day? Write freely..."></textarea>
 
         <div class="journal-bottom">
-
-            <span id="characterCount">
-                0 / 1500 characters
-            </span>
-
-            <button id="saveJournalButton"
-                    class="primary-button"
-                    type="button">
-                Save Reflection
-            </button>
-
+            <span id="characterCount">0 / 1500 characters</span>
+            <button id="saveJournalButton" class="primary-button"
+                    type="button">Save Reflection</button>
         </div>
-
-        <p id="journalMessage"
-           class="status-message"
-           role="status"></p>
-
+        <p id="journalMessage" class="status-message" role="status"></p>
     </div>
 
-    <!-- SAVED REFLECTIONS -->
     <div class="journal-history">
-
         <p class="small-heading">PAST REFLECTIONS</p>
-
         <h3>Your Journal Entries 📖</h3>
-
         <div id="journalEntries"></div>
-
     </div>
-
 </section>
 
-
-<!-- =========================================
-     DASHBOARD
-========================================= -->
-
+<!-- DASHBOARD -->
 <section id="dashboard" class="page-section soft-section">
-
     <div class="section-heading">
-
         <p class="small-heading">YOUR DASHBOARD</p>
-
         <h2>Your Emotional Snapshot.</h2>
-
-        <p>
-            An overview of your recorded moods and reflections.
-        </p>
-
+        <p>Explore your recorded moods and reflections.</p>
     </div>
 
     <div class="stats-grid">
-
         <div class="stat-card">
             <span class="stat-icon">🌷</span>
             <p>Total Check-ins</p>
             <h3 id="totalMoodEntries">0</h3>
         </div>
-
         <div class="stat-card">
             <span class="stat-icon">💜</span>
             <p>Most Frequent Mood</p>
             <h3 id="frequentMood">—</h3>
         </div>
-
         <div class="stat-card">
             <span class="stat-icon">📖</span>
             <p>Journal Entries</p>
             <h3 id="totalJournalEntries">0</h3>
         </div>
-
     </div>
 
     <div class="dashboard-grid">
-
         <div class="dashboard-card">
-
             <p class="small-heading">MOOD OVERVIEW</p>
-
             <h3>Mood Distribution</h3>
-
             <div id="moodChart" class="chart">
-
                 <div class="chart-column">
                     <span class="bar-count" id="happyCount">0</span>
                     <div id="happyBar" class="chart-bar"></div>
-                    <span>😊</span>
-                    <small>Happy</small>
+                    <span>😊</span><small>Happy</small>
                 </div>
-
                 <div class="chart-column">
                     <span class="bar-count" id="calmCount">0</span>
                     <div id="calmBar" class="chart-bar"></div>
-                    <span>😌</span>
-                    <small>Calm</small>
+                    <span>😌</span><small>Calm</small>
                 </div>
-
                 <div class="chart-column">
                     <span class="bar-count" id="okayCount">0</span>
                     <div id="okayBar" class="chart-bar"></div>
-                    <span>😐</span>
-                    <small>Okay</small>
+                    <span>😐</span><small>Okay</small>
                 </div>
-
                 <div class="chart-column">
                     <span class="bar-count" id="sadCount">0</span>
                     <div id="sadBar" class="chart-bar"></div>
-                    <span>😔</span>
-                    <small>Sad</small>
+                    <span>😔</span><small>Sad</small>
                 </div>
-
                 <div class="chart-column">
                     <span class="bar-count" id="stressedCount">0</span>
                     <div id="stressedBar" class="chart-bar"></div>
-                    <span>😣</span>
-                    <small>Stressed</small>
+                    <span>😣</span><small>Stressed</small>
                 </div>
-
             </div>
-
         </div>
 
         <div class="dashboard-card">
-
             <p class="small-heading">PATTERN SUMMARY</p>
-
             <h3>What Your Entries Show</h3>
-
             <div class="pattern-box">
-
                 <span>✨</span>
-
                 <p id="patternSummary">
                     Start recording moods to see your summary.
                 </p>
-
             </div>
-
             <p class="dashboard-note">
-                Mood patterns are not medical assessments.
+                These are descriptive patterns, not medical assessments.
             </p>
-
         </div>
-
     </div>
 
     <div class="dashboard-card recent-card">
-
         <p class="small-heading">RECENT CHECK-INS</p>
-
         <h3>Recent Mood History</h3>
-
         <div id="recentMoodHistory"></div>
-
     </div>
 
-<!-- SERENOVA - CREATIVE DASHBOARD FEATURES -->
+    <!-- SIX CREATIVE DASHBOARD CARDS -->
+    <div class="creative-dashboard">
+        <div class="section-heading">
+            <p class="small-heading">YOUR PERSONAL UNIVERSE</p>
+            <h2>Your Little World of Reflection ✨</h2>
+            <p>Six creative ways to reflect and grow.</p>
+        </div>
 
-<div class="creative-dashboard">
+        <div class="creative-feature-grid">
+            <button class="creative-feature-card" type="button"
+                    data-open="jarPopup">
+                <span class="creative-icon">⭐</span>
+                <h3>Jar of Emotions</h3>
+                <p>Turn feelings into little origami stars.</p>
+                <span>Open Your Jar →</span>
+            </button>
 
-    <div class="section-heading">
-        <p class="small-heading">YOUR PERSONAL UNIVERSE</p>
-        <h2>Your Little World of Reflection ✨</h2>
-        <p>Six peaceful ways to express yourself and grow.</p>
+            <button class="creative-feature-card" type="button"
+                    data-open="goalsPopup">
+                <span class="creative-icon">🌟</span>
+                <h3>Weekly Resolutions</h3>
+                <p>Celebrate small achievements.</p>
+                <span>View Your Goals →</span>
+            </button>
+
+            <button class="creative-feature-card" type="button"
+                    data-open="gardenPopup">
+                <span class="creative-icon">🌷</span>
+                <h3>Your Inner Garden</h3>
+                <p>Watch your recorded reflections bloom.</p>
+                <span>Visit Your Garden →</span>
+            </button>
+
+            <button class="creative-feature-card" type="button"
+                    data-open="lettersPopup">
+                <span class="creative-icon">💌</span>
+                <h3>Letters to My Future Self</h3>
+                <p>Write something to revisit later.</p>
+                <span>Write a Letter →</span>
+            </button>
+
+            <button class="creative-feature-card" type="button"
+                    data-open="starsPopup">
+                <span class="creative-icon">🌌</span>
+                <h3>Constellation of Feelings</h3>
+                <p>See your journal entries as stars.</p>
+                <span>Explore Your Sky →</span>
+            </button>
+
+            <button class="creative-feature-card" type="button"
+                    data-open="riverPopup">
+                <span class="creative-icon">🛶</span>
+                <h3>Let It Float Away</h3>
+                <p>Give a difficult thought space to drift away.</p>
+                <span>Visit the River →</span>
+            </button>
+        </div>
     </div>
-
-    <div class="creative-feature-grid">
-
-        <button class="creative-feature-card" data-open="jarPopup">
-            <span class="creative-icon">⭐</span>
-            <h3>Jar of Emotions</h3>
-            <p>Turn your feelings into little origami stars.</p>
-            <span>Open Your Jar →</span>
-        </button>
-
-        <button class="creative-feature-card" data-open="goalsPopup">
-            <span class="creative-icon">🌟</span>
-            <h3>Weekly Resolutions</h3>
-            <p>Celebrate your little wins, one step at a time.</p>
-            <span>View Your Goals →</span>
-        </button>
-
-        <button class="creative-feature-card" data-open="gardenPopup">
-            <span class="creative-icon">🌷</span>
-            <h3>Your Inner Garden</h3>
-            <p>Watch your reflections bloom into flowers.</p>
-            <span>Visit Your Garden →</span>
-        </button>
-
-        <button class="creative-feature-card" data-open="lettersPopup">
-            <span class="creative-icon">💌</span>
-            <h3>Letters to My Future Self</h3>
-            <p>Write something meaningful to open later.</p>
-            <span>Write a Letter →</span>
-        </button>
-
-        <button class="creative-feature-card" data-open="starsPopup">
-            <span class="creative-icon">🌌</span>
-            <h3>Constellation of Feelings</h3>
-            <p>Every journal entry becomes a star in your sky.</p>
-            <span>Explore Your Sky →</span>
-        </button>
-
-        <button class="creative-feature-card" data-open="riverPopup">
-            <span class="creative-icon">🛶</span>
-            <h3>Let It Float Away</h3>
-            <p>Give your worries a little space to drift away.</p>
-            <span>Visit the River →</span>
-        </button>
-
-    </div>
-</div>
-
 </section>
 
-
-
-
-<!-- IMPROVED WELLNESS CORNER -->
+<!-- REVISED WELLNESS CORNER -->
 <section id="wellness" class="page-section">
     <div class="section-heading">
         <p class="small-heading">WELLNESS CORNER</p>
@@ -738,54 +412,49 @@
     </div>
 
     <div class="wellness-grid">
-
-        <button class="wellness-card wellness-action"
-                type="button" data-open="pausePopup">
+        <button class="wellness-card wellness-action" type="button"
+                data-open="pausePopup">
             <span>🌿</span>
             <h3>Take a Pause</h3>
             <p>
-                Studying for a long time? Try a short screen
-                break or a gentle one-minute breathing activity.
+                Studying for a long time? Try a short screen break
+                or a gentle one-minute breathing activity.
             </p>
             <strong>Take a Little Break →</strong>
         </button>
 
-        <button class="wellness-card wellness-action"
-                type="button" data-open="bodyPopup">
+        <button class="wellness-card wellness-action" type="button"
+                data-open="bodyPopup">
             <span>💧</span>
             <h3>Care for Your Body</h3>
             <p>
-                Choose a small self-care activity: take a water
-                break, move comfortably, rest or step away
-                from your screen.
+                Choose a small self-care activity: take a water break,
+                move comfortably, rest or step away from your screen.
             </p>
             <strong>Choose a Self-Care Activity →</strong>
         </button>
 
-        <button class="wellness-card wellness-action"
-                type="button" data-open="connectPopup">
+        <button class="wellness-card wellness-action" type="button"
+                data-open="connectPopup">
             <span>🫶</span>
             <h3>Stay Connected</h3>
             <p>
-                Send a kind message, appreciate someone or
-                write a thoughtful note to yourself.
-                Choose what feels comfortable.
+                Send a kind message, appreciate someone or write
+                a thoughtful note to yourself. Choose what feels comfortable.
             </p>
             <strong>Explore Connection Ideas →</strong>
         </button>
 
-        <button class="wellness-card wellness-action"
-                type="button" data-open="tasksPopup">
+        <button class="wellness-card wellness-action" type="button"
+                data-open="tasksPopup">
             <span>📝</span>
             <h3>Break It Down</h3>
             <p>
-                Have an assignment or examination to prepare
-                for? Divide it into small steps and focus
-                on one task at a time.
+                Have an assignment or examination to prepare for?
+                Divide it into smaller steps and work at your own pace.
             </p>
             <strong>Organize My Study Tasks →</strong>
         </button>
-
     </div>
 
     <div class="safety-note">
@@ -793,495 +462,219 @@
         <div>
             <h3>Your Wellbeing, Your Choice</h3>
             <p>
-                These are general wellness suggestions,
-                not medical or psychological advice.
-                You may skip any activity or stop whenever
-                you feel uncomfortable.
+                These are general wellness suggestions, not medical
+                or psychological advice. Skip any activity that
+                feels uncomfortable.
             </p>
         </div>
     </div>
 </section>
 
-
-<!-- =========================================
-     ABOUT SERENOVA
-========================================= -->
-
+<!-- ABOUT -->
 <section id="about" class="page-section about-section">
-
     <div class="section-heading light-heading">
-
         <p class="small-heading">ABOUT THE PROJECT</p>
-
         <h2>About SERENOVA</h2>
-
         <p>AI Literacy & Integrity Educational Project</p>
-
     </div>
 
     <div class="about-grid">
-
         <div class="about-card">
             <h3>🌸 Introduction</h3>
-            <p>
-                A student-focused mood and wellness journal.
-            </p>
+            <p>A student-focused digital mood and wellness journal.</p>
         </div>
-
         <div class="about-card">
             <h3>🎯 Problem Statement</h3>
-            <p>
-                Students may not regularly reflect on their emotions.
-            </p>
+            <p>Students may not regularly reflect on their experiences.</p>
         </div>
-
         <div class="about-card">
             <h3>✨ Objectives</h3>
-            <p>
-                Encourage reflection, emotional awareness
-                and personal expression.
-            </p>
+            <p>Encourage reflection, self-expression and emotional awareness.</p>
         </div>
-
         <div class="about-card">
             <h3>🎓 Target Audience</h3>
-            <p>
-                College and university students.
-            </p>
+            <p>College and university students.</p>
         </div>
-
         <div class="about-card">
             <h3>💻 Features</h3>
-            <p>
-                Mood tracking, journaling, stickers,
-                memories, streaks and pastel themes.
-            </p>
+            <p>Mood tracking, journaling, memories, wellness activities and dashboards.</p>
         </div>
-
         <div class="about-card">
             <h3>🤖 AI Integrity</h3>
-            <p>
-                AI-assisted development with independent
-                human review and verification.
-            </p>
+            <p>AI-assisted development with human review and verification.</p>
         </div>
-
     </div>
 
     <div class="privacy-box">
-
         <h3>🔒 Privacy & Limitations</h3>
-
         <p>
-            Mood and journal entries are stored in browser storage.
-            Photographs may be stored using IndexedDB.
-            Information does not automatically synchronize across devices.
+            Entries are stored locally in your browser and do not
+            synchronize between devices. Avoid entering highly
+            sensitive personal information.
         </p>
-
-        <p>
-            Avoid entering sensitive personal information.
-            This website is an educational prototype.
-        </p>
-
     </div>
-
 </section>
 
-
-<!-- =========================================
-     THEMES POPUP
-========================================= -->
-
-<div id="themePopup"
-     class="popup-overlay hidden"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="themeTitle">
-
+<!-- THEMES POPUP -->
+<div id="themePopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="themeTitle">
     <div class="popup-content theme-popup">
-
-        <button class="close-popup"
-                type="button"
-                data-close="themePopup"
-                aria-label="Close themes">
-            ×
-        </button>
-
-        <p class="small-heading">
-            PERSONALIZE YOUR SPACE
-        </p>
-
+        <button class="close-popup" type="button"
+                data-close="themePopup" aria-label="Close themes">×</button>
+        <p class="small-heading">PERSONALIZE YOUR SPACE</p>
         <h2 id="themeTitle">🎨 Make SERENOVA Yours</h2>
-
-        <p>Choose your favourite pastel colour palette.</p>
+        <p>Choose a soft pastel colour palette.</p>
 
         <div class="theme-grid">
-
-            <button class="theme-choice"
-                    type="button"
-                    data-theme="lavender">
+            <button class="theme-choice" type="button" data-theme="lavender">
                 <span class="theme-swatch lavender-swatch">💜</span>
-                <strong>Lavender</strong>
-                <small>Original Serenity</small>
+                <strong>Lavender</strong><small>Original Serenity</small>
             </button>
-
-            <button class="theme-choice"
-                    type="button"
-                    data-theme="blue">
+            <button class="theme-choice" type="button" data-theme="blue">
                 <span class="theme-swatch blue-swatch">🩵</span>
-                <strong>Baby Blue</strong>
-                <small>Ocean Calm</small>
+                <strong>Baby Blue</strong><small>Ocean Calm</small>
             </button>
-
-            <button class="theme-choice"
-                    type="button"
-                    data-theme="green">
+            <button class="theme-choice" type="button" data-theme="green">
                 <span class="theme-swatch green-swatch">🌿</span>
-                <strong>Sage Green</strong>
-                <small>Nature's Peace</small>
+                <strong>Sage Green</strong><small>Nature's Peace</small>
             </button>
-
-            <button class="theme-choice"
-                    type="button"
-                    data-theme="yellow">
+            <button class="theme-choice" type="button" data-theme="yellow">
                 <span class="theme-swatch yellow-swatch">🌼</span>
-                <strong>Butter Yellow</strong>
-                <small>Gentle Sunshine</small>
+                <strong>Butter Yellow</strong><small>Gentle Sunshine</small>
             </button>
-
-            <button class="theme-choice"
-                    type="button"
-                    data-theme="pink">
+            <button class="theme-choice" type="button" data-theme="pink">
                 <span class="theme-swatch pink-swatch">🌸</span>
-                <strong>Blush Pink</strong>
-                <small>Soft Bloom</small>
+                <strong>Blush Pink</strong><small>Soft Bloom</small>
             </button>
-
-            <button class="theme-choice"
-                    type="button"
-                    data-theme="peach">
+            <button class="theme-choice" type="button" data-theme="peach">
                 <span class="theme-swatch peach-swatch">🍑</span>
-                <strong>Pastel Peach</strong>
-                <small>Warm Comfort</small>
+                <strong>Pastel Peach</strong><small>Warm Comfort</small>
             </button>
-
         </div>
 
         <div class="theme-preview">
-
             <h3>A Little Space for Every Feeling ✨</h3>
-
-            <p>
-                Text, buttons and backgrounds change
-                together with your selected theme.
-            </p>
-
-            <span class="preview-button">
-                Save Today's Mood
-            </span>
-
+            <p>Your selected theme changes the website and flower colours.</p>
+            <span class="preview-button">Save Today's Mood</span>
         </div>
 
-        <button id="resetThemeButton"
-                class="secondary-button"
-                type="button">
+        <button id="resetThemeButton" class="secondary-button" type="button">
             ↺ Restore Lavender
         </button>
-
-        <p id="themeMessage"
-           class="status-message"
-           role="status"></p>
-
+        <p id="themeMessage" class="status-message" role="status"></p>
     </div>
-
 </div>
 
-
-<!-- =========================================
-     MEMORY LANE POPUP
-========================================= -->
-
-<div id="memoryPopup"
-     class="popup-overlay hidden"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="memoryTitle">
-
+<!-- MEMORY LANE POPUP -->
+<div id="memoryPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="memoryTitle">
     <div class="popup-content">
-
-        <button class="close-popup"
-                type="button"
-                data-close="memoryPopup"
-                aria-label="Close memories">
-            ×
-        </button>
-
+        <button class="close-popup" type="button"
+                data-close="memoryPopup" aria-label="Close memories">×</button>
         <p class="small-heading">YOUR LITTLE MOMENTS</p>
-
         <h2 id="memoryTitle">📸 Memory Lane</h2>
-
         <p>Some moments deserve to stay a little longer.</p>
 
         <div class="memory-form">
-
-            <label for="memoryPhoto">
-                Choose a Photograph
-            </label>
-
-            <input type="file"
-                   id="memoryPhoto"
-                   accept="image/*">
-
-            <div id="photoPreview"
-                 class="photo-preview hidden">
-
-                <img id="previewImage"
-                     alt="Selected memory preview">
-
+            <label for="memoryPhoto">Choose a Photograph</label>
+            <input id="memoryPhoto" type="file" accept="image/*">
+            <div id="photoPreview" class="photo-preview hidden">
+                <img id="previewImage" alt="Selected photograph preview">
             </div>
-
-            <label for="memoryCaption">
-                Memory Caption
-            </label>
-
-            <input id="memoryCaption"
-                   type="text"
-                   maxlength="100"
+            <label for="memoryCaption">Memory Caption</label>
+            <input id="memoryCaption" maxlength="100"
                    placeholder="A moment worth remembering...">
-
-            <button id="saveMemoryButton"
-                    class="primary-button"
-                    type="button">
-                Save My Memory 💜
-            </button>
-
-            <p id="memoryMessage"
-               class="status-message"
-               role="status"></p>
-
+            <button id="saveMemoryButton" class="primary-button"
+                    type="button">Save My Memory 💜</button>
+            <p id="memoryMessage" class="status-message" role="status"></p>
         </div>
 
         <h3>Your Polaroid Collection</h3>
-
         <div id="memoryGallery" class="memory-gallery"></div>
-
     </div>
-
 </div>
 
-
-<!-- =========================================
-     REFLECTION STREAK POPUP
-========================================= -->
-
-<div id="streakPopup"
-     class="popup-overlay hidden"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="streakTitle">
-
+<!-- REFLECTION STREAK POPUP -->
+<div id="streakPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="streakTitle">
     <div class="popup-content">
-
-        <button class="close-popup"
-                type="button"
-                data-close="streakPopup"
-                aria-label="Close streak">
-            ×
-        </button>
-
-        <p class="small-heading">
-            YOUR REFLECTION JOURNEY
-        </p>
-
+        <button class="close-popup" type="button"
+                data-close="streakPopup" aria-label="Close streak">×</button>
+        <p class="small-heading">YOUR REFLECTION JOURNEY</p>
         <h2 id="streakTitle">🔥 Reflection Streak</h2>
-
-        <p>
-            Every little reflection is worth appreciating.
-        </p>
+        <p>Every little reflection is worth appreciating.</p>
 
         <div class="streak-stats">
-
             <div class="streak-stat">
-                <span>🔥</span>
-                <h3 id="currentStreak">0</h3>
+                <span>🔥</span><h3 id="currentStreak">0</h3>
                 <p>Current Streak</p>
             </div>
-
             <div class="streak-stat">
-                <span>🌟</span>
-                <h3 id="longestStreak">0</h3>
+                <span>🌟</span><h3 id="longestStreak">0</h3>
                 <p>Longest Streak</p>
             </div>
-
             <div class="streak-stat">
-                <span>🕘</span>
-                <h3 id="usualTime">—</h3>
+                <span>🕘</span><h3 id="usualTime">—</h3>
                 <p>Usual Reflection Time</p>
             </div>
-
         </div>
 
         <h3>🕰️ Your Reflection Timeline</h3>
-
         <div id="reflectionTimeline"></div>
-
         <div class="sleep-suggestion">
-
             <h3>🌙 A Gentle Rest Reminder</h3>
-
             <p id="sleepMessage">
                 Your rest matters as much as your reflections.
             </p>
-
         </div>
-
         <p class="dashboard-note">
             Reflection times do not establish actual sleep habits.
         </p>
-
     </div>
-
 </div>
 
-
-<!-- =========================================
-     GENTLE REMINDERS POPUP
-========================================= -->
-
-<div id="reminderPopup"
-     class="popup-overlay hidden"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="reminderTitle">
-
+<!-- REMINDER POPUP -->
+<div id="reminderPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="reminderTitle">
     <div class="popup-content">
-
-        <button class="close-popup"
-                type="button"
-                data-close="reminderPopup"
-                aria-label="Close reminders">
-            ×
-        </button>
-
+        <button class="close-popup" type="button"
+                data-close="reminderPopup" aria-label="Close reminders">×</button>
         <p class="small-heading">A LITTLE CHECK-IN</p>
-
         <h2 id="reminderTitle">🔔 Gentle Reminders</h2>
-
-        <p>
-            Choose a comfortable time for your daily reflection.
-        </p>
+        <p>Choose a comfortable time for your daily reflection.</p>
 
         <div class="reminder-form">
-
-            <label for="reminderTime">
-                Preferred Reminder Time
-            </label>
-
-            <input type="time"
-                   id="reminderTime"
-                   value="21:30">
-
+            <label for="reminderTime">Preferred Reminder Time</label>
+            <input id="reminderTime" type="time" value="21:30">
             <label class="check-label">
-
-                <input type="checkbox"
-                       id="remindersEnabled"
-                       checked>
-
+                <input id="remindersEnabled" type="checkbox" checked>
                 Enable gentle reminders
-
             </label>
-
-            <button id="saveReminderButton"
-                    class="primary-button"
-                    type="button">
-                Save Reminder Settings
-            </button>
-
-            <p id="reminderMessage"
-               class="status-message"
-               role="status"></p>
-
+            <button id="saveReminderButton" class="primary-button"
+                    type="button">Save Reminder Settings</button>
+            <p id="reminderMessage" class="status-message" role="status"></p>
         </div>
-
         <div class="sleep-suggestion">
-
             <h3>💜 Your Time, Your Pace</h3>
-
-            <p>
-                Reflection is optional.
-                You can disable reminders anytime.
-            </p>
-
+            <p>You can change or disable reminders whenever you wish.</p>
         </div>
-
     </div>
-
 </div>
 
+<!-- CREATIVE DASHBOARD POPUPS -->
 
-<!-- =========================================
-     TOP-RIGHT WELCOME NOTIFICATION
-========================================= -->
-
-<div id="welcomeNotification"
-     class="welcome-notification hidden"
-     role="status">
-
-    <button id="closeNotification"
-            class="notification-close"
-            type="button"
-            aria-label="Dismiss notification">
-        ×
-    </button>
-
-    <span class="notification-icon">💜</span>
-
-    <h3 id="notificationTitle">
-        Hello from SERENOVA!
-    </h3>
-
-    <p id="notificationText"></p>
-
-    <button id="notificationAction"
-            class="notification-action"
-            type="button">
-        Check In →
-    </button>
-
-</div>
-
-
-<!-- =========================================
-     FOOTER
-========================================= -->
-
-<footer>
-
-    <div class="footer-logo">SERENOVA</div>
-
-    <p>A Little Space for Every Feeling.</p>
-
-    <p class="footer-small">
-        AI Literacy & Integrity Educational Project
-    </p>
-
-</footer>
-
-<!-- 1. JAR OF EMOTIONS -->
-<div id="jarPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="jarTitle">
+<!-- JAR -->
+<div id="jarPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="jarTitle">
     <div class="popup-content creative-popup">
-        <button class="close-popup" data-close="jarPopup"
-                aria-label="Close">×</button>
-
+        <button class="close-popup" type="button"
+                data-close="jarPopup" aria-label="Close jar">×</button>
         <p class="small-heading">COLLECT YOUR FEELINGS</p>
         <h2 id="jarTitle">⭐ Jar of Emotions</h2>
-        <p>Every feeling deserves a place, even the difficult ones.</p>
-
+        <p>Every feeling deserves a place.</p>
         <label for="emotionText">What's on your mind?</label>
         <textarea id="emotionText" maxlength="300"
-                  placeholder="Write a little feeling or thought..."></textarea>
-
+                  placeholder="Write a feeling or thought..."></textarea>
         <label for="emotionColor">Choose your star colour</label>
         <select id="emotionColor">
             <option value="lavender">Lavender 💜</option>
@@ -1290,313 +683,281 @@
             <option value="yellow">Butter Yellow 🌼</option>
             <option value="green">Sage Green 🌿</option>
         </select>
-
-        <button id="addEmotionStar" class="primary-button">
-            Fold Into a Star ⭐
-        </button>
-
+        <button id="addEmotionStar" class="primary-button"
+                type="button">Fold Into a Star ⭐</button>
         <p id="jarMessage" class="status-message" role="status"></p>
-
-        <div class="emotion-jar">
-            <div id="jarStars" class="jar-stars"></div>
-        </div>
-
+        <div class="emotion-jar"><div id="jarStars" class="jar-stars"></div></div>
         <h3>Your Collected Feelings</h3>
         <div id="emotionList" class="creative-list"></div>
     </div>
 </div>
 
-<!-- 2. WEEKLY RESOLUTIONS -->
-<div id="goalsPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="goalsTitle">
+<!-- WEEKLY GOALS -->
+<div id="goalsPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="goalsTitle">
     <div class="popup-content creative-popup">
-        <button class="close-popup" data-close="goalsPopup"
-                aria-label="Close">×</button>
-
+        <button class="close-popup" type="button"
+                data-close="goalsPopup" aria-label="Close goals">×</button>
         <p class="small-heading">LITTLE STEPS MATTER</p>
         <h2 id="goalsTitle">🌟 Weekly Resolutions</h2>
         <p>Celebrate progress without pressure.</p>
-
         <label for="newGoal">Add a weekly goal</label>
         <div class="creative-input-row">
             <input id="newGoal" maxlength="120"
-                   placeholder="Something I'd like to accomplish...">
-            <button id="addGoal" class="primary-button">Add</button>
+                   placeholder="A little goal for this week...">
+            <button id="addGoal" class="primary-button" type="button">Add</button>
         </div>
-
         <div class="goal-summary">
             <div><strong id="completedGoals">0</strong><span>Completed</span></div>
             <div><strong id="remainingGoals">0</strong><span>Remaining</span></div>
         </div>
-
-        <div class="goal-progress">
-            <div id="goalProgressFill"></div>
-        </div>
-
+        <div class="goal-progress"><div id="goalProgressFill"></div></div>
         <p id="goalMessage" class="status-message" role="status"></p>
         <div id="goalList" class="creative-list"></div>
     </div>
 </div>
 
-<!-- 3. INNER GARDEN -->
-<div id="gardenPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="gardenTitle">
+<!-- GARDEN -->
+<div id="gardenPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="gardenTitle">
     <div class="popup-content creative-popup">
-        <button class="close-popup" data-close="gardenPopup"
-                aria-label="Close">×</button>
-
+        <button class="close-popup" type="button"
+                data-close="gardenPopup" aria-label="Close garden">×</button>
         <p class="small-heading">EVERY FEELING CAN BLOOM</p>
         <h2 id="gardenTitle">🌷 Your Inner Garden</h2>
-        <p>Your saved moods and reflections help your garden grow.</p>
-
+        <p>Every recorded emotion contributes to your garden.</p>
         <div id="innerGarden" class="inner-garden"></div>
         <p id="gardenMessage" class="garden-message"></p>
-
-        <div id="gardenDetails" class="creative-detail"
-             role="status">
+        <div id="gardenDetails" class="creative-detail" role="status">
             Select a flower to discover its story.
         </div>
     </div>
 </div>
 
-<!-- 4. FUTURE SELF LETTERS -->
-<div id="lettersPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="lettersTitle">
+<!-- FUTURE LETTERS -->
+<div id="lettersPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="lettersTitle">
     <div class="popup-content creative-popup">
-        <button class="close-popup" data-close="lettersPopup"
-                aria-label="Close">×</button>
-
+        <button class="close-popup" type="button"
+                data-close="lettersPopup" aria-label="Close letters">×</button>
         <p class="small-heading">A MESSAGE THROUGH TIME</p>
         <h2 id="lettersTitle">💌 Letters to My Future Self</h2>
-
         <label for="letterText">Dear Future Me...</label>
         <textarea id="letterText" maxlength="3000"
-                  placeholder="What would you like your future self to remember?"></textarea>
-
+                  placeholder="What would you like to remember?"></textarea>
         <label for="letterDate">Open this letter on</label>
         <input id="letterDate" type="date">
-
-        <button id="saveFutureLetter" class="primary-button">
-            Seal My Letter 💌
-        </button>
-
+        <button id="saveFutureLetter" class="primary-button"
+                type="button">Seal My Letter 💌</button>
         <p id="letterMessage" class="status-message" role="status"></p>
         <div id="futureLetters" class="creative-list"></div>
     </div>
 </div>
 
-<!-- 5. CONSTELLATION OF FEELINGS -->
-<div id="starsPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="starsTitle">
+<!-- CONSTELLATION -->
+<div id="starsPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="starsTitle">
     <div class="popup-content creative-popup">
-        <button class="close-popup" data-close="starsPopup"
-                aria-label="Close">×</button>
-
+        <button class="close-popup" type="button"
+                data-close="starsPopup" aria-label="Close stars">×</button>
         <p class="small-heading">YOUR PERSONAL NIGHT SKY</p>
         <h2 id="starsTitle">🌌 Constellation of Feelings</h2>
-        <p>Every saved journal reflection becomes a star.</p>
-
+        <p>Every saved reflection becomes a star.</p>
         <div id="constellationSky" class="constellation-sky"></div>
-
-        <div id="starDetails" class="creative-detail"
-             role="status">
+        <div id="starDetails" class="creative-detail" role="status">
             Select a star to read its reflection.
         </div>
     </div>
 </div>
 
-<!-- 6. LET IT FLOAT AWAY -->
-<div id="riverPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="riverTitle">
+<!-- RIVER -->
+<div id="riverPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="riverTitle">
     <div class="popup-content creative-popup">
-        <button class="close-popup" data-close="riverPopup"
-                aria-label="Close">×</button>
-
+        <button class="close-popup" type="button"
+                data-close="riverPopup" aria-label="Close river">×</button>
         <p class="small-heading">A MOMENT TO LET GO</p>
         <h2 id="riverTitle">🛶 Let It Float Away</h2>
         <p>Write something you'd like to release.</p>
-
         <label for="riverThought">What's weighing on your mind?</label>
         <textarea id="riverThought" maxlength="500"
-                  placeholder="Write freely. This is your space..."></textarea>
-
+                  placeholder="Write freely..."></textarea>
         <label class="creative-check">
             <input id="keepRiverThought" type="checkbox">
             Save this thought privately in this browser
         </label>
-
-        <button id="releaseThought" class="primary-button">
-            Let It Float Away 🛶
-        </button>
-
+        <button id="releaseThought" class="primary-button"
+                type="button">Let It Float Away 🛶</button>
         <div class="river-scene">
             <div class="river-water"></div>
             <div id="floatingBoat" class="floating-boat hidden">⛵</div>
         </div>
-
         <p id="riverMessage" class="status-message" role="status"></p>
-
         <h3>Thoughts You Chose to Keep</h3>
         <div id="savedRiverThoughts" class="creative-list"></div>
     </div>
 </div>
 
+<!-- INTERACTIVE WELLNESS POPUPS -->
+
 <!-- TAKE A PAUSE -->
-<div id="pausePopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+<div id="pausePopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="pauseTitle">
     <div class="popup-content wellness-popup">
         <button class="close-popup" type="button"
-                data-close="pausePopup" aria-label="Close">×</button>
-
+                data-close="pausePopup" aria-label="Close pause">×</button>
         <p class="small-heading">A MOMENT FOR YOURSELF</p>
         <h2 id="pauseTitle">🌿 Take a Pause</h2>
-        <p>Follow the circle at a comfortable pace. You may stop anytime.</p>
-
+        <p>
+            Been studying for a while? Take a quiet screen break
+            or try this optional one-minute breathing activity.
+        </p>
         <div class="breathing-area">
             <div id="breathingCircle" class="breathing-circle">
                 <span id="breathingInstruction">Ready?</span>
                 <strong id="breathingCount">60</strong>
             </div>
         </div>
-
         <p id="breathingStatus" class="wellness-status" role="status">
             One gentle minute, whenever you're ready.
         </p>
-
         <div class="wellness-actions">
-            <button id="startBreathing" class="primary-button" type="button">
-                Start Exercise
-            </button>
-            <button id="stopBreathing" class="secondary-button" type="button">
-                Stop
-            </button>
+            <button id="startBreathing" class="primary-button"
+                    type="button">Start Exercise</button>
+            <button id="stopBreathing" class="secondary-button"
+                    type="button">Stop</button>
         </div>
-
         <p class="wellness-disclaimer">
-            Breathe naturally. Do not force deep breaths or hold your breath.
-            Stop if you feel dizzy or uncomfortable.
+            Breathe naturally. Do not force deep breaths or hold
+            your breath. Stop if you feel uncomfortable.
         </p>
     </div>
 </div>
 
 <!-- CARE FOR YOUR BODY -->
-<div id="bodyPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="bodyTitle">
+<div id="bodyPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="bodyTitle">
     <div class="popup-content wellness-popup">
         <button class="close-popup" type="button"
-                data-close="bodyPopup" aria-label="Close">×</button>
-
+                data-close="bodyPopup" aria-label="Close self-care">×</button>
         <p class="small-heading">LITTLE ACTS OF CARE</p>
         <h2 id="bodyTitle">💧 Care for Your Body</h2>
-        <p>A gentle checklist, not a compulsory daily target.</p>
-
+        <p>
+            Choose any activity that feels useful today.
+            You don't need to complete the whole checklist.
+        </p>
         <div class="selfcare-list">
-            <label><input type="checkbox" class="selfcare-check" data-care="water">
-                I took a water break 💧</label>
-            <label><input type="checkbox" class="selfcare-check" data-care="stretch">
-                I moved or stretched comfortably 🌿</label>
-            <label><input type="checkbox" class="selfcare-check" data-care="rest">
-                I made time for rest 🌙</label>
-            <label><input type="checkbox" class="selfcare-check" data-care="screen">
-                I took a break from my screen 👀</label>
+            <label><input type="checkbox" class="selfcare-check"
+                          data-care="water"> I took a water break 💧</label>
+            <label><input type="checkbox" class="selfcare-check"
+                          data-care="stretch"> I moved comfortably 🌿</label>
+            <label><input type="checkbox" class="selfcare-check"
+                          data-care="rest"> I made time for rest 🌙</label>
+            <label><input type="checkbox" class="selfcare-check"
+                          data-care="screen"> I took a screen break 👀</label>
         </div>
-
         <div class="selfcare-progress">
             <div id="selfcareProgressFill"></div>
         </div>
         <p id="selfcareProgressText" class="wellness-status" role="status">
             0 of 4 little acts checked today.
         </p>
-
-        <button id="resetSelfcare" class="secondary-button" type="button">
-            Reset Today's Checklist
-        </button>
+        <button id="resetSelfcare" class="secondary-button"
+                type="button">Reset Today's Checklist</button>
     </div>
 </div>
 
 <!-- STAY CONNECTED -->
-<div id="connectPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="connectTitle">
+<div id="connectPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="connectTitle">
     <div class="popup-content wellness-popup">
         <button class="close-popup" type="button"
-                data-close="connectPopup" aria-label="Close">×</button>
-
+                data-close="connectPopup" aria-label="Close connection">×</button>
         <p class="small-heading">MEANINGFUL CONNECTIONS</p>
         <h2 id="connectTitle">🫶 Stay Connected</h2>
-        <p>Choose a connection idea that feels comfortable.</p>
-
+        <p>
+            Connection looks different for everyone.
+            You can reach out, appreciate a memory or write to yourself.
+        </p>
         <div class="connection-prompt">
             <span>💌</span>
             <p id="connectionPrompt">
                 Send a simple hello to someone you appreciate.
             </p>
         </div>
-
-        <button id="shuffleConnection" class="secondary-button" type="button">
-            🔀 Another Idea
-        </button>
-
+        <button id="shuffleConnection" class="secondary-button"
+                type="button">🔀 Another Idea</button>
         <label for="kindnessNote" class="wellness-label">
             A little note to yourself (optional)
         </label>
         <textarea id="kindnessNote" maxlength="500"
                   placeholder="Something kind I want to remember..."></textarea>
-
-        <button id="saveKindnessNote" class="primary-button" type="button">
-            Save My Note
-        </button>
+        <button id="saveKindnessNote" class="primary-button"
+                type="button">Save My Note</button>
         <p id="kindnessMessage" class="wellness-status" role="status"></p>
-
         <h3>Your Saved Notes</h3>
         <div id="kindnessNotes" class="wellness-records"></div>
-
         <p class="wellness-disclaimer">
-            You don't have to contact anyone. Choose connections that feel safe.
+            You don't have to contact anyone. Choose what feels safe.
         </p>
     </div>
 </div>
 
 <!-- BREAK IT DOWN -->
-<div id="tasksPopup" class="popup-overlay hidden"
-     role="dialog" aria-modal="true" aria-labelledby="tasksTitle">
+<div id="tasksPopup" class="popup-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="tasksTitle">
     <div class="popup-content wellness-popup">
         <button class="close-popup" type="button"
-                data-close="tasksPopup" aria-label="Close">×</button>
-
+                data-close="tasksPopup" aria-label="Close tasks">×</button>
         <p class="small-heading">ONE STEP AT A TIME</p>
         <h2 id="tasksTitle">📝 Break It Down</h2>
-        <p>Turn your assignment or goal into smaller steps.</p>
-
-        <label for="mainTask" class="wellness-label">What are you working on?</label>
+        <p>
+            Big assignments can feel difficult to begin.
+            Divide them into smaller steps at your own pace.
+        </p>
+        <label for="mainTask" class="wellness-label">
+            What are you working on?
+        </label>
         <input id="mainTask" maxlength="120"
                placeholder="Example: Complete physics assignment">
-
-        <button id="saveMainTask" class="secondary-button" type="button">
-            Set My Goal
-        </button>
-
+        <button id="saveMainTask" class="secondary-button"
+                type="button">Set My Goal</button>
         <h3 id="currentMainTask">Your current goal</h3>
-
         <label for="smallTask" class="wellness-label">Add a small step</label>
         <div class="wellness-input-row">
             <input id="smallTask" maxlength="120"
-                   placeholder="Example: Solve the first two questions">
-            <button id="addSmallTask" class="primary-button" type="button">
-                Add Step
-            </button>
+                   placeholder="Example: Solve two questions">
+            <button id="addSmallTask" class="primary-button"
+                    type="button">Add Step</button>
         </div>
-
         <div class="selfcare-progress">
             <div id="taskProgressFill"></div>
         </div>
         <p id="taskProgressText" class="wellness-status" role="status">
             No steps added yet.
         </p>
-
         <div id="smallTaskList" class="wellness-records"></div>
         <p id="taskMessage" class="wellness-status" role="status"></p>
     </div>
 </div>
+
+<!-- WELCOME NOTIFICATION -->
+<div id="welcomeNotification" class="welcome-notification hidden"
+     role="status">
+    <button id="closeNotification" class="notification-close"
+            type="button" aria-label="Dismiss notification">×</button>
+    <span class="notification-icon">💜</span>
+    <h3 id="notificationTitle">Hello from SERENOVA!</h3>
+    <p id="notificationText"></p>
+    <button id="notificationAction" class="notification-action"
+            type="button">Check In →</button>
+</div>
+
+<footer>
+    <div class="footer-logo">SERENOVA</div>
+    <p>A Little Space for Every Feeling.</p>
+    <p class="footer-small">AI Literacy & Integrity Educational Project</p>
+</footer>
 
 </body>
 </html>
