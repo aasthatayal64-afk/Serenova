@@ -2589,3 +2589,114 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - EDIT REFLECTION FEATURE
+   ========================================== */
+
+.edit-reflection-popup {
+    max-width: 600px;
+}
+
+.edit-reflection-popup label {
+    display: block;
+    margin: 20px 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.edit-reflection-popup input,
+.edit-reflection-popup textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    box-sizing: border-box;
+}
+
+.edit-reflection-popup textarea {
+    resize: vertical;
+    min-height: 180px;
+}
+
+.edit-reflection-popup input:focus,
+.edit-reflection-popup textarea:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.edit-character-count {
+    text-align: right;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.edit-reflection-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.edit-reflection-actions button {
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.journal-entry-title {
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 10px 0;
+    overflow-wrap: anywhere;
+}
+
+.journal-entry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.edit-entry-button {
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface-alt);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.edit-entry-button:hover {
+    background: var(--soft);
+}
+
+.edit-entry-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .edit-reflection-popup {
+        padding: 22px 18px;
+    }
+
+    .edit-reflection-actions {
+        flex-direction: column-reverse;
+    }
+
+    .edit-reflection-actions button {
+        width: 100%;
+    }
+}
+
