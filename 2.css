@@ -2254,3 +2254,269 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - INTERACTIVE WELLNESS CORNER
+   ========================================== */
+
+.wellness-action {
+    display:block;
+    width:100%;
+    text-align:left;
+    cursor:pointer;
+    transition:transform .25s,box-shadow .25s;
+}
+
+.wellness-action:hover {
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px var(--shadow);
+}
+
+.wellness-action strong {
+    display:block;
+    margin-top:18px;
+    color:var(--primary);
+    font-size:13px;
+}
+
+.wellness-popup h3 {
+    margin:20px 0 12px;
+    color:var(--primary);
+}
+
+.wellness-popup input:not([type="checkbox"]),
+.wellness-popup textarea {
+    width:100%;
+    padding:13px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--surface);
+    color:var(--text);
+    font:inherit;
+}
+
+.wellness-popup textarea {
+    min-height:100px;
+    resize:vertical;
+}
+
+.wellness-label {
+    display:block;
+    margin:18px 0 8px;
+    font-weight:600;
+}
+
+.wellness-actions,
+.wellness-input-row {
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin:20px 0;
+}
+
+.wellness-input-row input {
+    flex:1;
+    min-width:180px;
+}
+
+.wellness-status {
+    margin:15px 0;
+    color:var(--primary);
+    font-size:14px;
+}
+
+.wellness-disclaimer {
+    margin-top:20px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* BREATHING EXERCISE */
+
+.breathing-area {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:290px;
+}
+
+.breathing-circle {
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    background:radial-gradient(circle,var(--surface),var(--surface-alt));
+    border:4px solid var(--accent);
+    box-shadow:0 15px 40px var(--shadow);
+    transition:transform 4s ease-in-out;
+}
+
+.breathing-circle span {
+    color:var(--primary);
+    font-weight:700;
+}
+
+.breathing-circle strong {
+    font-size:34px;
+    color:var(--primary);
+}
+
+.breathing-circle.breathe-in {
+    transform:scale(1.25);
+}
+
+.breathing-circle.breathe-out {
+    transform:scale(.9);
+}
+
+/* SELF-CARE */
+
+.selfcare-list {
+    display:grid;
+    gap:13px;
+    margin:25px 0;
+}
+
+.selfcare-list label {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:15px;
+    background:var(--surface);
+    cursor:pointer;
+}
+
+.selfcare-list input,
+.wellness-records input[type="checkbox"] {
+    width:19px;
+    height:19px;
+    accent-color:var(--primary);
+    flex-shrink:0;
+}
+
+.selfcare-progress {
+    height:12px;
+    margin-top:20px;
+    border-radius:20px;
+    background:var(--surface-alt);
+    overflow:hidden;
+}
+
+#selfcareProgressFill,
+#taskProgressFill {
+    height:100%;
+    width:0%;
+    background:var(--primary);
+    border-radius:20px;
+    transition:width .3s;
+}
+
+/* CONNECTION PROMPTS */
+
+.connection-prompt {
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:25px;
+    margin:20px 0;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:var(--surface-alt);
+}
+
+.connection-prompt span {
+    font-size:30px;
+}
+
+.connection-prompt p {
+    color:var(--text);
+}
+
+/* SAVED RECORDS */
+
+.wellness-records {
+    display:grid;
+    gap:12px;
+    margin-top:20px;
+}
+
+.wellness-record {
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:15px;
+    background:var(--surface);
+    overflow-wrap:anywhere;
+}
+
+.wellness-record p {
+    white-space:pre-wrap;
+}
+
+.wellness-record small {
+    display:block;
+    margin-top:7px;
+    color:var(--muted);
+}
+
+.wellness-record button {
+    margin-top:10px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--surface-alt);
+    color:var(--primary);
+    padding:7px 12px;
+}
+
+.wellness-task-row {
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.wellness-task-row span {
+    flex:1;
+    overflow-wrap:anywhere;
+}
+
+.wellness-task-row.completed span {
+    text-decoration:line-through;
+    color:var(--muted);
+}
+
+/* RESPONSIVE DESIGN */
+
+@media(max-width:600px) {
+    .wellness-actions,
+    .wellness-input-row {
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .wellness-actions button,
+    .wellness-input-row button {
+        width:100%;
+    }
+
+    .breathing-circle {
+        width:160px;
+        height:160px;
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .breathing-circle {
+        transition:none;
+    }
+
+    #selfcareProgressFill,
+    #taskProgressFill {
+        transition:none;
+    }
+}
+
