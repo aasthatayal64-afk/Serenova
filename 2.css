@@ -2788,3 +2788,111 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - AI TRANSPARENCY & PRIVACY
+   ========================================== */
+
+.transparency-centre {
+    max-width: 1000px;
+    margin: 60px auto 0;
+    padding: 35px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    box-shadow: 0 12px 35px var(--shadow);
+    color: var(--text);
+}
+
+.transparency-heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.transparency-heading h2 {
+    color: var(--primary);
+    font-size: clamp(24px, 4vw, 34px);
+    margin: 12px 0;
+}
+
+.transparency-heading p {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.transparency-list {
+    display: grid;
+    gap: 14px;
+}
+
+.transparency-item {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 18px 22px;
+    transition: border-color 0.2s ease;
+}
+
+.transparency-item[open] {
+    border-color: var(--primary);
+}
+
+.transparency-item summary {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.transparency-item summary:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 5px;
+    border-radius: 4px;
+}
+
+.transparency-item p {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 14px;
+    margin: 15px 0 0;
+}
+
+.transparency-item button {
+    margin-top: 20px;
+    min-height: 44px;
+}
+
+.transparency-status {
+    color: var(--primary) !important;
+    font-weight: 600;
+}
+
+.transparency-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .transparency-centre {
+        padding: 22px 16px;
+        margin-top: 35px;
+    }
+
+    .transparency-item {
+        padding: 15px;
+    }
+
+    .transparency-item button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .transparency-item {
+        transition: none;
+    }
+}
+
