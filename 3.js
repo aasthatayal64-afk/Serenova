@@ -2245,3 +2245,86 @@ if (document.readyState === "loading") {
 } else {
     initializeSerenova();
 }
+
+/* ==========================================
+   SERENOVA - PRIVACY CENTRE
+   EXPORT USER DATA
+   ========================================== */
+
+function exportSerenovaData() {
+
+    const keys = [
+        "serenovaMoods",
+        "serenovaJournal",
+        "serenovaEmotionStars",
+        "serenovaWeeklyGoals",
+        "serenovaFutureLetters",
+        "serenovaRiverThoughts",
+        "serenovaKindnessNotes",
+        "serenovaWellnessTasks",
+        "serenovaSelfcare"
+    ];
+
+    const backup = {
+        website: "SERENOVA",
+        exportedAt: new Date().toISOString(),
+        records: {}
+    };
+
+    try {
+        keys.forEach(function(key) {
+            const saved = localStorage.getItem(key);
+
+            if (saved !== null) {
+                backup.records[key] = JSON.parse(saved);
+            }
+        });
+
+        const file = new Blob(
+            [JSON.stringify(backup, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(file);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "SERENOVA_Backup.json";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        URL.revokeObjectURL(url);
+
+        document.getElementById("exportDataMessage").textContent =
+            "Your data backup has been prepared. 💜";
+
+    } catch(error) {
+        console.error("Export error:", error);
+
+        document.getElementById("exportDataMessage").textContent =
+            "Unable to export your data. Please try again.";
+    }
+}
+
+function initializePrivacyCentre() {
+    const exportButton =
+        document.getElementById("exportSerenovaData");
+
+    if (!exportButton) return;
+
+    exportButton.addEventListener(
+        "click",
+        exportSerenovaData
+    );
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializePrivacyCentre
+    );
+} else {
+    initializePrivacyCentre();
+}
