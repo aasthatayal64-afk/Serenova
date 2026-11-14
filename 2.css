@@ -3007,4 +3007,56 @@ footer {
         width: 100%;
     }
 }
+/* ==========================================
+   WELLNESS SUGGESTION EXPLAINABILITY
+   ========================================== */
+
+#whySuggestionButton {
+    display: block;
+    margin: 15px auto;
+    padding: 11px 18px;
+    border-radius: 22px;
+    cursor: pointer;
+}
+
+.suggestion-explanation {
+    margin-top: 18px;
+    padding: 20px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: left;
+}
+
+.suggestion-explanation[hidden] {
+    display: none;
+}
+
+.suggestion-explanation h4 {
+    color: var(--primary);
+    margin: 0 0 12px;
+}
+
+.suggestion-explanation p {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 10px 0;
+}
+
+#whySuggestionButton:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    #whySuggestionButton {
+        width: 100%;
+    }
+
+    .suggestion-explanation {
+        padding: 16px;
+    }
+}
+
 
