@@ -3224,4 +3224,50 @@ footer {
     }
 }
 
+/* SERENOVA - PRIVATE REFLECTION */
+
+.private-reflection-placeholder {
+    padding: 18px;
+    border-radius: 14px;
+    background: var(--surface-alt);
+    color: var(--muted);
+    text-align: center;
+    font-style: italic;
+}
+
+.privacy-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+}
+
+.private-view-button,
+.private-toggle-button {
+    padding: 9px 15px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface-alt);
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.private-view-button:focus-visible,
+.private-toggle-button:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .privacy-actions {
+        flex-direction: column;
+    }
+
+    .privacy-actions button {
+        width: 100%;
+    }
+}
+
 
