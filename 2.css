@@ -2896,3 +2896,67 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - PIN REFLECTION FEATURE
+   ========================================== */
+
+.pin-entry-button {
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface-alt);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.pin-entry-button:hover {
+    background: var(--soft, var(--surface-alt));
+    transform: translateY(-2px);
+}
+
+.pin-entry-button:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+.pin-entry-button[aria-pressed="true"] {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.pinned-reflection {
+    border: 1px solid var(--primary);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.journal-entry-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+    .journal-entry-actions {
+        gap: 8px;
+    }
+
+    .pin-entry-button {
+        font-size: 12px;
+        padding: 9px 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pin-entry-button {
+        transition: none;
+    }
+}
+
