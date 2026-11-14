@@ -256,9 +256,29 @@ try {
     </div>
 
     <div class="journal-history">
-        <p class="small-heading">PAST REFLECTIONS</p>
-        <h3>Your Journal Entries 📖</h3>
+       
+<!-- COLLAPSIBLE PAST REFLECTIONS -->
+
+<details class="past-reflections-details">
+
+    <summary class="past-reflections-toggle">
+        <span>
+            <span class="small-heading">PAST REFLECTIONS</span>
+            <span class="past-reflections-title">
+                Your Journal Entries 📖
+            </span>
+        </span>
+
+        <span class="past-reflections-arrow"
+              aria-hidden="true">⌄</span>
+    </summary>
+
+    <div class="past-reflections-content">
         <div id="journalEntries"></div>
+    </div>
+
+</details>
+
     </div>
 </section>
 
