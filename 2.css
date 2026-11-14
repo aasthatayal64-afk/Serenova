@@ -3059,4 +3059,73 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - COLLAPSIBLE PAST REFLECTIONS
+   ========================================== */
+
+.past-reflections-details {
+    width: 100%;
+}
+
+.past-reflections-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.past-reflections-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.past-reflections-toggle::marker {
+    content: "";
+}
+
+.past-reflections-title {
+    display: block;
+    margin-top: 10px;
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.past-reflections-arrow {
+    font-size: 28px;
+    color: var(--primary);
+    transition: transform 0.2s ease;
+}
+
+.past-reflections-details[open] .past-reflections-arrow {
+    transform: rotate(180deg);
+}
+
+.past-reflections-content {
+    margin-top: 25px;
+}
+
+.past-reflections-toggle:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 5px;
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    .past-reflections-title {
+        font-size: 19px;
+    }
+
+    .past-reflections-content {
+        margin-top: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .past-reflections-arrow {
+        transition: none;
+    }
+}
+
 
