@@ -2479,6 +2479,7 @@ function initializeSerenova() {
     initializeThemes();
     initializeMoodTracker();
     restoreLastMood();
+    initializeSuggestionExplanation();
     initializeJournal();
     initializeWritingPrompts();
 
