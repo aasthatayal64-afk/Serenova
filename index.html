@@ -436,6 +436,36 @@ try {
         ↻ Another Suggestion
     </button>
 
+<!-- EXPLAINABILITY FEATURE -->
+
+<button id="whySuggestionButton"
+        type="button"
+        class="secondary-button"
+        aria-expanded="false"
+        aria-controls="suggestionExplanation">
+    ℹ️ Why am I seeing this suggestion?
+</button>
+
+<div id="suggestionExplanation"
+     class="suggestion-explanation"
+     role="region"
+     aria-label="Wellness suggestion explanation"
+     hidden>
+
+    <h4>Why this was suggested</h4>
+
+    <p id="explanationText">
+        SERENOVA uses predefined wellness suggestions.
+    </p>
+
+    <p>
+        This recommendation is not a diagnosis,
+        psychological assessment or medical advice.
+        SERENOVA does not detect or analyse your emotions.
+    </p>
+
+</div>
+
     <p class="wellness-disclaimer">
         These suggestions are based only on your
         selected mood. They are optional and
