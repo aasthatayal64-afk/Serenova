@@ -293,13 +293,81 @@ function initializeThemes() {
    MOOD TRACKER
    ========================================== */
 
+
+/* MOOD-BASED WELLNESS SUGGESTIONS */
+
 const moodSuggestions = {
-    Happy: "Celebrate something that made you smile today.",
-    Calm: "Appreciate a moment that helped you feel balanced.",
-    Okay: "An ordinary day is valid too. Take your time.",
-    Sad: "Be gentle with yourself and rest if you need to.",
-    Stressed: "Consider a short break or one manageable task."
+    Happy: [
+        "Celebrate a small achievement from today.",
+        "Share a happy moment with someone you appreciate.",
+        "Write about something that made you smile.",
+        "Save a positive memory in your journal."
+    ],
+
+    Calm: [
+        "Enjoy a quiet moment between your classes.",
+        "Write down three things you are grateful for.",
+        "Take a peaceful walk if you feel like it.",
+        "Plan one small goal for tomorrow."
+    ],
+
+    Okay: [
+        "Take a short break from your screen.",
+        "Think about one thing you would enjoy today.",
+        "Write about an ordinary but pleasant moment.",
+        "Choose a simple activity that feels manageable."
+    ],
+
+    Sad: [
+        "Be gentle with yourself and take things slowly.",
+        "Talk to a trusted friend if you feel comfortable.",
+        "Express your thoughts freely in your journal.",
+        "Choose a small comforting activity you enjoy."
+    ],
+
+    Stressed: [
+        "Break your study workload into smaller tasks.",
+        "Try SERENOVA's 60-second guided pause.",
+        "List your two most important tasks for today.",
+        "Take a short break before returning to your work."
+    ]
 };
+
+/* DISPLAY MOOD-BASED WELLNESS ADVICE */
+
+let suggestionIndex = 0;
+
+function showMoodWellness(mood) {
+
+    const suggestions = moodSuggestions[mood] || [
+        "Take a moment to check in with yourself.",
+        "Explore the Wellness Corner at your own pace.",
+        "Write a reflection if you feel like it."
+    ];
+
+    const suggestion =
+        suggestions[suggestionIndex % suggestions.length];
+
+    setText("suggestionText", suggestion);
+    setText("wellnessRecommendation", suggestion);
+
+    setText(
+        "wellnessMoodLabel",
+        mood ? "Suggested for: " + mood :
+               "A gentle suggestion for you"
+    );
+
+    if ($("moodSuggestion")) {
+        $("moodSuggestion").classList.remove("hidden");
+    }
+}
+
+function nextMoodSuggestion() {
+    suggestionIndex++;
+
+    showMoodWellness(selectedMood);
+}
+
 
 function initializeMoodTracker() {
     document.querySelectorAll(".mood-button").forEach(button => {
@@ -313,7 +381,8 @@ function initializeMoodTracker() {
             selectedEmoji = this.dataset.emoji;
 
             setText("moodMessage", selectedEmoji + " " + selectedMood);
-            setText("suggestionText", moodSuggestions[selectedMood]);
+            suggestionIndex = 0;
+            showMoodWellness(selectedMood);
 
             if ($("moodSuggestion")) {
                 $("moodSuggestion").classList.remove("hidden");
