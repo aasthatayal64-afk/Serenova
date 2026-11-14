@@ -767,6 +767,24 @@ function displayJournalEntries() {
     });
 }
 
+/* ==========================================
+   PIN AND UNPIN REFLECTION
+   ========================================== */
+
+function toggleReflectionPin(index) {
+    const entries = readData("serenovaJournal");
+
+    if (!entries[index]) return;
+
+    // Toggle pinned status
+    entries[index].pinned = !entries[index].pinned;
+
+    // Save the updated entry to browser storage
+    if (saveData("serenovaJournal", entries)) {
+        displayJournalEntries();
+    }
+}
+
 
     for (let i = entries.length - 1; i >= 0; i--) {
         const entry = entries[i];
