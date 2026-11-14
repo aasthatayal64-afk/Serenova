@@ -337,30 +337,84 @@ const moodSuggestions = {
 
 let suggestionIndex = 0;
 
+
+/* ==========================================
+   SERENOVA - ANOTHER SUGGESTION
+   ========================================== */
+
+/* General suggestions when no mood is available */
+
+const generalSuggestions = [
+    "Take a short break from your screen.",
+    "Write down one thing you are grateful for.",
+    "Drink some water and take a gentle pause.",
+    "Choose one small activity you enjoy."
+];
+
+/* Remember the current suggestion */
+
+let lastSuggestionIndex = -1;
+
+/* Display a suggestion for the selected mood */
+
 function showMoodWellness(mood) {
 
-    const suggestions = moodSuggestions[mood] || [
-        "Take a moment to check in with yourself.",
-        "Explore the Wellness Corner at your own pace.",
-        "Write a reflection if you feel like it."
-    ];
+    const suggestions = moodSuggestions[mood] ||
+                        generalSuggestions;
 
-    const suggestion =
-        suggestions[suggestionIndex % suggestions.length];
+    if (suggestions.length === 0) return;
 
+    // Keep the selected suggestion index valid
+    suggestionIndex = suggestionIndex % suggestions.length;
+
+    const suggestion = suggestions[suggestionIndex];
+
+    // Display suggestion in Mood Tracker
     setText("suggestionText", suggestion);
+
+    // Display suggestion in Wellness Corner
     setText("wellnessRecommendation", suggestion);
 
+    // Display selected mood
     setText(
         "wellnessMoodLabel",
         mood ? "Suggested for: " + mood :
                "A gentle suggestion for you"
     );
 
+    // Show the existing suggestion section
     if ($("moodSuggestion")) {
         $("moodSuggestion").classList.remove("hidden");
     }
+
+    lastSuggestionIndex = suggestionIndex;
 }
+
+/* Show another suggestion without repeating */
+
+function nextMoodSuggestion() {
+
+    // Use the mood currently selected by the user
+    const mood = selectedMood;
+
+    const suggestions = moodSuggestions[mood] ||
+                        generalSuggestions;
+
+    if (suggestions.length === 0) return;
+
+    if (suggestions.length === 1) {
+        suggestionIndex = 0;
+    } else {
+
+        // Move to the next suggestion
+        suggestionIndex =
+            (lastSuggestionIndex + 1) % suggestions.length;
+    }
+
+    // Update only the displayed recommendation
+    showMoodWellness(mood);
+}
+
 
 function nextMoodSuggestion() {
     suggestionIndex++;
