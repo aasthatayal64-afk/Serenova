@@ -3128,4 +3128,21 @@ footer {
     }
 }
 
+/* SERENOVA - COMPACT JOURNAL WRITING AREA */
+
+#journalInput {
+    display: block;
+    width: 100%;
+    max-width: 650px;
+    height: 140px;
+    min-height: 120px;
+    max-height: 350px;
+    padding: 16px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border-radius: 14px;
+    resize: vertical;
+    overflow-y: auto;
+}
+
 
