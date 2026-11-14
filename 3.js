@@ -468,6 +468,104 @@ function initializeSuggestionExplanation() {
     });
 }
 
+/* ==========================================
+   SERENOVA - WELLNESS FEEDBACK
+   ========================================== */
+
+function initializeWellnessFeedback() {
+    const helpful = document.getElementById("helpfulButton");
+    const notHelpful = document.getElementById("notHelpfulButton");
+    const reasonsBox = document.getElementById("feedbackReasons");
+    const reasonSelect = document.getElementById("feedbackReason");
+    const otherBox = document.getElementById("otherReasonBox");
+    const otherInput = document.getElementById("otherReason");
+    const submit = document.getElementById("submitFeedback");
+
+    if (!helpful || !notHelpful || !reasonsBox ||
+        !reasonSelect || !otherBox || !otherInput || !submit) {
+        return;
+    }
+
+    // Save a rating for the recommendation currently displayed
+    function saveFeedback(rating, reason) {
+        const suggestion = document.getElementById(
+            "wellnessRecommendation"
+        ).textContent.trim();
+
+        const mood = selectedMood || "General";
+
+        const feedback = {
+            mood: mood,
+            suggestion: suggestion,
+            rating: rating,
+            reason: reason,
+            date: new Date().toISOString()
+        };
+
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem("serenovaWellnessFeedback") || "[]"
+            );
+
+            const records = Array.isArray(saved) ? saved : [];
+            records.push(feedback);
+
+            localStorage.setItem(
+                "serenovaWellnessFeedback",
+                JSON.stringify(records)
+            );
+
+            document.getElementById("feedbackMessage").textContent =
+                "Thank you! Your feedback has been saved. 💜";
+
+            reasonsBox.hidden = true;
+
+        } catch (error) {
+            console.error("Feedback error:", error);
+
+            document.getElementById("feedbackMessage").textContent =
+                "Unable to save feedback in this browser.";
+        }
+    }
+
+    // Helpful button
+    helpful.addEventListener("click", function() {
+        saveFeedback("Helpful", "");
+    });
+
+    // Not Helpful button
+    notHelpful.addEventListener("click", function() {
+        reasonsBox.hidden = false;
+        reasonSelect.value = "";
+        otherInput.value = "";
+        otherBox.hidden = true;
+
+        document.getElementById("feedbackMessage").textContent = "";
+    });
+
+    // Show optional text box when Other is selected
+    reasonSelect.addEventListener("change", function() {
+        otherBox.hidden = this.value !== "Other";
+    });
+
+    // Submit negative feedback
+    submit.addEventListener("click", function() {
+        if (!reasonSelect.value) {
+            document.getElementById("feedbackMessage").textContent =
+                "Please select a reason.";
+            return;
+        }
+
+        let reason = reasonSelect.value;
+
+        if (reason === "Other" && otherInput.value.trim()) {
+            reason += ": " + otherInput.value.trim();
+        }
+
+        saveFeedback("Not Helpful", reason);
+    });
+}
+
 
 
 function initializeMoodTracker() {
@@ -2480,6 +2578,7 @@ function initializeSerenova() {
     initializeMoodTracker();
     restoreLastMood();
     initializeSuggestionExplanation();
+    initializeWellnessFeedback();
     initializeJournal();
     initializeWritingPrompts();
 
