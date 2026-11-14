@@ -395,6 +395,25 @@ function initializeMoodTracker() {
     }
 }
 
+/* RESTORE THE LAST SAVED MOOD */
+
+function restoreLastMood() {
+    const moods = readData("serenovaMoods");
+
+    if (moods.length === 0) {
+        showMoodWellness("");
+        return;
+    }
+
+    const lastMood = moods[moods.length - 1];
+
+    selectedMood = lastMood.mood;
+    selectedEmoji = lastMood.emoji || "";
+
+    suggestionIndex = 0;
+    showMoodWellness(selectedMood);
+}
+
 function saveMood() {
     if (!selectedMood) {
         setText("moodMessage", "Please select a mood first.");
@@ -2358,6 +2377,7 @@ function initializeSerenova() {
     initializePopups();
     initializeThemes();
     initializeMoodTracker();
+    restoreLastMood();
     initializeJournal();
     initializeWritingPrompts();
 
