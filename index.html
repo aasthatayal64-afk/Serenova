@@ -486,6 +486,78 @@ try {
 
 </div>
 
+<!-- SERENOVA - WELLNESS FEEDBACK -->
+
+<div class="wellness-feedback">
+
+    <h4>💜 Was this helpful?</h4>
+
+    <div class="feedback-buttons">
+        <button id="helpfulButton"
+                type="button"
+                class="secondary-button">
+            👍 Helpful
+        </button>
+
+        <button id="notHelpfulButton"
+                type="button"
+                class="secondary-button">
+            👎 Not Helpful
+        </button>
+    </div>
+
+    <div id="feedbackReasons" hidden>
+
+        <p>Why wasn't this helpful?</p>
+
+        <label for="feedbackReason">
+            Select a reason
+        </label>
+
+        <select id="feedbackReason">
+            <option value="">Choose a reason</option>
+            <option value="Too generic">Too generic</option>
+            <option value="Does not match how I feel">
+                Does not match how I feel
+            </option>
+            <option value="I have already tried this">
+                I have already tried this
+            </option>
+            <option value="Not practical right now">
+                Not practical right now
+            </option>
+            <option value="Other">Other</option>
+        </select>
+
+        <div id="otherReasonBox" hidden>
+            <label for="otherReason">
+                Tell us more (optional)
+            </label>
+
+            <textarea id="otherReason"
+                      maxlength="200"
+                      rows="2"
+                      placeholder="Your feedback..."></textarea>
+        </div>
+
+        <button id="submitFeedback"
+                type="button"
+                class="primary-button">
+            Submit Feedback
+        </button>
+    </div>
+
+    <p id="feedbackMessage"
+       role="status"
+       aria-live="polite"></p>
+
+    <p class="feedback-privacy">
+        Your feedback stays in this browser.
+        It is not sent to a server.
+    </p>
+
+</div>
+
     <p class="wellness-disclaimer">
         These suggestions are based only on your
         selected mood. They are optional and
