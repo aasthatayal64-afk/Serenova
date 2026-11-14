@@ -410,6 +410,40 @@ try {
         <p>Choose what feels helpful. Every activity is optional.</p>
     </div>
 
+<!-- MOOD-BASED WELLNESS RECOMMENDATION -->
+
+<div class="mood-wellness-panel">
+
+    <p class="small-heading">
+        A LITTLE CARE FOR YOUR DAY
+    </p>
+
+    <h3>🌷 Your Wellness Suggestion</h3>
+
+    <p id="wellnessMoodLabel">
+        A gentle suggestion for you
+    </p>
+
+    <p id="wellnessRecommendation"
+       role="status"
+       aria-live="polite">
+        Take a moment to check in with yourself.
+    </p>
+
+    <button type="button"
+            class="secondary-button"
+            onclick="nextMoodSuggestion()">
+        ↻ Another Suggestion
+    </button>
+
+    <p class="wellness-disclaimer">
+        These suggestions are based only on your
+        selected mood. They are optional and
+        are not medical advice.
+    </p>
+
+</div>
+
     <div class="wellness-grid">
         <button class="wellness-card wellness-action" type="button"
                 data-open="pausePopup">
