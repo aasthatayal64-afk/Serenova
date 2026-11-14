@@ -2960,3 +2960,51 @@ footer {
     }
 }
 
+/* ==========================================
+   MOOD-BASED WELLNESS RECOMMENDATIONS
+   ========================================== */
+
+.mood-wellness-panel {
+    max-width: 800px;
+    margin: 25px auto 35px;
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    text-align: center;
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.mood-wellness-panel h3 {
+    color: var(--primary);
+    margin: 12px 0;
+}
+
+#wellnessMoodLabel {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#wellnessRecommendation {
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 20px 0;
+}
+
+.mood-wellness-panel button {
+    min-height: 44px;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .mood-wellness-panel {
+        padding: 20px 16px;
+    }
+
+    .mood-wellness-panel button {
+        width: 100%;
+    }
+}
+
