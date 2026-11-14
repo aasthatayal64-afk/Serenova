@@ -969,13 +969,66 @@ function displayJournalEntries() {
             ));
         }
 
-        /* Reflection thoughts */
+       
+/* REFLECTION CONTENT WITH PRIVACY */
 
-        card.appendChild(makeElement(
-            "p",
-            "journal-entry-text",
-            entry.text || ""
-        ));
+const isPrivate = entry.private === true;
+const isVisible = visiblePrivateReflections.has(index);
+
+if (isPrivate && !isVisible) {
+    card.appendChild(makeElement(
+        "p",
+        "private-reflection-placeholder",
+        "🔒 This reflection is private and hidden."
+    ));
+} else {
+    card.appendChild(makeElement(
+        "p",
+        "journal-entry-text",
+        entry.text || ""
+    ));
+}
+
+/* SHOW / HIDE BUTTON */
+
+const privacyActions = makeElement(
+    "div",
+    "privacy-actions"
+);
+
+if (isPrivate) {
+    const viewButton = makeElement(
+        "button",
+        "private-view-button",
+        isVisible ? "🙈 Hide Reflection" : "👁 View Reflection"
+    );
+
+    viewButton.type = "button";
+
+    viewButton.addEventListener("click", function() {
+        toggleReflectionVisibility(index);
+    });
+
+    privacyActions.appendChild(viewButton);
+}
+
+/* MARK PRIVATE / REMOVE PRIVATE STATUS */
+
+const privacyButton = makeElement(
+    "button",
+    "private-toggle-button",
+    isPrivate ? "🔓 Make Public" : "🔒 Make Private"
+);
+
+privacyButton.type = "button";
+
+privacyButton.addEventListener("click", function() {
+    toggleReflectionPrivacy(index);
+});
+
+privacyActions.appendChild(privacyButton);
+card.appendChild(privacyActions);
+
 
         const actions = makeElement(
             "div",
@@ -1070,6 +1123,34 @@ function toggleReflectionPin(index) {
     if (saveData("serenovaJournal", entries)) {
         displayJournalEntries();
     }
+}
+
+/* PRIVATE REFLECTION FEATURE */
+
+// Remember which private reflections are currently visible
+const visiblePrivateReflections = new Set();
+
+function toggleReflectionPrivacy(index) {
+    const entries = readData("serenovaJournal");
+
+    if (!entries[index]) return;
+
+    entries[index].private = !entries[index].private;
+
+    if (saveData("serenovaJournal", entries)) {
+        visiblePrivateReflections.delete(index);
+        displayJournalEntries();
+    }
+}
+
+function toggleReflectionVisibility(index) {
+    if (visiblePrivateReflections.has(index)) {
+        visiblePrivateReflections.delete(index);
+    } else {
+        visiblePrivateReflections.add(index);
+    }
+
+    displayJournalEntries();
 }
 
 
