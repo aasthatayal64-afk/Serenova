@@ -3145,4 +3145,83 @@ footer {
     overflow-y: auto;
 }
 
+/* SERENOVA - WELLNESS FEEDBACK */
+
+.wellness-feedback {
+    margin-top: 25px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+
+.wellness-feedback h4 {
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.feedback-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.feedback-buttons button {
+    min-height: 44px;
+}
+
+#feedbackReasons {
+    max-width: 430px;
+    margin: 20px auto;
+    text-align: left;
+}
+
+#feedbackReasons[hidden],
+#otherReasonBox[hidden] {
+    display: none;
+}
+
+#feedbackReasons label {
+    display: block;
+    margin: 12px 0 6px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+#feedbackReason,
+#otherReason {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+}
+
+#submitFeedback {
+    margin-top: 15px;
+}
+
+#feedbackMessage {
+    color: var(--primary);
+    margin-top: 15px;
+}
+
+.feedback-privacy {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+    .feedback-buttons {
+        flex-direction: column;
+    }
+
+    .feedback-buttons button {
+        width: 100%;
+    }
+}
+
 
