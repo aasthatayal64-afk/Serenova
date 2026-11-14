@@ -392,9 +392,9 @@ function showMoodWellness(mood) {
 
 /* Show another suggestion without repeating */
 
-function nextMoodSuggestion() {
 
-    // Use the mood currently selected by the user
+function nextMoodSuggestion() {
+ // Use the mood currently selected by the user
     const mood = selectedMood;
 
     const suggestions = moodSuggestions[mood] ||
@@ -405,8 +405,7 @@ function nextMoodSuggestion() {
     if (suggestions.length === 1) {
         suggestionIndex = 0;
     } else {
-
-        // Move to the next suggestion
+     // Move to the next suggestion
         suggestionIndex =
             (lastSuggestionIndex + 1) % suggestions.length;
     }
@@ -416,11 +415,59 @@ function nextMoodSuggestion() {
 }
 
 
-function nextMoodSuggestion() {
-    suggestionIndex++;
 
-    showMoodWellness(selectedMood);
+/* ==========================================
+   SERENOVA - EXPLAINABILITY FEATURE
+   ========================================== */
+
+/* Update explanation based on selected mood */
+
+function updateSuggestionExplanation() {
+    const explanation = document.getElementById("explanationText");
+
+    if (!explanation) return;
+
+    const validMoods = [
+        "Happy", "Calm", "Okay", "Sad", "Stressed"
+    ];
+
+    if (validMoods.includes(selectedMood)) {
+        explanation.textContent =
+            "You selected '" + selectedMood + "' in the Mood Tracker. " +
+            "SERENOVA selected this recommendation from a predefined " +
+            "list associated with that mood. Your selected mood was " +
+            "used only to choose a general wellness suggestion.";
+    } else {
+        explanation.textContent =
+            "No mood is currently available. SERENOVA is showing " +
+            "a general wellness suggestion from its predefined list.";
+    }
 }
+
+/* Show or hide explanation */
+
+function initializeSuggestionExplanation() {
+    const button = document.getElementById("whySuggestionButton");
+    const panel = document.getElementById("suggestionExplanation");
+
+    if (!button || !panel) return;
+
+    button.addEventListener("click", function() {
+        const isHidden = panel.hidden;
+
+        if (isHidden) {
+            updateSuggestionExplanation();
+        }
+
+        panel.hidden = !isHidden;
+        button.setAttribute("aria-expanded", String(isHidden));
+
+        button.textContent = isHidden
+            ? "ℹ️ Hide Explanation"
+            : "ℹ️ Why am I seeing this suggestion?";
+    });
+}
+
 
 
 function initializeMoodTracker() {
