@@ -612,18 +612,161 @@ function saveJournal() {
    PAST REFLECTIONS - EDIT AND DELETE
    ========================================== */
 
+
+/* ==========================================
+   SERENOVA - PAST REFLECTIONS
+   PIN, EDIT AND DELETE
+   ========================================== */
+
 function displayJournalEntries() {
     const entries = readData("serenovaJournal");
-    const container = $("journalEntries");
+    const container = document.getElementById("journalEntries");
 
     if (!container) return;
 
     container.replaceChildren();
 
-    if (!entries.length) {
+    if (entries.length === 0) {
         showEmpty(container, "Your reflections will appear here.");
         return;
     }
+
+    /* Sort for display only.
+       Pinned entries appear first.
+       Original storage order is preserved. */
+
+    const sortedEntries = entries.map(function(entry, index) {
+        return {
+            entry: entry,
+            originalIndex: index
+        };
+    });
+
+    sortedEntries.sort(function(a, b) {
+        const aPinned = a.entry.pinned === true;
+        const bPinned = b.entry.pinned === true;
+
+        if (aPinned !== bPinned) {
+            return aPinned ? -1 : 1;
+        }
+
+        // Newest entries first within each group
+        return b.originalIndex - a.originalIndex;
+    });
+
+    sortedEntries.forEach(function(item) {
+        const entry = item.entry;
+        const index = item.originalIndex;
+
+        const card = makeElement("div", "journal-entry");
+
+        if (entry.pinned === true) {
+            card.classList.add("pinned-reflection");
+        }
+
+        /* Date and time */
+
+        card.appendChild(makeElement(
+            "p",
+            "journal-entry-date",
+            (entry.date || "") + " • " + (entry.time || "")
+        ));
+
+        /* Reflection title */
+
+        if (entry.title) {
+            card.appendChild(makeElement(
+                "h3",
+                "journal-entry-title",
+                entry.title
+            ));
+        }
+
+        /* Reflection thoughts */
+
+        card.appendChild(makeElement(
+            "p",
+            "journal-entry-text",
+            entry.text || ""
+        ));
+
+        const actions = makeElement(
+            "div",
+            "journal-entry-actions"
+        );
+
+        /* PIN / UNPIN BUTTON */
+
+        const pinButton = makeElement(
+            "button",
+            "pin-entry-button",
+            entry.pinned === true
+                ? "📌 Unpin"
+                : "📌 Pin Reflection"
+        );
+
+        pinButton.type = "button";
+
+        pinButton.setAttribute(
+            "aria-pressed",
+            String(entry.pinned === true)
+        );
+
+        pinButton.addEventListener("click", function() {
+            toggleReflectionPin(index);
+        });
+
+        actions.appendChild(pinButton);
+
+        /* EDIT BUTTON */
+
+        const editButton = makeElement(
+            "button",
+            "edit-entry-button",
+            "✏️ Edit Reflection"
+        );
+
+        editButton.type = "button";
+
+        editButton.addEventListener("click", function() {
+            openReflectionEditor(index);
+        });
+
+        actions.appendChild(editButton);
+
+        /* DELETE BUTTON */
+
+        const deleteButton = makeElement(
+            "button",
+            "delete-button",
+            "Delete Entry"
+        );
+
+        deleteButton.type = "button";
+
+        deleteButton.addEventListener("click", function() {
+            if (!confirm("Delete this reflection?")) return;
+
+            const latest = readData("serenovaJournal");
+
+            if (!latest[index]) return;
+
+            latest.splice(index, 1);
+
+            if (saveData("serenovaJournal", latest)) {
+                displayJournalEntries();
+                updateDashboard();
+                updateReflectionStreak();
+                updateNotificationState();
+            }
+        });
+
+        actions.appendChild(deleteButton);
+        card.appendChild(actions);
+        container.appendChild(card);
+    });
+}
+
 
     for (let i = entries.length - 1; i >= 0; i--) {
         const entry = entries[i];
