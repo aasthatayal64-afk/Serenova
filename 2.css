@@ -3270,4 +3270,55 @@ footer {
     }
 }
 
+/* SERENOVA - MOOD SELECTION CONFIRMATION */
+
+.mood-selection-confirmation {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 16px auto;
+    padding: 10px 18px;
+    text-align: center;
+
+    color: var(--primary);
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+
+    animation: moodFadeIn 0.5s ease;
+}
+
+.mood-selection-confirmation[hidden] {
+    display: none;
+}
+
+@keyframes moodFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .mood-selection-confirmation {
+        font-size: 13px;
+        padding: 9px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mood-selection-confirmation {
+        animation: none;
+    }
+}
+
 
