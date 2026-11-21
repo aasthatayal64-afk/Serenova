@@ -3457,4 +3457,68 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - DELETE PREVIOUS MOOD
+   ========================================== */
+
+.mood-history-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+}
+
+.mood-history-note {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.mood-delete-button {
+    padding: 7px 13px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.mood-delete-button:hover {
+    background: var(--surface-alt);
+    color: var(--primary);
+}
+
+.mood-delete-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* Keep mood information and delete button aligned */
+
+.history-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .mood-delete-button {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mood-delete-button {
+        transition: none;
+    }
+}
+
 
