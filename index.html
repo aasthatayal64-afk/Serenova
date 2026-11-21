@@ -156,8 +156,32 @@ try {
 
         </div>
 
+<!-- OPTIONAL MOOD NOTE -->
+
+<div id="moodNoteSection" class="mood-note-section" hidden>
+
+    <label for="moodNote">
+        Want to add a note?
+        <span class="mood-note-optional">(Optional)</span>
+    </label>
+
+    <textarea
+        id="moodNote"
+        rows="3"
+        maxlength="200"
+        placeholder="What's making you feel this way?"
+    ></textarea>
+
+    <p class="mood-note-hint">
+        A few words are enough. You can leave this blank.
+    </p>
+
+</div>
+
         <button id="saveMoodButton" class="primary-button normal-button"
                 type="button">Save Today's Mood</button>
+
+
         <p id="moodMessage" class="status-message" role="status"></p>
 
         <div id="moodSuggestion" class="suggestion-box hidden">
