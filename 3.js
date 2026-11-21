@@ -579,6 +579,14 @@ function initializeMoodTracker() {
             selectedMood = this.dataset.mood;
             selectedEmoji = this.dataset.emoji;
 
+/* SHOW OPTIONAL NOTE BOX */
+
+const moodNoteSection = document.getElementById("moodNoteSection");
+
+if (moodNoteSection) {
+    moodNoteSection.hidden = false;
+}
+
             setText("moodMessage", selectedEmoji + " " + selectedMood);
             suggestionIndex = 0;
             showMoodWellness(selectedMood);
@@ -621,10 +629,13 @@ function saveMood() {
 
     const entries = readData("serenovaMoods");
     const now = new Date();
+    const moodNote = document.getElementById("moodNote");
 
+    const note = moodNote ? moodNote.value.trim() : "";
     const entry = {
         mood: selectedMood,
         emoji: selectedEmoji,
+        note: note,
         date: getCurrentDate(),
         time: now.toLocaleTimeString([], {
             hour: "2-digit", minute: "2-digit"
@@ -640,7 +651,9 @@ function saveMood() {
     else entries.push(entry);
 
     if (!saveData("serenovaMoods", entries)) return;
-
+    if (moodNote) {
+    moodNote.value = "";
+}
     setText("moodMessage", "Your mood has been saved! 💜");
     displayMoodHistory();
     updateDashboard();
