@@ -3321,4 +3321,76 @@ footer {
     }
 }
 
+/* ==========================================
+   SERENOVA - MOOD SELECTION HIGHLIGHT
+   ========================================== */
+
+/* Smooth transition for all mood cards */
+
+.mood-button {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease,
+        background-color 0.25s ease;
+}
+
+/* Gentle effect when hovering */
+
+.mood-button:hover {
+    transform: translateY(-3px);
+}
+
+/* Highlight the selected mood */
+
+.mood-button.selected {
+    border: 2px solid var(--primary);
+    background: var(--surface-alt);
+    box-shadow: 0 5px 18px rgba(145, 110, 180, 0.18);
+    transform: scale(1.04);
+}
+
+/* Slight emphasis on the selected emoji */
+
+.mood-button.selected span {
+    transform: scale(1.08);
+}
+
+/* Smooth emoji movement */
+
+.mood-button span {
+    display: inline-block;
+    transition: transform 0.25s ease;
+}
+
+/* Keyboard accessibility */
+
+.mood-button:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* Responsive design */
+
+@media (max-width: 600px) {
+    .mood-button.selected {
+        transform: scale(1.02);
+    }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    .mood-button,
+    .mood-button span {
+        transition: none;
+    }
+
+    .mood-button:hover,
+    .mood-button.selected,
+    .mood-button.selected span {
+        transform: none;
+    }
+}
+
 
