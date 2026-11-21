@@ -296,42 +296,41 @@ function initializeThemes() {
 
 /* MOOD-BASED WELLNESS SUGGESTIONS */
 
+
+/* SERENOVA - GENTLE MOOD SUGGESTIONS */
+
 const moodSuggestions = {
     Happy: [
-        "Celebrate a small achievement from today.",
-        "Share a happy moment with someone you appreciate.",
-        "Write about something that made you smile.",
-        "Save a positive memory in your journal."
+        "Celebrate a small moment that made you smile today.",
+        "Share something positive with someone you appreciate.",
+        "Write about a little achievement from your day."
     ],
 
     Calm: [
-        "Enjoy a quiet moment between your classes.",
-        "Write down three things you are grateful for.",
-        "Take a peaceful walk if you feel like it.",
-        "Plan one small goal for tomorrow."
+        "Enjoy a peaceful moment and appreciate your progress.",
+        "Take a quiet break between your classes.",
+        "Write down something you feel grateful for."
     ],
 
     Okay: [
-        "Take a short break from your screen.",
-        "Think about one thing you would enjoy today.",
-        "Write about an ordinary but pleasant moment.",
-        "Choose a simple activity that feels manageable."
+        "Take your day at your own pace. Small steps count too.",
+        "Choose one simple activity that feels manageable.",
+        "Notice one pleasant moment from your day."
     ],
 
     Sad: [
-        "Be gentle with yourself and take things slowly.",
-        "Talk to a trusted friend if you feel comfortable.",
-        "Express your thoughts freely in your journal.",
-        "Choose a small comforting activity you enjoy."
+        "Be gentle with yourself. You can take things slowly.",
+        "Write down your thoughts if you feel comfortable.",
+        "Consider connecting with someone you trust."
     ],
 
     Stressed: [
-        "Break your study workload into smaller tasks.",
-        "Try SERENOVA's 60-second guided pause.",
-        "List your two most important tasks for today.",
-        "Take a short break before returning to your work."
+        "Focus on one manageable task and take breaks when needed.",
+        "Break your study work into smaller steps.",
+        "Take a short pause away from your screen."
     ]
 };
+
 
 /* DISPLAY MOOD-BASED WELLNESS ADVICE */
 
