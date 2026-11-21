@@ -659,31 +659,116 @@ function saveMood() {
     updateNotificationState();
 }
 
+
+/* ==========================================
+   SERENOVA - PREVIOUS MOOD ENTRIES
+   WITH DELETE OPTION
+   ========================================== */
+
 function displayMoodHistory() {
-    const container = $("moodHistory");
+    const container = document.getElementById("moodHistory");
+
     if (!container) return;
 
     const entries = readData("serenovaMoods");
+
     container.replaceChildren();
 
-    if (!entries.length) {
-        showEmpty(container, "Your mood history will appear here.");
+    if (entries.length === 0) {
+        showEmpty(
+            container,
+            "Your mood history will appear here."
+        );
         return;
     }
 
-    entries.slice().reverse().forEach(entry => {
+    // Show newest mood entries first
+    for (let i = entries.length - 1; i >= 0; i--) {
+
+        const entry = entries[i];
+
         const row = makeElement("div", "history-entry");
 
-        row.appendChild(makeElement(
-            "strong", "", (entry.emoji || "💜") + " " + entry.mood
+        const details = makeElement(
+            "div",
+            "mood-history-details"
+        );
+
+        // Display saved mood
+        details.appendChild(makeElement(
+            "strong",
+            "",
+            (entry.emoji || "💜") + " " + entry.mood
         ));
 
-        row.appendChild(makeElement(
-            "span", "", (entry.date || "") + " • " + (entry.time || "")
+        // Display date and time
+        details.appendChild(makeElement(
+            "span",
+            "",
+            (entry.date || "") + " • " + (entry.time || "")
         ));
+
+        // Display optional mood note, if available
+        if (entry.note) {
+            details.appendChild(makeElement(
+                "p",
+                "mood-history-note",
+                entry.note
+            ));
+        }
+
+        // Create delete button
+        const deleteButton = makeElement(
+            "button",
+            "mood-delete-button",
+            "Delete"
+        );
+
+        deleteButton.type = "button";
+        deleteButton.setAttribute(
+            "aria-label",
+            "Delete " + entry.mood +
+            " mood entry from " + (entry.date || "saved history")
+        );
+
+        deleteButton.addEventListener("click", function() {
+
+            const confirmed = confirm(
+                "Are you sure you want to delete this mood entry?"
+            );
+
+            if (!confirmed) return;
+
+            // Read the latest saved entries
+            const updatedEntries = readData("serenovaMoods");
+
+            if (!updatedEntries[i]) return;
+
+            // Remove only the selected entry
+            updatedEntries.splice(i, 1);
+
+            // Save the updated list
+            if (saveData("serenovaMoods", updatedEntries)) {
+
+                // Refresh mood history
+                displayMoodHistory();
+
+                // Refresh dashboard statistics
+                updateDashboard();
+
+                // Refresh the Inner Garden
+                renderInnerGarden();
+
+                // Update reminder information
+                updateNotificationState();
+            }
+        });
+
+        row.appendChild(details);
+        row.appendChild(deleteButton);
 
         container.appendChild(row);
-    });
+    }
 }
 
 /* ==========================================
